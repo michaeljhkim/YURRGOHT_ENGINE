@@ -6,6 +6,7 @@
 
 #include <rttr/registration>
 #include <rttr/registration_friend.h>
+//#include <rttr>		//it's in docker file
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
 

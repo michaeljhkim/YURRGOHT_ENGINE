@@ -8,13 +8,20 @@ add_library(${TARGET_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Yurrgoht")
 
+find_package(SDL2 REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(rttr REQUIRED)
+find_package(Jolt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(yaml-cpp REQUIRED)
+
 target_link_libraries(${TARGET_NAME} PUBLIC ${Vulkan_LIBRARY})
 target_link_libraries(${TARGET_NAME} PUBLIC SDL2)
 target_link_libraries(${TARGET_NAME} PUBLIC glfw)
 target_link_libraries(${TARGET_NAME} PUBLIC imgui)
 target_link_libraries(${TARGET_NAME} PUBLIC spdlog)
 target_link_libraries(${TARGET_NAME} PUBLIC yaml-cpp)
-target_link_libraries(${TARGET_NAME} PUBLIC rttr_core_lib)
+target_link_libraries(${TARGET_NAME} PUBLIC rttr)
 target_link_libraries(${TARGET_NAME} PRIVATE ktx)
 target_link_libraries(${TARGET_NAME} PRIVATE Jolt)
 target_link_libraries(${TARGET_NAME} PRIVATE effolkronium_random)
@@ -28,12 +35,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE VULKAN_SHADER_COMPILER=\"${Vul
 set(INSTALL_BIN "bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>")
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_BIN})
-install(TARGETS SDL2 DESTINATION ${INSTALL_BIN})
-install(TARGETS glfw DESTINATION ${INSTALL_BIN})
 install(TARGETS imgui DESTINATION ${INSTALL_BIN})
-install(TARGETS spdlog DESTINATION ${INSTALL_BIN})
-install(TARGETS yaml-cpp DESTINATION ${INSTALL_BIN})
-install(TARGETS rttr_core_lib DESTINATION ${INSTALL_BIN})
 install(TARGETS ktx DESTINATION ${INSTALL_BIN})
 
 install(FILES ${Vulkan_LIBRARY}

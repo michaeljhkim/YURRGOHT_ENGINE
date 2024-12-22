@@ -1,0 +1,49 @@
+- Docker will be used to install dependencies according to their own needs
+- CMakeLists need to be changed to remove all local dependencies (except for imgui - worry about later)
+- I can also just add vma (vulkan memory allocator) because its just a header file
+- need to remove install instructions and such
+- test build with c++17 again now that dependencies are properly made
+
+- THEN change to use c++20
+- may need to revert some code back to original if this works as well as I think (so I can have a good starting point)
+
+
+- Delete Local dependencies:
+- cereal
+- glfw
+- glm
+- jolt
+- rttr
+- sdl2
+- spdlog
+- yaml-cpp
+
+- Keep Local dependencies:
+- eventpp
+- imgui
+- ktx       (TRYING TO ADD TO DOCKER - figure out why the rpm will just not install)
+- random    (TRYING TO ADD TO DOCKER)
+- tinygltf
+- vma
+
+
+# Vulkan KTX2 dependency
+RUN wget https://github.com/KhronosGroup/KTX-Software/releases/download/v4.3.2/KTX-Software-4.3.2-Linux-x86_64.rpm && \
+    dnf localinstall --nobest -y KTX-Software-4.3.2-Linux-x86_64.rpm
+
+
+- Consider copying the original bamboo source code again for clean start with docker
+
+
+#Assuming we will be able to use the docker image to find this stuff
+find_package(Vulkan REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(glfw REQUIRED)
+find_package(rttr REQUIRED)
+find_package(jolt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(yaml-cpp REQUIRED)
+
+
+cmake -G Ninja -S . -B build
+cmake --build build --config Release
