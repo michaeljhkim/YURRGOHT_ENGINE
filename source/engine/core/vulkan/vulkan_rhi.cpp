@@ -7,7 +7,7 @@
 
 #define ENABLE_VALIDATION_LAYER DEBUG
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void VulkanRHI::init()
 	{

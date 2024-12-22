@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class VulkanRHI
 	{

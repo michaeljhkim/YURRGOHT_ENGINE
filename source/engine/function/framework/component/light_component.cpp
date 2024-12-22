@@ -2,16 +2,16 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::LightComponent>("LightComponent")
-	 .property("intensity", &Bamboo::LightComponent::m_intensity)
-	 .property("color", &Bamboo::LightComponent::m_color)
-	 .property("cast_shadow", &Bamboo::LightComponent::m_cast_shadow);
+rttr::registration::class_<Yurrgoht::LightComponent>("LightComponent")
+	 .property("intensity", &Yurrgoht::LightComponent::m_intensity)
+	 .property("color", &Yurrgoht::LightComponent::m_color)
+	 .property("cast_shadow", &Yurrgoht::LightComponent::m_cast_shadow);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::LightComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::LightComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::LightComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::LightComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	POLYMORPHIC_DEFINITION(LightComponent)

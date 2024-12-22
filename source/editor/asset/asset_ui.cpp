@@ -4,7 +4,7 @@
 #include "engine/core/event/event_system.h"
 #include <queue>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void AssetUI::init()
 	{

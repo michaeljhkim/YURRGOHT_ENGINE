@@ -1,10 +1,10 @@
 #include "skeleton.h"
 #include <queue>
 
-CEREAL_REGISTER_TYPE(Bamboo::Skeleton)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::Skeleton)
+CEREAL_REGISTER_TYPE(Yurrgoht::Skeleton)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Skeleton)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void Skeleton::inflate()

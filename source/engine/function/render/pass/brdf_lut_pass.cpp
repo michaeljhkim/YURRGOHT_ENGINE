@@ -5,7 +5,7 @@
 #include "engine/resource/asset/asset_manager.h"
 #include "engine/resource/asset/texture_2d.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	BRDFLUTPass::BRDFLUTPass()

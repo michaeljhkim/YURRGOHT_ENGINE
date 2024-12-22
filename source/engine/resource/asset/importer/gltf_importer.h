@@ -9,7 +9,7 @@
 #include "engine/resource/asset/skeleton.h"
 #include "engine/resource/asset/animation.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class GltfImporter
 	{

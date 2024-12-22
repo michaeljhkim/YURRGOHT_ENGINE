@@ -3,14 +3,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::MeshColliderComponent>("MeshColliderComponent")
-	.property("static_mesh", &Bamboo::MeshColliderComponent::m_static_mesh);
+rttr::registration::class_<Yurrgoht::MeshColliderComponent>("MeshColliderComponent")
+	.property("static_mesh", &Yurrgoht::MeshColliderComponent::m_static_mesh);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::MeshColliderComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::ColliderComponent, Bamboo::MeshColliderComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::MeshColliderComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::ColliderComponent, Yurrgoht::MeshColliderComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	MeshColliderComponent::MeshColliderComponent()

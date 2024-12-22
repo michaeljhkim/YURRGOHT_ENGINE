@@ -1,6 +1,6 @@
 #include "color.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	Color3 Color3::operator*(float v) const

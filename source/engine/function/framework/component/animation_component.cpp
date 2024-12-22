@@ -4,14 +4,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::AnimationComponent>("AnimationComponent")
-	 .property("animations", &Bamboo::AnimationComponent::m_animations);
+rttr::registration::class_<Yurrgoht::AnimationComponent>("AnimationComponent")
+	 .property("animations", &Yurrgoht::AnimationComponent::m_animations);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::AnimationComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::AnimationComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::AnimationComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::AnimationComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void AnimationComponent::addAnimation(std::shared_ptr<Animation>& animation)
 	{

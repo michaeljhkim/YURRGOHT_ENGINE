@@ -6,7 +6,7 @@
 #include <functional>
 #include <imgui/imgui.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct FolderNode
 	{

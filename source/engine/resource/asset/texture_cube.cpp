@@ -1,10 +1,10 @@
 #include "texture_cube.h"
 #include <ktx.h>
 
-CEREAL_REGISTER_TYPE(Bamboo::TextureCube)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::TextureCube)
+CEREAL_REGISTER_TYPE(Yurrgoht::TextureCube)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::TextureCube)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void TextureCube::inflate()
 	{	

@@ -4,7 +4,7 @@
 #include "engine/resource/asset/texture_cube.h"
 #include "engine/resource/asset/static_mesh.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class SkyLightComponent : public LightComponent, public IAssetRef
 	{

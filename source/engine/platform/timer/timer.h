@@ -4,7 +4,7 @@
 #include <chrono>
 #include <functional>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	typedef uint32_t TimerHandle;
 

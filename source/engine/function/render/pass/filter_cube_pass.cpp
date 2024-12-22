@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	struct IrradiancePCO

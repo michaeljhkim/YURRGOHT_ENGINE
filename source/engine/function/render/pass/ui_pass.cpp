@@ -10,7 +10,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/font/IconsFontAwesome5.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void checkVkResult(VkResult result)
 	{

@@ -3,7 +3,7 @@
 #include "component.h"
 #include "engine/core/math/transform.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EProjectionType
 	{

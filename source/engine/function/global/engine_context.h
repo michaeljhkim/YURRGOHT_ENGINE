@@ -4,7 +4,7 @@
 #include <vector>
 #include <array>
 
-namespace Bamboo
+namespace Yurrgoht
 {
     class EngineContext
     {

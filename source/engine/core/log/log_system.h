@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <memory>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class ELogLevel
 	{

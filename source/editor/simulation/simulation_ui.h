@@ -3,7 +3,7 @@
 #include "editor/base/editor_ui.h"
 #include "engine/core/vulkan/vulkan_util.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EOperationMode
 	{

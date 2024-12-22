@@ -3,7 +3,7 @@
 #include "editor/base/editor_ui.h"
 #include "editor/base/folder_tree_ui.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class MenuUI : public EditorUI, public IFolderTreeUI
 	{

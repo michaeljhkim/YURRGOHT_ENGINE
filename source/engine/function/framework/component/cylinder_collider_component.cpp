@@ -2,15 +2,15 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::CylinderColliderComponent>("CylinderColliderComponent")
-	.property("radius", &Bamboo::CylinderColliderComponent::m_radius)
-	.property("height", &Bamboo::CylinderColliderComponent::m_height);
+rttr::registration::class_<Yurrgoht::CylinderColliderComponent>("CylinderColliderComponent")
+	.property("radius", &Yurrgoht::CylinderColliderComponent::m_radius)
+	.property("height", &Yurrgoht::CylinderColliderComponent::m_height);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::CylinderColliderComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::ColliderComponent, Bamboo::CylinderColliderComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::CylinderColliderComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::ColliderComponent, Yurrgoht::CylinderColliderComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	
 	CylinderColliderComponent::CylinderColliderComponent()

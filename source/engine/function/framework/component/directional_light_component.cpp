@@ -2,14 +2,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::DirectionalLightComponent>("DirectionalLightComponent")
-	.property("cascade_frustum_near", &Bamboo::DirectionalLightComponent::m_cascade_frustum_near);
+rttr::registration::class_<Yurrgoht::DirectionalLightComponent>("DirectionalLightComponent")
+	.property("cascade_frustum_near", &Yurrgoht::DirectionalLightComponent::m_cascade_frustum_near);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::DirectionalLightComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::LightComponent, Bamboo::DirectionalLightComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::DirectionalLightComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::LightComponent, Yurrgoht::DirectionalLightComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	DirectionalLightComponent::DirectionalLightComponent()
 	{

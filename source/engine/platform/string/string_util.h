@@ -2,8 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <stdexcept>
+#include <memory>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class StringUtil
 	{

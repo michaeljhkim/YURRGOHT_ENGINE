@@ -2,7 +2,7 @@
 #include "engine/core/vulkan/vulkan_rhi.h"
 #include "engine/resource/shader/shader_manager.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	PostprocessPass::PostprocessPass()

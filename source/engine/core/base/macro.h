@@ -6,7 +6,7 @@
 
 #define DEBUG (!NDEBUG)
 
-#define APP_NAME "BambooEditor"
+#define APP_NAME "YurrgohtEditor"
 #define APP_MAJOR_VERSION 1
 #define APP_MINOR_VERSION 0
 #define APP_PATCH_VERSION 0

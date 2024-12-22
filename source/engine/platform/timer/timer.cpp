@@ -1,7 +1,7 @@
 #include "timer.h"
 #include <chrono>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void TimerManager::init()

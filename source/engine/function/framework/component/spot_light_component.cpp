@@ -2,15 +2,15 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::SpotLightComponent>("SpotLightComponent")
-	 .property("inner_cone_angle", &Bamboo::SpotLightComponent::m_inner_cone_angle)
-	 .property("outer_cone_angle", &Bamboo::SpotLightComponent::m_outer_cone_angle);
+rttr::registration::class_<Yurrgoht::SpotLightComponent>("SpotLightComponent")
+	 .property("inner_cone_angle", &Yurrgoht::SpotLightComponent::m_inner_cone_angle)
+	 .property("outer_cone_angle", &Yurrgoht::SpotLightComponent::m_outer_cone_angle);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::SpotLightComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::PointLightComponent, Bamboo::SpotLightComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::SpotLightComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::PointLightComponent, Yurrgoht::SpotLightComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	SpotLightComponent::SpotLightComponent()
 	{

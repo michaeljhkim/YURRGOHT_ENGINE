@@ -2,7 +2,7 @@
 
 #include "engine/function/render/render_data.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class RenderPass
 	{

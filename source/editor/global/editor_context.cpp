@@ -2,7 +2,7 @@
 #include "engine/function/global/engine_context.h"
 #include "engine/function/render/window_system.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
     EditorContext g_editor;
 

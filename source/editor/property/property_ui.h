@@ -8,7 +8,7 @@ namespace rttr
 	class variant;
 }
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EPropertyValueType
 	{

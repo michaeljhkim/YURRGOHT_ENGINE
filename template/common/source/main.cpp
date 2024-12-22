@@ -1,9 +1,11 @@
 #include "editor/editor.h"
+#include <iostream>
 
-int main(int argc, char** argv)
+int main()
 {
-    Bamboo::Editor* editor = new Bamboo::Editor;
-    editor->init();
+    Yurrgoht::Editor* editor = new Yurrgoht::Editor;
+    editor->init();     //Segfault occurs here
+    std::cout << "Seg fault here?" << std::endl;
     editor->run();
     editor->destroy();
     delete editor;

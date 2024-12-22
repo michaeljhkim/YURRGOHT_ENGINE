@@ -2,8 +2,9 @@
 
 #include "engine/resource/asset/base/texture.h"
 #include "engine/resource/asset/base/asset.h"
+#include "engine/resource/asset/base/asset.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class ETextureCompressionMode
 	{

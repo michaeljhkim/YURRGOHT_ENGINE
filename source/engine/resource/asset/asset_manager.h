@@ -9,7 +9,7 @@
 #define DEFAULT_TEXTURE_CUBE_URL "asset/engine/texture/ibl/texc_cloudy.texc"
 #define BRDF_TEXTURE_URL "asset/engine/texture/ibl/tex_brdf_lut.tex"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EArchiveType
 	{

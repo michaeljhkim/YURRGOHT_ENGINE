@@ -3,7 +3,7 @@
 #include "render_pass.h"
 #include <functional>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class UIPass : public RenderPass
 	{

@@ -3,7 +3,7 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/resource/asset/base/asset.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class SkeletalMesh : public Mesh, public Asset
 	{

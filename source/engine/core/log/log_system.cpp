@@ -13,7 +13,7 @@
 #define MAX_ROTATE_FILE_SIZE 1048576 * 10
 #define MAX_RINGBUFFER_SIZE 100
 
-namespace Bamboo
+namespace Yurrgoht
 {
     void LogSystem::init()
     {
@@ -83,7 +83,7 @@ namespace Bamboo
             }
         }
 
-        std::string log_filename = g_engine.fileSystem()->combine(log_dir, "bamboo_" + getCurrentDateTimeStr() + ".log");
+        std::string log_filename = g_engine.fileSystem()->combine(log_dir, "Yurrgoht_" + getCurrentDateTimeStr() + ".log");
         return log_filename;
 	}
 

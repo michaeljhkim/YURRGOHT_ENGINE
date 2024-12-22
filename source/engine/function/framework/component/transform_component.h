@@ -3,7 +3,7 @@
 #include "component.h"
 #include "engine/core/math/transform.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class TransformComponent : public Component, public Transform
 	{

@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	Mesh::~Mesh()

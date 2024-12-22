@@ -6,14 +6,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::AnimatorComponent>("AnimatorComponent")
-	 .property("skeleton", &Bamboo::AnimatorComponent::m_skeleton);
+rttr::registration::class_<Yurrgoht::AnimatorComponent>("AnimatorComponent")
+	 .property("skeleton", &Yurrgoht::AnimatorComponent::m_skeleton);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::AnimatorComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::AnimatorComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::AnimatorComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::AnimatorComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	AnimatorComponent::AnimatorComponent()

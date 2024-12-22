@@ -1,6 +1,6 @@
 #include "bounding_box.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	BoundingBox BoundingBox::transform(const glm::mat4& m)
 	{

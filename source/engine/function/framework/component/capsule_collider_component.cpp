@@ -2,15 +2,15 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::CapsuleColliderComponent>("CapsuleColliderComponent")
-	.property("radius", &Bamboo::CapsuleColliderComponent::m_radius)
-	.property("height", &Bamboo::CapsuleColliderComponent::m_height);
+rttr::registration::class_<Yurrgoht::CapsuleColliderComponent>("CapsuleColliderComponent")
+	.property("radius", &Yurrgoht::CapsuleColliderComponent::m_radius)
+	.property("height", &Yurrgoht::CapsuleColliderComponent::m_height);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::CapsuleColliderComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::ColliderComponent, Bamboo::CapsuleColliderComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::CapsuleColliderComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::ColliderComponent, Yurrgoht::CapsuleColliderComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	CapsuleColliderComponent::CapsuleColliderComponent()

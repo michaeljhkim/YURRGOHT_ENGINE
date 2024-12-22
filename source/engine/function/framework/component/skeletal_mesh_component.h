@@ -3,7 +3,7 @@
 #include "component.h"
 #include "engine/resource/asset/skeletal_mesh.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class SkeletalMeshComponent : public Component, public IAssetRef
 	{

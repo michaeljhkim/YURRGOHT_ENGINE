@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class MathUtil
 	{

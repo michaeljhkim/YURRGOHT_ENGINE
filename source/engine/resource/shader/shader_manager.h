@@ -3,7 +3,7 @@
 #include "engine/core/vulkan/vulkan_util.h"
 #include <map>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class ShaderManager
 	{

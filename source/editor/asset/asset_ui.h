@@ -4,7 +4,7 @@
 #include "editor/base/folder_tree_ui.h"
 #include "engine/resource/asset/asset_manager.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class AssetUI : public EditorUI, public IFolderTreeUI
 	{

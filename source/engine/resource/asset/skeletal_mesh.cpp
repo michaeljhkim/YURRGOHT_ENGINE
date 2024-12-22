@@ -1,9 +1,9 @@
 #include "skeletal_mesh.h"
 
-CEREAL_REGISTER_TYPE(Bamboo::SkeletalMesh)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::SkeletalMesh)
+CEREAL_REGISTER_TYPE(Yurrgoht::SkeletalMesh)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::SkeletalMesh)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void SkeletalMesh::inflate()

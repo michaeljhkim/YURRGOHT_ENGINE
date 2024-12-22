@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-namespace Bamboo
+namespace Yurrgoht
 {
     class Editor
     {

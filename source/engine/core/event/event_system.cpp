@@ -1,6 +1,6 @@
 #include "event_system.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void EventSystem::tick()
 	{

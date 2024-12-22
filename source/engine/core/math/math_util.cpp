@@ -6,7 +6,7 @@
 
 using Random = effolkronium::random_static;
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	
 	float MathUtil::pi()

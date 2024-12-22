@@ -13,12 +13,12 @@
 #include "engine/core/vulkan/vulkan_rhi.h"
 #include "engine/core/event/event_system.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
     void Editor::init()
     {
         // init engine
-        m_engine = new Bamboo::Engine;
+        m_engine = new Yurrgoht::Engine;
         m_engine->init();
 
         // create editor ui

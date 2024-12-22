@@ -5,7 +5,7 @@
 #include <tinygltf/stb_image.h>
 #include <fstream>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	const char* vkErrorString(VkResult result)
 	{

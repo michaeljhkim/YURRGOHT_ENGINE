@@ -6,7 +6,7 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${HEADER_FILES} ${SOURCE_F
 
 add_library(${TARGET_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
-set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Bamboo")
+set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Yurrgoht")
 
 target_link_libraries(${TARGET_NAME} PRIVATE Engine)
 

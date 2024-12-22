@@ -4,17 +4,17 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::Material>("Material")
-	 .property("base_color_texure", &Bamboo::Material::m_base_color_texure)
-	 .property("metallic_roughness_occlusion_texure", &Bamboo::Material::m_metallic_roughness_occlusion_texure)
-	 .property("normal_texure", &Bamboo::Material::m_normal_texure)
-	 .property("emissive_texure", &Bamboo::Material::m_emissive_texure);
+rttr::registration::class_<Yurrgoht::Material>("Material")
+	 .property("base_color_texure", &Yurrgoht::Material::m_base_color_texure)
+	 .property("metallic_roughness_occlusion_texure", &Yurrgoht::Material::m_metallic_roughness_occlusion_texure)
+	 .property("normal_texure", &Yurrgoht::Material::m_normal_texure)
+	 .property("emissive_texure", &Yurrgoht::Material::m_emissive_texure);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::Material)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::Material)
+CEREAL_REGISTER_TYPE(Yurrgoht::Material)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Material)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void Material::bindRefs()

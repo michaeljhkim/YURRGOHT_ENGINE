@@ -2,7 +2,7 @@
 #include "engine/core/event/event_system.h"
 #include "engine/function/framework/world/world_manager.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void WorldUI::init()

@@ -3,7 +3,7 @@
 #include "engine/core/vulkan/vulkan_util.h"
 #include "host_device.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class ERenderDataType
 	{

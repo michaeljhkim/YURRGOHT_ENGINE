@@ -6,9 +6,10 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${HEADER_FILES} ${SOURCE_F
 
 add_library(${TARGET_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
-set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Bamboo")
+set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Yurrgoht")
 
 target_link_libraries(${TARGET_NAME} PUBLIC ${Vulkan_LIBRARY})
+target_link_libraries(${TARGET_NAME} PUBLIC SDL2)
 target_link_libraries(${TARGET_NAME} PUBLIC glfw)
 target_link_libraries(${TARGET_NAME} PUBLIC imgui)
 target_link_libraries(${TARGET_NAME} PUBLIC spdlog)
@@ -18,15 +19,16 @@ target_link_libraries(${TARGET_NAME} PRIVATE ktx)
 target_link_libraries(${TARGET_NAME} PRIVATE Jolt)
 target_link_libraries(${TARGET_NAME} PRIVATE effolkronium_random)
 
-target_include_directories(${TARGET_NAME} PUBLIC ${BAMBOO_ROOT_DIR}/source)
-target_include_directories(${TARGET_NAME} PUBLIC ${BAMBOO_ROOT_DIR}/external)
-target_include_directories(${TARGET_NAME} PUBLIC ${BAMBOO_ROOT_DIR}/shader/include)
+target_include_directories(${TARGET_NAME} PUBLIC ${Yurrgoht_ROOT_DIR}/source)
+target_include_directories(${TARGET_NAME} PUBLIC ${Yurrgoht_ROOT_DIR}/external)
+target_include_directories(${TARGET_NAME} PUBLIC ${Yurrgoht_ROOT_DIR}/shader/include)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE VULKAN_SHADER_COMPILER=\"${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE}\")
 
 set(INSTALL_BIN "bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>")
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_BIN})
+install(TARGETS SDL2 DESTINATION ${INSTALL_BIN})
 install(TARGETS glfw DESTINATION ${INSTALL_BIN})
 install(TARGETS imgui DESTINATION ${INSTALL_BIN})
 install(TARGETS spdlog DESTINATION ${INSTALL_BIN})

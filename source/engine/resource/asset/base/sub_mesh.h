@@ -3,7 +3,7 @@
 #include "engine/resource/asset/material.h"
 #include "engine/core/math/bounding_box.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class SubMesh : public IAssetRef
 	{

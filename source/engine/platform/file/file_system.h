@@ -3,7 +3,7 @@
 #include "engine/platform/string/string_util.h"
 #include <filesystem>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EFileOrderType
 	{

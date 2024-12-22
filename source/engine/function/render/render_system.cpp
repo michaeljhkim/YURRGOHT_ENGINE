@@ -29,7 +29,7 @@
 
 #include <random>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void RenderSystem::init()

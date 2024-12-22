@@ -5,7 +5,7 @@
 
 #define INVALID_BONE_INDEX 255
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class Bone
 	{

@@ -5,7 +5,7 @@
 #include "engine/core/vulkan/vulkan_util.h"
 #include "host_device.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class AnimatorComponent : public Component, public IAssetRef
 	{

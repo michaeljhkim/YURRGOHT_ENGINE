@@ -1,6 +1,6 @@
 #include "string_util.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	std::vector<std::string> StringUtil::split(const std::string& s, const std::string& delimiter)
 	{

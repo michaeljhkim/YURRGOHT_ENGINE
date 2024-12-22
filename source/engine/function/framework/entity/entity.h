@@ -8,7 +8,7 @@
 
 #include <cereal/types/vector.hpp>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class World;
 	class Entity : public std::enable_shared_from_this<Entity>, public ITickable

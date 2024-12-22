@@ -2,7 +2,7 @@
 #include "engine/core/vulkan/vulkan_rhi.h"
 #include <array>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void ShaderManager::init()
 	{

@@ -1,11 +1,11 @@
 #include "component.h"
 #include "engine/function/framework/entity/entity.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	RTTR_REGISTRATION
 	{
-	rttr::registration::class_<Bamboo::Component>("Component");
+	rttr::registration::class_<Yurrgoht::Component>("Component");
 	}
 
 	void ITickable::tickable(float delta_time)

@@ -12,7 +12,7 @@
 #include "engine/function/framework/component/sky_light_component.h"
 #include "engine/function/framework/component/spot_light_component.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void WorldManager::init()

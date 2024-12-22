@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace Bamboo
+namespace Yurrgoht
 {
     class Engine
     {

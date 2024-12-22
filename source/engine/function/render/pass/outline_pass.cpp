@@ -4,7 +4,7 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/platform/timer/timer.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	OutlinePass::OutlinePass()

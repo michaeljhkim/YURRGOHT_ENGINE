@@ -9,7 +9,7 @@
 
 #include <fstream>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void AssetManager::init()
 	{

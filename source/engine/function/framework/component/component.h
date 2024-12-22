@@ -11,7 +11,7 @@
 
 #include "engine/resource/serialization/serialization.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class ITickable
 	{
@@ -75,8 +75,9 @@ namespace Bamboo
 
 #define REGISTER_REFLECTION(parent_class) \
 	RTTR_REGISTRATION_FRIEND \
-	RTTR_ENABLE(Bamboo::##parent_class) \
+    RTTR_ENABLE(Yurrgoht::parent_class) \
 	friend class cereal::access;
+/* RTTR_ENABLE(Yurrgoht::##parent_class) \ */
 
 #define POLYMORPHIC_DECLARATION virtual void inflate() override;
 #define POLYMORPHIC_DEFINITION(class_name) void class_name::inflate() {}

@@ -3,7 +3,7 @@
 #include "engine/resource/asset/base/texture.h"
 #include "engine/resource/asset/base/asset.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class TextureCube : public Texture, public Asset
 	{

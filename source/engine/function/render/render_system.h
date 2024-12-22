@@ -6,7 +6,7 @@
 #include <memory>
 #include <functional>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class ELightType
 	{

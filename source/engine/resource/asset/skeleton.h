@@ -2,7 +2,7 @@
 
 #include "engine/resource/asset/base/bone.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class Skeleton : public Asset
 	{

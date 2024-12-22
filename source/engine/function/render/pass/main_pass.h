@@ -2,7 +2,7 @@
 
 #include "render_pass.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class MainPass : public RenderPass
 	{

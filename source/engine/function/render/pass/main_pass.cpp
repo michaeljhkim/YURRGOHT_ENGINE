@@ -7,7 +7,7 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/function/render/render_data.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	MainPass::MainPass()

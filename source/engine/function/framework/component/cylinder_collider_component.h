@@ -2,7 +2,7 @@
 
 #include "collider_component.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class CylinderColliderComponent : public ColliderComponent
 	{

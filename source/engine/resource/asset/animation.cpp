@@ -1,10 +1,10 @@
 #include "animation.h"
 #include <limits>
 
-CEREAL_REGISTER_TYPE(Bamboo::Animation)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::Animation)
+CEREAL_REGISTER_TYPE(Yurrgoht::Animation)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Animation)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void Animation::inflate()
 	{

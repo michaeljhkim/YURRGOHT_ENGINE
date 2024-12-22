@@ -5,11 +5,11 @@
 
 #include <queue>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	RTTR_REGISTRATION
 	{
-	rttr::registration::class_<Bamboo::Entity>("Entity");
+	rttr::registration::class_<Yurrgoht::Entity>("Entity");
 	}
 
 	Entity::~Entity()
@@ -54,7 +54,8 @@ namespace Bamboo
 			component->setTypeName(rttr::type::get(*component.get()).get_name().to_string());
 
 			// attach to current entity
-			component->attach(weak_from_this());
+			std::weak_ptr<Yurrgoht::Entity> weakEntity = weak_from_this();
+			component->attach(weakEntity);
 			component->inflate();
 		}
 
@@ -86,7 +87,8 @@ namespace Bamboo
 		component->setTypeName(rttr::type::get(*component.get()).get_name().to_string());
 
 		// attach to current entity
-		component->attach(weak_from_this());
+		std::weak_ptr<Yurrgoht::Entity> weakEntity = weak_from_this();
+		component->attach(weakEntity);
 		component->inflate();
 		
 		if (g_engine.isSimulating())
@@ -132,7 +134,8 @@ namespace Bamboo
 			bool is_chain_dirty = std::get<1>(tuple);
 			const glm::mat4& parent_global_matrix = std::get<2>(tuple);
 
-			auto& transform_component = entity->getComponent(TransformComponent);
+			//auto transform_component = entity->getComponent(TransformComponent);
+			const auto& transform_component = entity->getComponent(TransformComponent);
 			is_chain_dirty = transform_component->update(is_chain_dirty, parent_global_matrix);
 
 			for (auto& child : entity->m_children)

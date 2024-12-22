@@ -6,7 +6,7 @@
 
 #define DRAG_SPEED 0.1f
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void PropertyUI::init()
@@ -142,7 +142,7 @@ namespace Bamboo
 				EPropertyType property_type = getPropertyType(prop.get_type());
 				ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type now");
 
-				rttr::variant& variant = prop.get_value(instance);
+				rttr::variant variant = prop.get_value(instance);
 				if (property_type.second == EPropertyContainerType::Mono)
 				{
 					m_property_constructors[property_type.first](prop_name, variant);

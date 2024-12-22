@@ -1,8 +1,9 @@
 #include "engine/core/base/macro.h"
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void FileSystem::init()
 	{
@@ -12,6 +13,7 @@ namespace Bamboo
 		}
 		else if (std::filesystem::exists(std::filesystem::path("../asset")))
 		{
+        	std::cout << "Seg fault here?" << std::endl;
 			m_header = std::filesystem::path("../");
 		}
 		else
@@ -95,7 +97,11 @@ namespace Bamboo
 			{
 				if (isFile(file))
 				{
-					last_write_time = std::max(last_write_time, std::chrono::duration_cast<std::chrono::seconds>(std::filesystem::last_write_time(file).time_since_epoch()).count());
+					//last_write_time = std::max(last_write_time, std::chrono::duration_cast<std::chrono::seconds>(std::filesystem::last_write_time(file).time_since_epoch()).count());
+					last_write_time = std::max(
+						static_cast<int64_t>(last_write_time), 
+						static_cast<int64_t>(std::chrono::duration_cast<std::chrono::seconds>(std::filesystem::last_write_time(file).time_since_epoch()).count())
+					);
 				}
 			}
 			return std::to_string(last_write_time);

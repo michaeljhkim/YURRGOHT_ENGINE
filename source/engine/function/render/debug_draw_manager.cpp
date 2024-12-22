@@ -5,7 +5,7 @@
 #define MAX_VERTEX_COUNT 1024
 #define UPDATE_BUFFER_FPS 30
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	
 	void DebugDrawManager::init()

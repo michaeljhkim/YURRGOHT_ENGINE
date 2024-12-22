@@ -12,6 +12,15 @@ if (NOT TARGET Vulkan)
     endif()
 endif()
 
+if(NOT TARGET SDL2)
+    set(SDL_SHARED ON)   # Enable shared library
+    set(SDL_STATIC OFF)  # Disable static library
+    set(SDL_TEST OFF)    # Disable tests
+    set(SDL_INSTALL OFF) # Disable installation
+    add_subdirectory(SDL2)
+    set_target_properties(SDL2 PROPERTIES FOLDER ${external_folder}/SDL2)
+endif()
+
 if(NOT TARGET glfw)
     option(GLFW_BUILD_EXAMPLES "" OFF)
     option(GLFW_BUILD_TESTS "" OFF)

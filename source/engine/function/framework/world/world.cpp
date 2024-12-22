@@ -5,10 +5,10 @@
 #include "engine/function/framework/world/world_manager.h"
 #include <fstream>
 
-CEREAL_REGISTER_TYPE(Bamboo::World)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::World)
+CEREAL_REGISTER_TYPE(Yurrgoht::World)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::World)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	World::World()
 	{

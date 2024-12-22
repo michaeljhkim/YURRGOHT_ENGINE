@@ -2,14 +2,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::SphereColliderComponent>("SphereColliderComponent")
-	.property("radius", &Bamboo::SphereColliderComponent::m_radius);
+rttr::registration::class_<Yurrgoht::SphereColliderComponent>("SphereColliderComponent")
+	.property("radius", &Yurrgoht::SphereColliderComponent::m_radius);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::SphereColliderComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::ColliderComponent, Bamboo::SphereColliderComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::SphereColliderComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::ColliderComponent, Yurrgoht::SphereColliderComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	SphereColliderComponent::SphereColliderComponent()

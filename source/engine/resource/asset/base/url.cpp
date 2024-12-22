@@ -1,7 +1,7 @@
 #include "url.h"
 #include "engine/core/base/macro.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	std::string URL::getAbsolute() const
 	{

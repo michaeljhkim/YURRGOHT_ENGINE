@@ -3,7 +3,7 @@
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class ConfigManager
 	{

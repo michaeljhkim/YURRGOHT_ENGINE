@@ -6,7 +6,7 @@
 #include <imgui/font/IconsFontAwesome5.h>
 #include <queue>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void IFolderTreeUI::pollFolders()

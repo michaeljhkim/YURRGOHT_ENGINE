@@ -7,7 +7,7 @@
 
 #include "engine/resource/asset/texture_2d.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct ImGuiImage
 	{

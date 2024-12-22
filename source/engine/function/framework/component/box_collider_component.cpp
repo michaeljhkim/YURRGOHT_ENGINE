@@ -2,14 +2,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::BoxColliderComponent>("BoxColliderComponent")
-	.property("size", &Bamboo::BoxColliderComponent::m_size);
+rttr::registration::class_<Yurrgoht::BoxColliderComponent>("BoxColliderComponent")
+	.property("size", &Yurrgoht::BoxColliderComponent::m_size);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::BoxColliderComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::ColliderComponent, Bamboo::BoxColliderComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::BoxColliderComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::ColliderComponent, Yurrgoht::BoxColliderComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	BoxColliderComponent::BoxColliderComponent()

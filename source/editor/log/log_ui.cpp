@@ -2,7 +2,7 @@
 #include "engine/core/base/macro.h"
 #include <map>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void LogUI::init()
 	{

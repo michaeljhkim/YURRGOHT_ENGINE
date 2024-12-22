@@ -17,7 +17,7 @@ namespace JPH
 	class BodyActivationListener;
 }
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class PhysicsSystem
 	{

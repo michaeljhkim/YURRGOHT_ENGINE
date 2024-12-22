@@ -4,11 +4,11 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::SubMesh>("SubMesh")
-	 .property("material", &Bamboo::SubMesh::m_material);
+rttr::registration::class_<Yurrgoht::SubMesh>("SubMesh")
+	 .property("material", &Yurrgoht::SubMesh::m_material);
 }
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void SubMesh::bindRefs()

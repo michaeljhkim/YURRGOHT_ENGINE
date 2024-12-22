@@ -7,7 +7,7 @@
 
 #include <queue>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	VkFilter GltfImporter::getVkFilterFromGltf(int gltf_filter)
 	{

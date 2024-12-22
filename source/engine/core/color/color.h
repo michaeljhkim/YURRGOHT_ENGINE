@@ -2,8 +2,9 @@
 
 #include <glm/glm.hpp>
 #include <cereal/access.hpp>
+#include <cereal/cereal.hpp>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class Color3
 	{

@@ -2,7 +2,7 @@
 
 #include "light_component.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class DirectionalLightComponent : public LightComponent
 	{

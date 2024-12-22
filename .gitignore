@@ -3,6 +3,7 @@ build/*
 install/*
 log/*
 asset/*
+external/SDL2/*
 
 # mac
 cpm_modules/

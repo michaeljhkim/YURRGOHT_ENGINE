@@ -7,7 +7,7 @@
 
 #include <imgui/imgui_internal.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void MenuUI::init()

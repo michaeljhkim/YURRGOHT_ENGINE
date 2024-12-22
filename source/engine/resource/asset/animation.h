@@ -2,7 +2,7 @@
 
 #include "engine/resource/asset/base/asset.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct AnimationChannel
 	{

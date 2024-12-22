@@ -4,7 +4,7 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/core/math/transform.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	SpotLightShadowPass::SpotLightShadowPass()

@@ -2,7 +2,7 @@
 
 #include "collider_component.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class SphereColliderComponent : public ColliderComponent
 	{

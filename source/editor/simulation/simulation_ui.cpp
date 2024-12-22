@@ -23,7 +23,7 @@
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <imgui/ImGuizmo.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void SimulationUI::init()

@@ -3,7 +3,7 @@
 #include <eventpp/eventqueue.h>
 #include <vulkan/vulkan.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EEventType
 	{

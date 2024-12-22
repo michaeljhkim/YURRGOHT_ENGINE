@@ -1,7 +1,7 @@
 #include "bone.h"
 
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void Bone::setRotation(const glm::quat& quat)

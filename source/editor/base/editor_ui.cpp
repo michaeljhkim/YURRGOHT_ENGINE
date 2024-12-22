@@ -5,7 +5,7 @@
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <imgui/imgui_internal.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void ImGuiImage::destroy()
 	{
@@ -84,7 +84,7 @@ namespace Bamboo
 		return image;
 	}
 
-	std::shared_ptr<Bamboo::ImGuiImage> EditorUI::loadImGuiImageFromImageViewSampler(const VmaImageViewSampler& image_view_sampler)
+	std::shared_ptr<Yurrgoht::ImGuiImage> EditorUI::loadImGuiImageFromImageViewSampler(const VmaImageViewSampler& image_view_sampler)
 	{
 		std::shared_ptr<ImGuiImage> image = std::make_shared<ImGuiImage>();
 		image->image_view_sampler = image_view_sampler;
@@ -98,7 +98,7 @@ namespace Bamboo
 		return image;
 	}
 
-	std::shared_ptr<Bamboo::ImGuiImage> EditorUI::getImGuiImageFromCache(const URL& url)
+	std::shared_ptr<Yurrgoht::ImGuiImage> EditorUI::getImGuiImageFromCache(const URL& url)
 	{
 		return m_imgui_images[url];
 	}

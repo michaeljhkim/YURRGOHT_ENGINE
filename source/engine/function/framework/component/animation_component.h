@@ -3,7 +3,7 @@
 #include "component.h"
 #include "engine/resource/asset/animation.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class AnimationComponent : public Component, public IAssetRef
 	{

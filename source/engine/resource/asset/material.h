@@ -2,7 +2,7 @@
 
 #include "engine/resource/asset/texture_2d.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class Material : public Asset, public IAssetRef
 	{

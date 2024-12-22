@@ -3,7 +3,7 @@
 #include "collider_component.h"
 #include "engine/resource/asset/static_mesh.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class MeshColliderComponent : public ColliderComponent, public IAssetRef
 	{

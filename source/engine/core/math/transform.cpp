@@ -2,7 +2,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <Jolt/Jolt.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	glm::mat4 Transform::matrix() const

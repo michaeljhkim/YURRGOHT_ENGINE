@@ -2,8 +2,9 @@
 
 #include <string>
 #include <cereal/access.hpp>
+#include <cereal/cereal.hpp>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct URL
 	{

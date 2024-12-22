@@ -6,14 +6,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::SkyLightComponent>("SkyLightComponent")
-	 .property("texture_cube", &Bamboo::SkyLightComponent::m_texture_cube);
+rttr::registration::class_<Yurrgoht::SkyLightComponent>("SkyLightComponent")
+	 .property("texture_cube", &Yurrgoht::SkyLightComponent::m_texture_cube);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::SkyLightComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::LightComponent, Bamboo::SkyLightComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::SkyLightComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::LightComponent, Yurrgoht::SkyLightComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	SkyLightComponent::SkyLightComponent()

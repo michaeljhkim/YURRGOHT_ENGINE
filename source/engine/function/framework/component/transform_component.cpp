@@ -3,16 +3,16 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::TransformComponent>("TransformComponent")
-	 .property("position", &Bamboo::TransformComponent::m_position)
-	 .property("rotation", &Bamboo::TransformComponent::m_rotation)
-	 .property("scale", &Bamboo::TransformComponent::m_scale);
+rttr::registration::class_<Yurrgoht::TransformComponent>("TransformComponent")
+	 .property("position", &Yurrgoht::TransformComponent::m_position)
+	 .property("rotation", &Yurrgoht::TransformComponent::m_rotation)
+	 .property("scale", &Yurrgoht::TransformComponent::m_scale);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::TransformComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::TransformComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::TransformComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::TransformComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	
 	void TransformComponent::setPosition(const glm::vec3& position)

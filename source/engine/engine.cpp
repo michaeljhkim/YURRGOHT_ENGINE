@@ -6,7 +6,7 @@
 #include "engine/function/render/render_system.h"
 #include "engine/function/framework/world/world_manager.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
     void Engine::init()
     {

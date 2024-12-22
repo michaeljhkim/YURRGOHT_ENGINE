@@ -1,9 +1,9 @@
 #include "static_mesh.h"
 
-CEREAL_REGISTER_TYPE(Bamboo::StaticMesh)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Asset, Bamboo::StaticMesh)
+CEREAL_REGISTER_TYPE(Yurrgoht::StaticMesh)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::StaticMesh)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void StaticMesh::inflate()

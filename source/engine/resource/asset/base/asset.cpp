@@ -12,7 +12,7 @@
 #include "engine/resource/asset/animation.h"
 #include "engine/function/framework/world/world.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void Asset::setURL(const URL& url)
 	{

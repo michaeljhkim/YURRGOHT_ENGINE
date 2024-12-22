@@ -4,14 +4,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::SkeletalMeshComponent>("SkeletalMeshComponent")
-	 .property("skeletal_mesh", &Bamboo::SkeletalMeshComponent::m_skeletal_mesh);
+rttr::registration::class_<Yurrgoht::SkeletalMeshComponent>("SkeletalMeshComponent")
+	 .property("skeletal_mesh", &Yurrgoht::SkeletalMeshComponent::m_skeletal_mesh);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::SkeletalMeshComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::SkeletalMeshComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::SkeletalMeshComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::SkeletalMeshComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void SkeletalMeshComponent::setSkeletalMesh(std::shared_ptr<SkeletalMesh>& skeletal_mesh)
 	{

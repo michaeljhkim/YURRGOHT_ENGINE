@@ -5,7 +5,7 @@
 #include "engine/core/math/transform.h"
 #include "engine/core/vulkan/vulkan_util.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct DebugDrawVertex
 	{

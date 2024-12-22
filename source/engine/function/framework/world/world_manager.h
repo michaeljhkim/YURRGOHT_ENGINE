@@ -2,7 +2,7 @@
 
 #include "world.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class WorldManager
 	{

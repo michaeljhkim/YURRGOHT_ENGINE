@@ -36,7 +36,7 @@ private:
 	}
 };
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class Mesh
 	{

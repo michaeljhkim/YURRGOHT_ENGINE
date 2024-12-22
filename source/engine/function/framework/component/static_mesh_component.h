@@ -3,7 +3,7 @@
 #include "component.h"
 #include "engine/resource/asset/static_mesh.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class StaticMeshComponent : public Component, public IAssetRef
 	{

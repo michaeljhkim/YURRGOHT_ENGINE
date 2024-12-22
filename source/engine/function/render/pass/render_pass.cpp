@@ -1,7 +1,7 @@
 #include "render_pass.h"
 #include "engine/core/vulkan/vulkan_rhi.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	void RenderPass::init()

@@ -2,6 +2,7 @@
 
 #include "engine/core/vulkan/vulkan_util.h"
 #include <cereal/access.hpp>
+#include <cereal/cereal.hpp>
 
 enum class ETextureType
 {
@@ -13,7 +14,7 @@ enum class EPixelType
 	RGBA8, RGBA16, RGBA32, RG16, R16, R32
 };
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class Texture
 	{

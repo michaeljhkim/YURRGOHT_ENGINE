@@ -2,9 +2,10 @@
 
 #include <glm/glm.hpp>
 #include <cereal/access.hpp>
+#include <cereal/cereal.hpp>
 #include <limits>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct BoundingBox
 	{

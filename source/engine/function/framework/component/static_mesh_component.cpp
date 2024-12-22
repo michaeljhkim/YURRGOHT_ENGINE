@@ -4,14 +4,14 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::StaticMeshComponent>("StaticMeshComponent")
-	 .property("static_mesh", &Bamboo::StaticMeshComponent::m_static_mesh);
+rttr::registration::class_<Yurrgoht::StaticMeshComponent>("StaticMeshComponent")
+	 .property("static_mesh", &Yurrgoht::StaticMeshComponent::m_static_mesh);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::StaticMeshComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::StaticMeshComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::StaticMeshComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::StaticMeshComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void StaticMeshComponent::setStaticMesh(std::shared_ptr<StaticMesh>& static_mesh)
 	{

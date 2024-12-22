@@ -2,15 +2,15 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::ColliderComponent>("ColliderComponent")
-	.property("position", &Bamboo::ColliderComponent::m_position)
-	.property("rotation", &Bamboo::ColliderComponent::m_rotation);
+rttr::registration::class_<Yurrgoht::ColliderComponent>("ColliderComponent")
+	.property("position", &Yurrgoht::ColliderComponent::m_position)
+	.property("rotation", &Yurrgoht::ColliderComponent::m_rotation);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::ColliderComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::ColliderComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::ColliderComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::ColliderComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	POLYMORPHIC_DEFINITION(ColliderComponent)
 }

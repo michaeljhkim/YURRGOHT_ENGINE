@@ -2,16 +2,16 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::PointLightComponent>("PointLightComponent")
-	 .property("radius", &Bamboo::PointLightComponent::m_radius)
-	 .property("linear_attenuation", &Bamboo::PointLightComponent::m_linear_attenuation)
-	 .property("quadratic_attenuation", &Bamboo::PointLightComponent::m_quadratic_attenuation);
+rttr::registration::class_<Yurrgoht::PointLightComponent>("PointLightComponent")
+	 .property("radius", &Yurrgoht::PointLightComponent::m_radius)
+	 .property("linear_attenuation", &Yurrgoht::PointLightComponent::m_linear_attenuation)
+	 .property("quadratic_attenuation", &Yurrgoht::PointLightComponent::m_quadratic_attenuation);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::PointLightComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::LightComponent, Bamboo::PointLightComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::PointLightComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::LightComponent, Yurrgoht::PointLightComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	POLYMORPHIC_DEFINITION(PointLightComponent)
 

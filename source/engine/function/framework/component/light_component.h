@@ -3,7 +3,7 @@
 #include "component.h"
 #include "engine/core/color/color.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class LightComponent : public Component
 	{

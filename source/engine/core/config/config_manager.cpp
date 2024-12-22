@@ -1,7 +1,7 @@
 #include "config_manager.h"
 #include "engine/core/base/macro.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	void ConfigManager::init()
 	{

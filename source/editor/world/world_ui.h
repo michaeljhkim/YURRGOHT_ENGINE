@@ -2,7 +2,7 @@
 
 #include "editor/base/editor_ui.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class WorldUI : public EditorUI
 	{

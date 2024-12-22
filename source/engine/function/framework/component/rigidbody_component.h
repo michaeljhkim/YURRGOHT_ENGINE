@@ -2,7 +2,7 @@
 
 #include "component.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	enum class EMotionType
 	{

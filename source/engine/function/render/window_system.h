@@ -7,7 +7,7 @@
 #include <functional>
 #include <vector>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class WindowSystem
 	{

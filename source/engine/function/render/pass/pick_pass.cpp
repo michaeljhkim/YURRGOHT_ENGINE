@@ -9,7 +9,7 @@
 
 #define MAX_SIZE 512u
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	PickPass::PickPass()

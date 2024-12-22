@@ -10,20 +10,20 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::class_<Bamboo::CameraComponent>("CameraComponent")
-	 .property("fovy", &Bamboo::CameraComponent::m_fovy)
-	 .property("near", &Bamboo::CameraComponent::m_near)
-	 .property("far", &Bamboo::CameraComponent::m_far)
-	 .property("move_speed", &Bamboo::CameraComponent::m_move_speed)
-	 .property("turn_speed", &Bamboo::CameraComponent::m_turn_speed)
-	 .property("zoom_speed", &Bamboo::CameraComponent::m_zoom_speed)
-	 .property("exposure", &Bamboo::CameraComponent::m_exposure);
+rttr::registration::class_<Yurrgoht::CameraComponent>("CameraComponent")
+	 .property("fovy", &Yurrgoht::CameraComponent::m_fovy)
+	 .property("near", &Yurrgoht::CameraComponent::m_near)
+	 .property("far", &Yurrgoht::CameraComponent::m_far)
+	 .property("move_speed", &Yurrgoht::CameraComponent::m_move_speed)
+	 .property("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed)
+	 .property("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed)
+	 .property("exposure", &Yurrgoht::CameraComponent::m_exposure);
 }
 
-CEREAL_REGISTER_TYPE(Bamboo::CameraComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Bamboo::Component, Bamboo::CameraComponent)
+CEREAL_REGISTER_TYPE(Yurrgoht::CameraComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::CameraComponent)
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	float CameraComponent::m_last_aspect_ratio = 0.0f;
 

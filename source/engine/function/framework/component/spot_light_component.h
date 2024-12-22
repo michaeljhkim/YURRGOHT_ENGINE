@@ -2,7 +2,7 @@
 
 #include "point_light_component.h"
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	class SpotLightComponent : public PointLightComponent
 	{

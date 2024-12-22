@@ -1,7 +1,7 @@
 #include "texture.h"
 #include <ktx.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 
 	Texture::Texture()

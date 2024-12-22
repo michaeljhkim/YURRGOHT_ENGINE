@@ -2,7 +2,7 @@
 
 #include <Jolt/Physics/PhysicsSettings.h>
 
-namespace Bamboo
+namespace Yurrgoht
 {
 	struct PhysicsSettings : public JPH::PhysicsSettings
 	{
