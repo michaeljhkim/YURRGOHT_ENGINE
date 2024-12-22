@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/ringbuffer_sink.h>
+#include <spdlog/fmt/fmt.h>
 #include <stdexcept>
 #include <memory>
 
@@ -21,33 +22,38 @@ namespace Yurrgoht
 
             template<typename... TARGS>
             void log(ELogLevel level, TARGS&&... args)
-            {
-                switch (level)
-                {
+            {	
+				// NOTE: I have NO idea of if this REALLY works or how this works. I just kept asking chatgpt until I got no red lines on build
+				// to be fair, it is 2:37am, and I did not want to learn. I just want this to vaguely work
+
+				// Format the arguments into a string
+				const auto formatted_message = fmt::format("{}", std::forward<TARGS>(args)...);	
+
+				switch (level)
+				{
 				case ELogLevel::Debug:
-					m_logger->debug(std::forward<TARGS>(args)...);
+					m_logger->debug(formatted_message);
 					break;
 				case ELogLevel::Info:
-					m_logger->info(std::forward<TARGS>(args)...);
+					m_logger->info(formatted_message);
 					break;
 				case ELogLevel::Warning:
-					m_logger->warn(std::forward<TARGS>(args)...);
+					m_logger->warn(formatted_message);
 					break;
 				case ELogLevel::Error:
-					m_logger->error(std::forward<TARGS>(args)...);
+					m_logger->error(formatted_message);
 					break;
 				case ELogLevel::Fatal:
-				{
-					m_logger->critical(args...);
+					{
+						m_logger->critical(formatted_message);
 
-					// throw application runtime error
-					std::string fatal_str = fmt::format(std::forward<TARGS>(args)...);
-					throw std::runtime_error(fatal_str);
-				}
+						// throw application runtime error
+						throw std::runtime_error(formatted_message);
+					}
 					break;
 				default:
 					break;
-                }
+				}
             }
 
         private:
