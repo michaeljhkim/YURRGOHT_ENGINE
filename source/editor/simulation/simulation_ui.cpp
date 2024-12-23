@@ -484,6 +484,10 @@ namespace Yurrgoht
 		{
 			const ImGuiPayload* payload = nullptr;
 			ImGuiDragDropFlags flags = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoPreviewTooltip;
+			
+			// vscode issues warnings if value is assigned in an if conditional, so warning was disabled for this code block
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wparentheses"	
 			if (payload = ImGui::AcceptDragDropPayload("load_asset", flags))
 			{
 				if (!m_created_entity)
@@ -543,6 +547,7 @@ namespace Yurrgoht
 					}
 				}
 			}
+			#pragma clang diagnostic pop
 
 			if (m_created_entity)
 			{

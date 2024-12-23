@@ -28,15 +28,6 @@ if(NOT TARGET imgui)
     set_target_properties(imgui PROPERTIES FOLDER ${external_folder}/imgui)
 endif()
 
-if (NOT TARGET ktx)
-    option(KTX_FEATURE_TESTS "" OFF)
-    option(KTX_FEATURE_GL_UPLOAD "" OFF)
-    
-    add_subdirectory(ktx)
-    target_link_libraries(ktx PUBLIC ${Vulkan_LIBRARY})
-    set_target_properties(ktx PROPERTIES FOLDER ${external_folder}/ktx)
-endif()
-
 if (NOT TARGET effolkronium_random)
     option(Random_BuildTests "" OFF)
     add_subdirectory(random)

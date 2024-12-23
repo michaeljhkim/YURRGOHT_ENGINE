@@ -59,7 +59,7 @@ git clone https://github.com/Code-Guy/Yurrgoht.git
 **Step 4.** Go to Project folder, use CMake to generate build files using any [desired generator](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html). The generating command maybe like this:
 
 ```shell
-cmake -G "Visual Studio 17 2022" -A x64 -S . -B build
+cmake -G Ninja -S . -B build
 ```
 
 **Step 5.** Then you can use any IDE according to you selected generator, but you can also just build straight from CMake.
@@ -70,6 +70,9 @@ cmake --build build --config Release
 
 ## External libraries
 All external libraries' source codes have been integrated into this repo, so there is no need to clone those libraries manually:)
+
+
+
 - [vma](https://gpuopen.com/vulkan-memory-allocator/)(vulkan resource management)
 - [glm](https://glm.g-truc.net/0.9.9/)(math)
 - [glfw](https://www.glfw.org/)(window and input)

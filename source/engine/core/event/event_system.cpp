@@ -16,10 +16,15 @@ namespace Yurrgoht
 	}
 
 	void EventSystem::removeListener(void* handle)
-	{
+	{	
+		/*
 		EventHandle* event_handle = (EventHandle*)handle;
 		m_event_queue.removeListener(event_handle->type, event_handle->handle);
 		delete handle;
+		*/
+		EventHandle* event_handle = static_cast<EventHandle*>(handle);
+		m_event_queue.removeListener(event_handle->type, event_handle->handle);
+		delete event_handle;  // Delete the correct type
 	}
 
 	void EventSystem::asyncDispatch(const EventPointer& event_pointer)
