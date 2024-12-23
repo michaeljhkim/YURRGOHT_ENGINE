@@ -6,7 +6,6 @@
 
 #include <rttr/registration>
 #include <rttr/registration_friend.h>
-//#include <rttr>		//it's in docker file
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
 
@@ -76,9 +75,8 @@ namespace Yurrgoht
 
 #define REGISTER_REFLECTION(parent_class) \
 	RTTR_REGISTRATION_FRIEND \
-    RTTR_ENABLE(Yurrgoht::parent_class) \
+	RTTR_ENABLE(Yurrgoht::parent_class) \
 	friend class cereal::access;
-/* RTTR_ENABLE(Yurrgoht::##parent_class) \ */
 
 #define POLYMORPHIC_DECLARATION virtual void inflate() override;
 #define POLYMORPHIC_DEFINITION(class_name) void class_name::inflate() {}

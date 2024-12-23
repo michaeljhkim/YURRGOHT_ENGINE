@@ -1,23 +1,6 @@
 #include "animation.h"
 #include <limits>
 
-/*
-RTTR_REGISTRATION
-{
-rttr::registration::enumeration<Yurrgoht::AnimationChannel::EPathType>("EPathType") 
-	(
-		rttr::value("Translation", Yurrgoht::AnimationChannel::EPathType::Translation),
-		rttr::value("Rotation", Yurrgoht::AnimationChannel::EPathType::Rotation),
-		rttr::value("Scale", Yurrgoht::AnimationChannel::EPathType::Scale)
-	);
-
-rttr::registration::class_<Yurrgoht::AnimationChannel>("AnimationChannel")
-	 .property("path_type", &Yurrgoht::AnimationChannel::m_path_type);
-}
-*/
-
-
-
 CEREAL_REGISTER_TYPE(Yurrgoht::Animation)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Animation)
 

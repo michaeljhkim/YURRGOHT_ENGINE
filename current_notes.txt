@@ -32,7 +32,7 @@ RUN wget https://github.com/KhronosGroup/KTX-Software/releases/download/v4.3.2/K
     dnf localinstall --nobest -y KTX-Software-4.3.2-Linux-x86_64.rpm
 
 
-- Consider copying the original bamboo source code again for clean start with docker
+- Consider copying the original Yurrgoht source code again for clean start with docker
 
 
 #Assuming we will be able to use the docker image to find this stuff

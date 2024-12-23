@@ -2,10 +2,8 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/ringbuffer_sink.h>
-#include <spdlog/fmt/fmt.h>
 #include <stdexcept>
 #include <memory>
-
 
 namespace Yurrgoht
 {
@@ -59,4 +57,3 @@ namespace Yurrgoht
             std::shared_ptr<spdlog::logger> m_logger;
     };
 }
-

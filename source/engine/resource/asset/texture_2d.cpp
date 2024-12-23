@@ -1,12 +1,10 @@
-#include <thread>
-#include <ktx.h>
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include <tinygltf/stb_image_resize2.h>
-
 #include "texture_2d.h"
 #include "engine/core/base/macro.h"
 #include "engine/platform/timer/timer.h"
 
+#include <ktx.h>
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include <tinygltf/stb_image_resize2.h>
 
 CEREAL_REGISTER_TYPE(Yurrgoht::Texture2D)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Texture2D)

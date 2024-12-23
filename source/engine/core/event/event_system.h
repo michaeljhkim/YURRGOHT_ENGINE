@@ -133,8 +133,6 @@ namespace Yurrgoht
 	class WindowDropEvent : public Event
 	{
 	public:
-		std::vector<std::string> filenames;
-
 		WindowDropEvent(int count, const char** paths, double xpos, double ypos) : Event(EEventType::WindowDrop),
 			xpos(xpos), ypos(ypos)
 		{
@@ -144,6 +142,7 @@ namespace Yurrgoht
 			}
 		}
 
+		std::vector<std::string> filenames;
 		double xpos;
 		double ypos;
 	};

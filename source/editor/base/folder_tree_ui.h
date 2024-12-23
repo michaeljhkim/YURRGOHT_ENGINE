@@ -7,6 +7,7 @@
 #include <imgui/imgui.h>
 #include <stdint.h>
 
+
 namespace Yurrgoht
 {
 	struct FolderNode

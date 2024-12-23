@@ -13,15 +13,6 @@
 #define MAX_ROTATE_FILE_SIZE 1048576 * 10
 #define MAX_RINGBUFFER_SIZE 100
 
-/*
-#include <rttr/registration>
-#include "engine/resource/asset/animation.h"
-
-RTTR_REGISTRATION
-{
-}
-*/
-
 namespace Yurrgoht
 {
     void LogSystem::init()

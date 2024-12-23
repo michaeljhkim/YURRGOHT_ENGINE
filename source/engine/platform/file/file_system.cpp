@@ -13,7 +13,6 @@ namespace Yurrgoht
 		}
 		else if (std::filesystem::exists(std::filesystem::path("../asset")))
 		{
-        	std::cout << "Seg fault here?" << std::endl;
 			m_header = std::filesystem::path("../");
 		}
 		else
