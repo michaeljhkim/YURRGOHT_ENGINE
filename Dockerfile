@@ -4,6 +4,7 @@ WORKDIR /yurrgoht
 
 # Install necessary build tools and libraries
 RUN dnf install -y \
+    git \
     vulkan-tools vulkan-loader-devel vulkan-validation-layers-devel glslang glslc spirv-tools \
     SDL2 SDL2-devel \
     glfw glfw-devel \
