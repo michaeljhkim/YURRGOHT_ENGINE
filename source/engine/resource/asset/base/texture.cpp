@@ -1,5 +1,24 @@
 #include "texture.h"
 #include <ktx.h>
+#include <rttr/registration>
+
+/*
+RTTR_REGISTRATION
+{
+rttr::registration::enumeration<EPixelType>("EPixelType") 
+	(
+		rttr::value("RGBA8", EPixelType::RGBA8),
+		rttr::value("RGBA16", EPixelType::RGBA16),
+		rttr::value("RGBA32", EPixelType::RGBA32),
+		rttr::value("RG16", EPixelType::RG16),
+		rttr::value("R16", EPixelType::R16),
+		rttr::value("R32", EPixelType::R32)
+	);
+
+rttr::registration::class_<Yurrgoht::Texture>("Texture")
+	 .property("pixel_type", &Yurrgoht::Texture::m_pixel_type);
+}
+*/
 
 namespace Yurrgoht
 {

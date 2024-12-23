@@ -5,6 +5,7 @@
 #include <string>
 #include <functional>
 #include <imgui/imgui.h>
+#include <stdint.h>
 
 namespace Yurrgoht
 {

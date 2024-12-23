@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <memory>
 
+
 namespace Yurrgoht
 {
 	enum class ELogLevel
@@ -22,38 +23,33 @@ namespace Yurrgoht
 
             template<typename... TARGS>
             void log(ELogLevel level, TARGS&&... args)
-            {	
-				// NOTE: I have NO idea of if this REALLY works or how this works. I just kept asking chatgpt until I got no red lines on build
-				// to be fair, it is 2:37am, and I did not want to learn. I just want this to vaguely work
-
-				// Format the arguments into a string
-				const auto formatted_message = fmt::format("{}", std::forward<TARGS>(args)...);	
-
-				switch (level)
-				{
+            {
+                switch (level)
+                {
 				case ELogLevel::Debug:
-					m_logger->debug(formatted_message);
+					m_logger->debug(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Info:
-					m_logger->info(formatted_message);
+					m_logger->info(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Warning:
-					m_logger->warn(formatted_message);
+					m_logger->warn(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Error:
-					m_logger->error(formatted_message);
+					m_logger->error(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Fatal:
-					{
-						m_logger->critical(formatted_message);
+				{
+					m_logger->critical(args...);
 
-						// throw application runtime error
-						throw std::runtime_error(formatted_message);
-					}
+					// throw application runtime error
+					std::string fatal_str = fmt::format(std::forward<TARGS>(args)...);
+					throw std::runtime_error(fatal_str);
+				}
 					break;
 				default:
 					break;
-				}
+                }
             }
 
         private:
@@ -63,3 +59,4 @@ namespace Yurrgoht
             std::shared_ptr<spdlog::logger> m_logger;
     };
 }
+

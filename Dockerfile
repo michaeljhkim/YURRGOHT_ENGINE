@@ -9,6 +9,7 @@ RUN dnf install -y \
     glfw glfw-devel \
     cereal-devel \
     glm-devel \
+    fmt fmt-devel \
     librttr librttr-devel \
     spdlog spdlog-devel \
     yaml-cpp yaml-cpp-devel yaml-cpp-static \
