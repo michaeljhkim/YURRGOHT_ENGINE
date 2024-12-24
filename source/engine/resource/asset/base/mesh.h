@@ -20,20 +20,21 @@ private:
 	}
 };
 
-struct SkeletalVertex : public StaticVertex
+struct SkeletalVertex
 {
-	glm::ivec4 m_bones;
-	glm::vec4 m_weights;
+    StaticVertex m_static_vertex; // Avoid inheritance, make it a member
+    glm::ivec4 m_bones;   // 16 bytes
+    glm::vec4 m_weights;  // 16 bytes
 
 private:
-	friend class cereal::access;
-	template<class Archive>
-	void serialize(Archive& ar)
-	{
-		ar(cereal::make_nvp("static_vertex", cereal::base_class<StaticVertex>(this)));
-		ar(cereal::make_nvp("bones", m_bones));
-		ar(cereal::make_nvp("weights", m_weights));
-	}
+    friend class cereal::access;
+    template<class Archive>
+    void serialize(Archive& ar)
+    {
+        ar(cereal::make_nvp("static_vertex", m_static_vertex)); // Serialize the StaticVertex member
+        ar(cereal::make_nvp("bones", m_bones));
+        ar(cereal::make_nvp("weights", m_weights));
+    }
 };
 
 namespace Yurrgoht

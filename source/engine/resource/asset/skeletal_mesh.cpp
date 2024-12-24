@@ -18,7 +18,7 @@ namespace Yurrgoht
 	{
 		for (const auto& vertex : m_vertices)
 		{
-			m_bounding_box.combine(vertex.m_position);
+			m_bounding_box.combine(vertex.m_static_vertex.m_position);
 		}
 	}
 

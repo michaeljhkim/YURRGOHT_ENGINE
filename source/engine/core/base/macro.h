@@ -4,7 +4,9 @@
 #include "engine/platform/file/file_system.h"
 #include "engine/function/global/engine_context.h"
 
+#ifndef DEBUG
 #define DEBUG (!NDEBUG)
+#endif
 
 #define APP_NAME "YurrgohtEditor"
 #define APP_MAJOR_VERSION 1

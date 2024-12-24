@@ -6,10 +6,7 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${HEADER_FILES} ${SOURCE_F
 add_library(${TARGET_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Yurrgoht")
 
-set(KTX_DIR "/workspaces/KTX-Software-4.3.2-Linux-x86_64/")
-list(APPEND CMAKE_PREFIX_PATH "${KTX_DIR}/lib/cmake/ktx/")
 find_package(Ktx REQUIRED)
-
 find_package(SDL2 REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(rttr REQUIRED)
@@ -25,15 +22,14 @@ target_link_libraries(${TARGET_NAME} PUBLIC imgui)
 target_link_libraries(${TARGET_NAME} PUBLIC spdlog)
 target_link_libraries(${TARGET_NAME} PUBLIC fmt)
 target_link_libraries(${TARGET_NAME} PUBLIC yaml-cpp)
-target_link_libraries(${TARGET_NAME} PUBLIC rttr)
-target_link_libraries(${TARGET_NAME} PRIVATE ktx)
+target_link_libraries(${TARGET_NAME} PUBLIC RTTR::Core)
+target_link_libraries(${TARGET_NAME} PRIVATE KTX::ktx)
 target_link_libraries(${TARGET_NAME} PRIVATE Jolt)
 target_link_libraries(${TARGET_NAME} PRIVATE effolkronium_random)
 
 target_include_directories(${TARGET_NAME} PUBLIC ${YURRGOHT_ROOT_DIR}/source)
 target_include_directories(${TARGET_NAME} PUBLIC ${YURRGOHT_ROOT_DIR}/external)
 target_include_directories(${TARGET_NAME} PUBLIC ${YURRGOHT_ROOT_DIR}/shader/include)
-target_include_directories(${TARGET_NAME} PUBLIC ${KTX_DIR}/include)
 target_compile_definitions(${TARGET_NAME} PRIVATE VULKAN_SHADER_COMPILER=\"${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE}\")
 
 set(INSTALL_BIN "bin/$<$<CONFIG:Debug>:debug>$<$<CONFIG:Release>:release>")

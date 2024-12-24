@@ -320,7 +320,7 @@ namespace Yurrgoht
 				else
 				{
 					skeletal_vertex = &skeletal_mesh->m_vertices[v + vertex_start];
-					static_vertex = skeletal_vertex;
+					static_vertex = &skeletal_vertex->m_static_vertex;
 				}
 
 				static_vertex->m_position = glm::make_vec3(&position_buffer[v * position_byte_stride]);

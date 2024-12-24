@@ -2,7 +2,7 @@
 
 #include "engine/core/base/macro.h"
 #include <vulkan/vulkan.h>
-#include <vma/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 
 #define MAX_FRAMES_IN_FLIGHT 2
 
