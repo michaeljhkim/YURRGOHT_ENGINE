@@ -1,7 +1,10 @@
 # YURRGOHT_ENGINE
 
 ## What is Yurrgoht?
-**Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, and is written in C++17.
+**Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, linux based, and is written in C++17. Dockerfile is included for easy replication of development environment
+
+This project was forked from the Bamboo game engine project by RobotBerry https://github.com/Code-Guy/Bamboo  
+
 <!-- 
 ![1](snapshot/robot.png)
 
@@ -51,10 +54,10 @@ git clone https://github.com/Code-Guy/Yurrgoht.git
 ```
 
 **Step 2.** Download the lastest version's Project.zip file, unzip to somewhere. It's a demo project which relies on the engine and editor sources to compile, and contains "asset" "config" "source" and "CMakeLists.txt" four items.
-![4](snapshot/project_files.png)
+<!-- ![4](snapshot/project_files.png) -->
 
 **Step 3.** Open "CMakeLists.txt" file, modify TARGET_NAME property to whatever you want, and modify Yurrgoht_DIR to the absolute path of where you put Yurrgoht repository. **(That's very important!)**
-![5](snapshot/cmakelists_properties.png)
+<!-- ![5](snapshot/cmakelists_properties.png) -->
 
 **Step 4.** Go to Project folder, use CMake to generate build files using any [desired generator](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html). The generating command maybe like this:
 
@@ -69,9 +72,7 @@ cmake --build build --config Release
 ```
 
 ## External libraries
-All external libraries' source codes have been integrated into this repo, so there is no need to clone those libraries manually:)
-
-
+All external libraries' source codes have been included in the dockerfile, so no further installation will be required :)
 
 - [vma](https://gpuopen.com/vulkan-memory-allocator/)(vulkan resource management)
 - [glm](https://glm.g-truc.net/0.9.9/)(math)

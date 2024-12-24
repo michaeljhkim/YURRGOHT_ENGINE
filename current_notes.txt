@@ -8,23 +8,11 @@
 - may need to revert some code back to original if this works as well as I think (so I can have a good starting point)
 
 
-- Delete Local dependencies:
-- cereal
-- glfw
-- glm
-- jolt
-- rttr
-- sdl2
-- spdlog
-- yaml-cpp
-
 - Keep Local dependencies:
 - eventpp
 - imgui
-- ktx       (TRYING TO ADD TO DOCKER - figure out why the rpm will just not install)
 - random    (TRYING TO ADD TO DOCKER)
 - tinygltf
-- vma
 
 
 # Vulkan KTX2 dependency
@@ -45,5 +33,10 @@ find_package(spdlog REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 
+sudo docker build -t yurrgoht/testapp:1.0 .
 cmake -G Ninja -S . -B build
 cmake --build build --config Release
+
+
+cd build/template/common/
+./Test

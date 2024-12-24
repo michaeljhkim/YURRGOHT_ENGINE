@@ -140,7 +140,7 @@ namespace Yurrgoht
 					for (size_t j = 0; j < entity_typess[i].size(); ++j)
 					{
 						const std::string& entity_type = entity_typess[i][j];
-						ImGui::Text(entity_type.c_str());
+						ImGui::Text("%s", entity_type.c_str());
 						if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID | ImGuiDragDropFlags_SourceNoPreviewTooltip))
 						{
 							std::string playload_str = std::string(entity_categories[i].begin() + 4, entity_categories[i].end()) + "-" +

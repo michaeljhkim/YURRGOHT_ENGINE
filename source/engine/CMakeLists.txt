@@ -25,7 +25,6 @@ target_link_libraries(${TARGET_NAME} PUBLIC yaml-cpp)
 target_link_libraries(${TARGET_NAME} PUBLIC RTTR::Core)
 target_link_libraries(${TARGET_NAME} PRIVATE KTX::ktx)
 target_link_libraries(${TARGET_NAME} PRIVATE Jolt)
-target_link_libraries(${TARGET_NAME} PRIVATE effolkronium_random)
 
 target_include_directories(${TARGET_NAME} PUBLIC ${YURRGOHT_ROOT_DIR}/source)
 target_include_directories(${TARGET_NAME} PUBLIC ${YURRGOHT_ROOT_DIR}/external)

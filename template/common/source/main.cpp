@@ -1,6 +1,6 @@
 #include "editor/editor.h"
 
-int main()
+int main(int argc, char** argv)
 {
     Yurrgoht::Editor* editor = new Yurrgoht::Editor;
     editor->init();

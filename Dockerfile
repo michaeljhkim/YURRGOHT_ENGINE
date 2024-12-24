@@ -38,8 +38,6 @@ RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archi
     cd build && \
     cmake --install .
 
-
-
 # KTX software dependency (ktx textures 2)
 RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
     tar -xzvf v4.3.2.tar.gz && \
@@ -49,7 +47,7 @@ RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.t
     cd build && \
     cmake --install .
 
-
+    
 
 # spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
 RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \

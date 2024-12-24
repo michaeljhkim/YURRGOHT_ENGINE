@@ -23,7 +23,7 @@ namespace Yurrgoht
         m_timer_manager->init();
 
 		m_file_system = std::make_shared<FileSystem>();
-		m_file_system->init();
+        m_file_system->init();
 
 		m_log_system = std::make_shared<LogSystem>();
 		m_log_system->init();

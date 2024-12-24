@@ -4,6 +4,7 @@
 #include <spdlog/sinks/ringbuffer_sink.h>
 #include <stdexcept>
 #include <memory>
+#include <iostream>
 
 namespace Yurrgoht
 {

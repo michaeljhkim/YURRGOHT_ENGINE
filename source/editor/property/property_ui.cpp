@@ -67,7 +67,7 @@ namespace Yurrgoht
 
 			ImGui::SetCursorPosX((window_width - text_width) * 0.5f);
 			ImGui::SetCursorPosY(window_height * 0.2f);
-			ImGui::Text(hint_text);
+			ImGui::Text("%s", hint_text);
 		}
 
 		ImGui::End();

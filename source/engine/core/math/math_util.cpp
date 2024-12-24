@@ -1,10 +1,9 @@
 #include "math_util.h"
 #include <cmath>
 #include <algorithm>
-#include <effolkronium/random.hpp>
+#include <random>
 #include <glm/gtx/matrix_decompose.hpp>
 
-using Random = effolkronium::random_static;
 
 namespace Yurrgoht
 {
@@ -32,32 +31,38 @@ namespace Yurrgoht
 
 	bool MathUtil::randomBool()
 	{
-		return Random::get<bool>();
+		static thread_local std::mt19937 gen(std::random_device{}());
+		static thread_local std::bernoulli_distribution dist(0.5); // Equal probability
+		return dist(gen);
 	}
 
-	int MathUtil::randomInteger(int min, int max)
-	{
-		return Random::get(min, max);
-	}
+	int MathUtil::randomInteger(int min, int max) {
+        // Use thread-local static random engine for efficiency
+        static thread_local std::mt19937 gen(std::random_device{}());
+        std::uniform_int_distribution<int> dist(min, max);
+        return dist(gen);
+    }
 
-	float MathUtil::randomFloat()
-	{
-		return Random::get(0.0f, 1.0f);
-	}
+	float MathUtil::randomFloat() {
+        // Use thread-local static random engine for efficiency
+        static thread_local std::mt19937 gen(std::random_device{}());
+        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+        return dist(gen);
+    }
 
-	float MathUtil::randomFloat(float min, float max)
-	{
-		return Random::get(min, max);
-	}
+    float MathUtil::randomFloat(float min, float max) {
+        static thread_local std::mt19937 gen(std::random_device{}());
+        std::uniform_real_distribution<float> dist(min, max);
+        return dist(gen);
+    }
 
-	glm::vec3 MathUtil::randomUnitVector()
-	{
-		return glm::normalize(glm::vec3(
-			randomFloat(-1.0f, 1.0f),
-			randomFloat(-1.0f, 1.0f),
-			randomFloat(-1.0f, 1.0f)
-		));
-	}
+    glm::vec3 MathUtil::randomUnitVector() {
+        return glm::normalize(glm::vec3(
+            randomFloat(-1.0f, 1.0f),
+            randomFloat(-1.0f, 1.0f),
+            randomFloat(-1.0f, 1.0f)
+        ));
+    }
 
 	glm::vec3 MathUtil::randomRotation()
 	{

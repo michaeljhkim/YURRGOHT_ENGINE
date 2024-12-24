@@ -100,7 +100,7 @@ namespace Yurrgoht
 				ImGui::BeginChild("new_world_middle", ImVec2(content_size.x, k_middle_height), true);
 				ImGui::Text("path:");
 				ImGui::SameLine();
-				ImGui::Text(m_selected_folder.c_str());
+				ImGui::Text("%s", m_selected_folder.c_str());
 
 				ImGui::Text("name:");
 				ImGui::SameLine();
@@ -207,7 +207,7 @@ namespace Yurrgoht
 				ImGui::BeginChild("new_world_middle", ImVec2(content_size.x, k_middle_height), true);
 				ImGui::Text("path:");
 				ImGui::SameLine();
-				ImGui::Text(m_selected_folder.c_str());
+				ImGui::Text("%s", m_selected_folder.c_str());
 
 				ImGui::Text("name:");
 				ImGui::SameLine();
@@ -570,13 +570,13 @@ namespace Yurrgoht
 			if (text_width > icon_size.x)
 			{
 				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + icon_size.x);
-				ImGui::Text(template_world_name.c_str());
+				ImGui::Text("%s", template_world_name.c_str());
 				ImGui::PopTextWrapPos();
 			}
 			else
 			{
 				ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (icon_size.x - text_width) * 0.5f);
-				ImGui::Text(template_world_name.c_str());
+				ImGui::Text("%s", template_world_name.c_str());
 			}
 
 			ImGui::EndGroup();

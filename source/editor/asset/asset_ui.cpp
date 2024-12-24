@@ -147,7 +147,7 @@ namespace Yurrgoht
 
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f);
-		ImGui::Text(m_formatted_selected_folder.c_str());
+		ImGui::Text("%s", m_formatted_selected_folder.c_str());
 
 		ImGui::SameLine(ImGui::GetWindowWidth() - 22);
 		if (ImGui::Button(ICON_FA_COG, button_size))
@@ -286,13 +286,13 @@ namespace Yurrgoht
 		else if (text_width > size.x)
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + size.x);
-			ImGui::Text(basename.c_str());
+			ImGui::Text("%s", basename.c_str());
 			ImGui::PopTextWrapPos();
 		}
 		else
 		{
 			ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (size.x - text_width) * 0.5f);
-			ImGui::Text(basename.c_str());
+			ImGui::Text("%s", basename.c_str());
 		}
 		ImGui::EndGroup();
 
@@ -496,7 +496,7 @@ namespace Yurrgoht
 		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
 		{
 			std::string text = " Do you really want to delete " + g_engine.fileSystem()->relative(path) + "? ";
-			ImGui::Text(text.c_str());
+			ImGui::Text("%s", text.c_str());
 			ImGui::Separator();
 
 			float current_width = ImGui::GetWindowWidth();
