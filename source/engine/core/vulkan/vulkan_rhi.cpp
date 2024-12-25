@@ -502,8 +502,7 @@ namespace Yurrgoht
 		// check if each required instance layer is supported
 		for (const char* required_instance_layer : required_instance_layers)
 		{
-			if (std::find(supported_instance_layers.begin(), supported_instance_layers.end(),
-				required_instance_layer) == supported_instance_layers.end())
+			if (std::find(supported_instance_layers.begin(), supported_instance_layers.end(), required_instance_layer) == supported_instance_layers.end())
 			{
 				LOG_FATAL("required instance layer {} is not supported", required_instance_layer);
 			}

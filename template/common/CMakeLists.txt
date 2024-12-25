@@ -17,34 +17,23 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${HEADER_FILES} ${SOURCE_F
 
 add_executable(${TARGET_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${RESOURCE})
 
-# Add subdirectory for Yurrgoht if not already present
-if(NOT TARGET Yurrgoht)
-    #add_subdirectory(${YURRGOHT_DIR} ${YURRGOHT_DIR}/build)
-endif()
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/template/common/libs)
+set(CMAKE_INSTALL_RPATH "$ORIGIN/libs")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 target_link_libraries(${TARGET_NAME} PRIVATE Editor)
 target_link_libraries(${TARGET_NAME} PRIVATE Engine)
 target_include_directories(${TARGET_NAME} PRIVATE ${YURRGOHT_DIR}/source)
 
-# MSVC-specific compile options
-if(MSVC)
-    add_compile_options("/MP")
-    set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TARGET_NAME})
-    set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_OPTIONS "/GL")
-    set_target_properties(${TARGET_NAME} PROPERTIES LINK_OPTIONS "/INCREMENTAL:NO;/LTCG")
-endif()
-
-# this is supposed to make the executable run from where it's located, but it does not do this - fix tomorrow 
-set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/build/template/common")
-set_target_properties(${TARGET_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build/template/common")
-
 # Set subsystem and entry point based on the platform
-if(WIN32)
-    # Windows-specific linker options
-    set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<CONFIG:Debug>,/SUBSYSTEM:CONSOLE,/SUBSYSTEM:WINDOWS>" "/ENTRY:mainCRTStartup")
-else()
-    # Unix-specific linker options (for example, Linux)
-    set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
-endif()
-
+set(SUBSYSTEM_LINKER_OPTIONS "$<IF:$<NOT:$<CONFIG:Debug>>,-mwindows,>")
 target_link_options(${TARGET_NAME} PRIVATE ${SUBSYSTEM_LINKER_OPTIONS})
+
+
+# Copy dependency libraries
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/template/common/libs)
+
+add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Copying shared libraries..."
+    COMMAND ldd ${CMAKE_BINARY_DIR}/template/common/${TARGET_NAME} | cut -d' ' -f3 |  grep -v 'linux-vdso.so.1' |  xargs -I {} cp -v {} ${CMAKE_BINARY_DIR}/template/common/libs/
+)

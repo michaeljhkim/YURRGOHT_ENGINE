@@ -20,6 +20,23 @@ RUN dnf install -y \
     mesa-libGL mesa-libGL-devel mesa-vulkan-drivers assimp-devel
 
 
+# KTX software dependency (ktx textures 2)
+RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
+    tar -xzvf v4.3.2.tar.gz && \
+    cd KTX-Software-4.3.2 && \ 
+    cmake . -G Ninja -B build && \
+    cmake --build build && \
+    cd build && \
+    cmake --install .
+
+# vulkan memory allocator dependency
+RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
+    tar -xzvf v3.1.0.tar.gz && \
+    cd VulkanMemoryAllocator-3.1.0 && \
+    cmake -S . -B build && \
+    cd build && \
+    cmake --install .
+
 # JoltPhysics dependency
 RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz && \
     tar -xzvf v5.2.0.tar.gz && \
@@ -30,33 +47,41 @@ RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz &
     ./UnitTests && \
     cmake --install .
     
-# vulkan memory allocator dependency
-RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
-    tar -xzvf v3.1.0.tar.gz && \
-    cd VulkanMemoryAllocator-3.1.0 && \
-    cmake -S . -B build && \
-    cd build && \
-    cmake --install .
-
-# KTX software dependency (ktx textures 2)
-RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
-    tar -xzvf v4.3.2.tar.gz && \
-    cd KTX-Software-4.3.2 && \ 
+# eventpp dependency
+RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
+    tar -xzvf v0.1.3.tar.gz && \
+    cd eventpp-0.1.3 && \
+    mkdir build && \
     cmake . -G Ninja -B build && \
-    cmake --build build && \
     cd build && \
     cmake --install .
 
     
+# imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
+#RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz
 
 # spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
 RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
     sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
 
 
+RUN mkdir libs && \
+    cp /lib64/libSDL2-2.0.so.0 libs && \
+    cp /lib64/libglfw.so.3 libs && \
+    cp /lib64/libvulkan.so.1 libs && \
+    cp /lib64/libspdlog.so.1 libs && \
+    cp /lib64/libfmt.so.8 libs && \
+    cp /lib64/libyaml-cpp.so.0.6 libs && \
+    cp /lib64/librttr_core.so.0.9.7 libs && \
+    cp /usr/local/lib64/libktx.so.0 libs && \
+    cp /lib64/libstdc++.so.6 libs && \
+    cp /lib64/libm.so.6 libs && \
+    cp /lib64/libgcc_s.so.1 libs && \
+    cp /lib64/libc.so.6 libs && \
+    cp /lib64/libX11.so.6 libs && \
+    cp /lib64/libxcb.so.1 libs && \
+    cp /lib64/libXau.so.6 libs
+
 
 # Default command: Start bash to interact with the container
 CMD ["/bin/bash"]
-
-# imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
-#RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz

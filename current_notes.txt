@@ -1,17 +1,12 @@
-- Docker will be used to install dependencies according to their own needs
-- CMakeLists need to be changed to remove all local dependencies (except for imgui - worry about later)
-- I can also just add vma (vulkan memory allocator) because its just a header file
-- need to remove install instructions and such
 - test build with c++17 again now that dependencies are properly made
-
 - THEN change to use c++20
-- may need to revert some code back to original if this works as well as I think (so I can have a good starting point)
+- added assets from bamboo release file for testing - must make it seperate download in the future
+- must convert glfw code to sdl2
 
 
 - Keep Local dependencies:
 - eventpp
 - imgui
-- random    (TRYING TO ADD TO DOCKER)
 - tinygltf
 
 

@@ -25,9 +25,23 @@ This project was forked from the Bamboo game engine project by RobotBerry https:
 - Multiple light types(Directional/Sky/Point/Spot)
 - Postprocessing(Color Grading)
 - Play in Editor(PIE)
-- Physicis System
+- Physics System
 - Texture Compression
 - Engine/Editor/Game code isolation
+
+
+## TBD Features
+- Tick editor
+- Simple scripting language for easy programming and does not need to be compiled
+- Convert from using glfw to sdl2
+- Audio system with steam audio
+- Asynchronous input
+- Virtual Texturing and sparse bindings for envoirnments
+- Increase preformance with further optimization of systems
+- Simple multiplayer features (TBD)
+- Better in-depth documentation
+
+
 
 <!-- 
 ## How to build
@@ -37,20 +51,19 @@ Well, if you're using Windows, you can download the prebuild package(Release.zip
 -->
 
 **Supported Platforms**
-- Windows
-- Linux(WIP)
+- Linux
+- Windows(WIP)
 - MacOS(TODO)
 
 **Prerequites**
 - [Git](http://git-scm.com/downloads).
 - [CMake](https://cmake.org/download/). Version 3.20.0 or later is required.
-- [Vulkan Sdk](https://www.lunarg.com/vulkan-sdk/). Verison 1.3 or later is prefered.
-- [Visual Studio](https://visualstudio.microsoft.com/). Version 2022 is prefered.
+- [Docker](https://www.docker.com/). For development environment.
 
 **Step 1.** Clone the Yurrgoht repository. Now the engine and editor modules will be compiled to two static libraries rather than one engine library and one editor executable.
 
 ```shell
-git clone https://github.com/Code-Guy/Yurrgoht.git
+git clone https://github.com/michaeljhkim/Yurrgoht.git
 ```
 
 **Step 2.** Download the lastest version's Project.zip file, unzip to somewhere. It's a demo project which relies on the engine and editor sources to compile, and contains "asset" "config" "source" and "CMakeLists.txt" four items.
@@ -87,4 +100,3 @@ All external libraries' source codes have been included in the dockerfile, so no
 - [rttr](https://www.rttr.org/)(reflection)
 - [eventpp](https://github.com/wqking/eventpp)(event system)
 - [jolt](https://github.com/jrouwe/JoltPhysics)(physics system)
-- [random](https://github.com/effolkronium/random)(random number generator)
