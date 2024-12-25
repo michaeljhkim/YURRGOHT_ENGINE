@@ -13,5 +13,4 @@ set(CMAKE_INSTALL_PREFIX "${YURRGOHT_ROOT_DIR}/install")
 add_subdirectory(external)
 add_subdirectory(source/engine)
 add_subdirectory(source/editor)
-
-add_subdirectory(template/common)
+add_subdirectory(source)

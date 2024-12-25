@@ -2,10 +2,13 @@
 - THEN change to use c++20
 - added assets from bamboo release file for testing - must make it seperate download in the future
 - must convert glfw code to sdl2
+- must figure out how to create editor executable seperate from user developer code
+
+- The Test executable technically works, but it seg faults right away
+- first guess is environment differences
 
 
 - Keep Local dependencies:
-- eventpp
 - imgui
 - tinygltf
 
@@ -13,9 +16,6 @@
 # Vulkan KTX2 dependency
 RUN wget https://github.com/KhronosGroup/KTX-Software/releases/download/v4.3.2/KTX-Software-4.3.2-Linux-x86_64.rpm && \
     dnf localinstall --nobest -y KTX-Software-4.3.2-Linux-x86_64.rpm
-
-
-- Consider copying the original Yurrgoht source code again for clean start with docker
 
 
 #Assuming we will be able to use the docker image to find this stuff
@@ -35,3 +35,5 @@ cmake --build build --config Release
 
 cd build/template/common/
 ./Test
+
+

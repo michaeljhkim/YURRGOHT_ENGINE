@@ -37,10 +37,9 @@ install(TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_BIN})
 install(TARGETS imgui DESTINATION ${INSTALL_BIN})
 
 install(FILES ${Vulkan_LIBRARY}
-        DESTINATION ${INSTALL_BIN}
-  )
+        DESTINATION ${INSTALL_BIN} )
+        
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" # source directory
         DESTINATION "include/engine" # target directory
         FILES_MATCHING # install only matched files
-        PATTERN "*.h" # select header files
-)
+        PATTERN "*.h") # select header files

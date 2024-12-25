@@ -65,23 +65,5 @@ RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/cor
     sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
 
 
-RUN mkdir libs && \
-    cp /lib64/libSDL2-2.0.so.0 libs && \
-    cp /lib64/libglfw.so.3 libs && \
-    cp /lib64/libvulkan.so.1 libs && \
-    cp /lib64/libspdlog.so.1 libs && \
-    cp /lib64/libfmt.so.8 libs && \
-    cp /lib64/libyaml-cpp.so.0.6 libs && \
-    cp /lib64/librttr_core.so.0.9.7 libs && \
-    cp /usr/local/lib64/libktx.so.0 libs && \
-    cp /lib64/libstdc++.so.6 libs && \
-    cp /lib64/libm.so.6 libs && \
-    cp /lib64/libgcc_s.so.1 libs && \
-    cp /lib64/libc.so.6 libs && \
-    cp /lib64/libX11.so.6 libs && \
-    cp /lib64/libxcb.so.1 libs && \
-    cp /lib64/libXau.so.6 libs
-
-
 # Default command: Start bash to interact with the container
 CMD ["/bin/bash"]
