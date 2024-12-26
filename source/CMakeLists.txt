@@ -9,8 +9,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
-#set(CMAKE_SKIP_BUILD_RPATH TRUE)
-
 # Platform-independent header and source file search
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "project_source/*.h")
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "project_source/*.cpp")

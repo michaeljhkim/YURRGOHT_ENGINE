@@ -6,27 +6,12 @@
 
 - The Test executable technically works, but it seg faults right away
 - first guess is environment differences
-- create new project to fix rttr, then compile, then use statically
+- rttr can only be compiled with gcc, but when done statically, it cannot just be linked with a clang project
 
 
 - Keep Local dependencies:
 - imgui
 - tinygltf
-
-
-# Vulkan KTX2 dependency
-RUN wget https://github.com/KhronosGroup/KTX-Software/releases/download/v4.3.2/KTX-Software-4.3.2-Linux-x86_64.rpm && \
-    dnf localinstall --nobest -y KTX-Software-4.3.2-Linux-x86_64.rpm
-
-
-#Assuming we will be able to use the docker image to find this stuff
-find_package(Vulkan REQUIRED)
-find_package(SDL2 REQUIRED)
-find_package(glfw3 REQUIRED)
-find_package(rttr REQUIRED)
-find_package(jolt REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(yaml-cpp REQUIRED)
 
 
 sudo docker build -t yurrgoht/testapp:1.0 .
@@ -56,7 +41,7 @@ if (NOT TARGET rttr_core_lib)
     option(BUILD_RTTR_DYNAMIC "" OFF)
     option(BUILD_UNIT_TESTS "" OFF)
     option(BUILD_STATIC "" ON)
-    #option(BUILD_WITH_STATIC_RUNTIME_LIBS "" ON)
+    option(BUILD_WITH_STATIC_RUNTIME_LIBS "" OFF)
     option(BUILD_EXAMPLES "" OFF)
     option(BUILD_DOCUMENTATION "" OFF)
     option(BUILD_INSTALLER OFF)
@@ -76,3 +61,6 @@ RUN git clone https://github.com/rttrorg/rttr.git && \
     cmake --install . && \
     cd ../src/rttr && \
     find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
+
+
+cmake . -G Ninja -B build -DCMAKE_CXX_COMPILER=clang -DCMAKE_CXX_STANDARD=17 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON -DBUILD_WITH_STATIC_RUNTIME_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_INSTALLER=ON -DBUILD_PACKAGE=ON
