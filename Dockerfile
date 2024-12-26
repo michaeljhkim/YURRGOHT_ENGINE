@@ -26,14 +26,6 @@ RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz &
     ./UnitTests && \
     cmake --install .
 
-# KTX software dependency (ktx textures 2) - static
-RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
-    tar -xzvf v4.3.2.tar.gz && \
-    cd KTX-Software-4.3.2 && mkdir build && cd build && \
-    cmake -DBUILD_SHARED_LIBS=OFF .. && \
-    make -j && \
-    make install
-
 # vulkan memory allocator dependency - static
 RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
     tar -xzvf v3.1.0.tar.gz && \
@@ -41,8 +33,6 @@ RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archi
     cmake -S . -B build -DBUILD_SHARED_LIBS=OFF && \
     cd build && \
     cmake --install .
-
-    
 
 # SDL2 dependency - static
 RUN wget https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.30.10.tar.gz && \
@@ -59,6 +49,18 @@ RUN wget https://github.com/glfw/glfw/archive/refs/tags/3.4.tar.gz && \
     cmake -DBUILD_SHARED_LIBS=OFF .. && \
     make -j && \
     make install
+
+# KTX software dependency (ktx textures 2) - static
+RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
+    tar -xzvf v4.3.2.tar.gz && \
+    cd KTX-Software-4.3.2 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF -DKTX_FEATURE_TESTS=OFF -DKTX_FEATURE_STATIC_LIBRARY=ON .. && \
+    make -j && \
+    make install
+
+
+    
+
 
 # eventpp dependency - static
 RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
@@ -96,12 +98,9 @@ RUN git clone https://github.com/rttrorg/rttr.git && \
     cd ../src/rttr && \
     find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
 
+    
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
 #RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz
-
-# spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
-#RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
-#    sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
 
 
 # Default command: Start bash to interact with the container

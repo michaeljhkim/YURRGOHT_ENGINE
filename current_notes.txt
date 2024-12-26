@@ -19,9 +19,8 @@ cmake -G Ninja -S . -B build
 cmake --build build --config Release
 
 
-cd build/template/common/
+cd build/source
 ./Test
-
 
 
 
@@ -37,30 +36,6 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/libs)
 endif()
 
 
-if (NOT TARGET rttr_core_lib)
-    option(BUILD_RTTR_DYNAMIC "" OFF)
-    option(BUILD_UNIT_TESTS "" OFF)
-    option(BUILD_STATIC "" ON)
-    option(BUILD_WITH_STATIC_RUNTIME_LIBS "" OFF)
-    option(BUILD_EXAMPLES "" OFF)
-    option(BUILD_DOCUMENTATION "" OFF)
-    option(BUILD_INSTALLER OFF)
-    option(BUILD_PACKAGE OFF)
-    add_subdirectory(rttr)
-    set_target_properties(rttr_core_lib PROPERTIES FOLDER ${external_folder}/rttr)
-endif()
-
-# rttr dependency - static
-# manually had to set install location and then copy header files b/c rttr does not do so for static for some reason
-RUN git clone https://github.com/rttrorg/rttr.git && \
-    cd rttr && mkdir build && cd build && \
-    cmake .. -G Ninja -B . -DCMAKE_CXX_COMPILER=clang -DCMAKE_CXX_STANDARD=17 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON \
-    -DBUILD_WITH_STATIC_RUNTIME_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_INSTALLER=ON -DBUILD_PACKAGE=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    cmake --build . && \
-    cmake --install . && \
-    cd ../src/rttr && \
-    find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
-
-
-cmake . -G Ninja -B build -DCMAKE_CXX_COMPILER=clang -DCMAKE_CXX_STANDARD=17 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON -DBUILD_WITH_STATIC_RUNTIME_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_INSTALLER=ON -DBUILD_PACKAGE=ON
+# spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
+#RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
+#    sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
