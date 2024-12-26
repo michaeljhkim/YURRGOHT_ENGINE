@@ -14,25 +14,6 @@ enum class EPixelType
 	RGBA8, RGBA16, RGBA32, RG16, R16, R32
 };
 
-// Specialize fmt::formatter for EPixelType
-template <>
-struct fmt::formatter<EPixelType> : fmt::formatter<std::string> {
-    // Format function to convert enum to string
-    template <typename FormatContext>
-    auto format(EPixelType pt, FormatContext& ctx) {
-        std::string_view str;
-        switch (pt) {
-            case EPixelType::RGBA8: str = "RGBA8"; break;
-            case EPixelType::RGBA16: str = "RGBA16"; break;
-            case EPixelType::RGBA32: str = "RGBA32"; break;
-            case EPixelType::RG16: str = "RG16"; break;
-            case EPixelType::R16: str = "R16"; break;
-            case EPixelType::R32: str = "R32"; break;
-            default: str = "Unknown"; break;
-        }
-        return fmt::formatter<std::string>::format(std::string(str), ctx);
-    }
-};
 
 namespace Yurrgoht
 {
@@ -80,3 +61,24 @@ namespace Yurrgoht
 		}
 	};
 }
+
+
+// Specialize fmt::formatter for EPixelType
+template <>
+struct fmt::formatter<EPixelType> : fmt::formatter<std::string> {
+    // Format function to convert enum to string
+    template <typename FormatContext>
+    auto format(EPixelType pt, FormatContext& ctx) const {
+        std::string_view str;
+        switch (pt) {
+            case EPixelType::RGBA8: str = "RGBA8"; break;
+            case EPixelType::RGBA16: str = "RGBA16"; break;
+            case EPixelType::RGBA32: str = "RGBA32"; break;
+            case EPixelType::RG16: str = "RG16"; break;
+            case EPixelType::R16: str = "R16"; break;
+            case EPixelType::R32: str = "R32"; break;
+            default: str = "Unknown"; break;
+        }
+        return fmt::formatter<std::string>::format(std::string(str), ctx);
+    }
+};

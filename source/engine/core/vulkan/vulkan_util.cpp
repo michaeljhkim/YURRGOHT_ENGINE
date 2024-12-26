@@ -625,7 +625,7 @@ namespace Yurrgoht
 		case VK_FORMAT_R32G32B32A32_SFLOAT:
 			return 16;
 		default:
-			LOG_FATAL("unsupported format: {}", format);
+			LOG_FATAL("unsupported format: {}", static_cast<int>(format));
 			return 0;
 		}
 	}

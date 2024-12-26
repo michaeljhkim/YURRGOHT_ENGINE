@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/ringbuffer_sink.h>
+#include <spdlog/fmt/fmt.h>
 #include <stdexcept>
 #include <memory>
 #include <iostream>

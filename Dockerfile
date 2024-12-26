@@ -7,62 +7,92 @@ WORKDIR /workspaces
 RUN dnf install -y \
     vulkan-tools vulkan-loader-devel vulkan-validation-layers-devel glslang glslc spirv-tools \
     assimp assimp-devel \
-    SDL2 SDL2-devel \
-    glfw glfw-devel \
-    cereal-devel \
     glm-devel \
-    fmt fmt-devel \
-    librttr librttr-devel \
-    spdlog spdlog-devel \
-    yaml-cpp yaml-cpp-devel yaml-cpp-static
-RUN dnf install -y \
-    git wget xz clang cmake make automake gcc gcc-c++ kernel-devel libzstd-devel ninja-build doxygen graphviz \
-    mesa-libGL mesa-libGL-devel mesa-vulkan-drivers assimp-devel
+    cereal-devel \
+    git wget clang cmake make ninja-build \
+    mesa-libGL mesa-vulkan-drivers \
+    wayland-devel libxkbcommon-devel wayland-protocols-devel extra-cmake-modules \ 
+    libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel libXrender-devel
 
-
-# KTX software dependency (ktx textures 2)
-RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
-    tar -xzvf v4.3.2.tar.gz && \
-    cd KTX-Software-4.3.2 && \ 
-    cmake . -G Ninja -B build && \
-    cmake --build build && \
-    cd build && \
-    cmake --install .
-
-# vulkan memory allocator dependency
-RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
-    tar -xzvf v3.1.0.tar.gz && \
-    cd VulkanMemoryAllocator-3.1.0 && \
-    cmake -S . -B build && \
-    cd build && \
-    cmake --install .
-
+    
 # JoltPhysics dependency
 RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz && \
     tar -xzvf v5.2.0.tar.gz && \
     cd JoltPhysics-5.2.0/Build && \ 
+    cmake -DBUILD_SHARED_LIBS=OFF . && \
     ./cmake_linux_clang_gcc.sh && \
     cd Linux_Debug && \
     make -j $(nproc) && \
     ./UnitTests && \
     cmake --install .
-    
-# eventpp dependency
-RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
-    tar -xzvf v0.1.3.tar.gz && \
-    cd eventpp-0.1.3 && \
-    mkdir build && \
-    cmake . -G Ninja -B build && \
+
+# KTX software dependency (ktx textures 2) - static
+RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
+    tar -xzvf v4.3.2.tar.gz && \
+    cd KTX-Software-4.3.2 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF .. && \
+    make -j && \
+    make install
+
+# vulkan memory allocator dependency - static
+RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
+    tar -xzvf v3.1.0.tar.gz && \
+    cd VulkanMemoryAllocator-3.1.0 && \
+    cmake -S . -B build -DBUILD_SHARED_LIBS=OFF && \
     cd build && \
     cmake --install .
 
     
+
+# SDL2 dependency - static
+RUN wget https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.30.10.tar.gz && \
+    tar -xzvf release-2.30.10.tar.gz && \
+    cd SDL-release-2.30.10 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON .. && \
+    make -j && \
+    make install
+
+# glfw3 dependency - static
+RUN wget https://github.com/glfw/glfw/archive/refs/tags/3.4.tar.gz && \
+    tar -xzvf 3.4.tar.gz && \
+    cd glfw-3.4 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF .. && \
+    make -j && \
+    make install
+
+# eventpp dependency - static
+RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
+    tar -xzvf v0.1.3.tar.gz && \
+    cd eventpp-0.1.3 && mkdir build && cd build && \
+    cmake .. -G Ninja -B . -DBUILD_SHARED_LIBS=OFF && \
+    cmake --install .
+
+# spdlog dependency - static
+RUN wget https://github.com/gabime/spdlog/archive/refs/tags/v1.15.0.tar.gz && \
+    tar -xzvf v1.15.0.tar.gz && \
+    cd spdlog-1.15.0 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF -SPDLOG_FMT_EXTERNAL=OFF .. && \
+    make -j && \
+    make install
+
+# yaml-cpp dependency - static
+RUN wget https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz && \
+    tar -xzvf 0.8.0.tar.gz && \
+    cd yaml-cpp-0.8.0 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF -DYAML_BUILD_SHARED_LIBS=OFF .. && \
+    make -j && \
+    make install
+
+    
+RUN dnf install -y libc++-devel
+
+
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
 #RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz
 
 # spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
-RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
-    sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
+#RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
+#    sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
 
 
 # Default command: Start bash to interact with the container

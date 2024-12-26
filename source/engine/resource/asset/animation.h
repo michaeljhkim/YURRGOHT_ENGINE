@@ -75,27 +75,3 @@ namespace Yurrgoht
 }
 
 
-	
-// Custom formatter for EPathType
-template <>
-struct fmt::formatter<Yurrgoht::AnimationChannel::EPathType> : fmt::formatter<std::string> {
-	template <typename FormatContext>
-	auto format(Yurrgoht::AnimationChannel::EPathType pathType, FormatContext& ctx) {
-		std::string pathTypeStr;
-		switch (pathType) {
-			case Yurrgoht::AnimationChannel::EPathType::Translation:
-				pathTypeStr = "Translation";
-				break;
-			case Yurrgoht::AnimationChannel::EPathType::Rotation:
-				pathTypeStr = "Rotation";
-				break;
-			case Yurrgoht::AnimationChannel::EPathType::Scale:
-				pathTypeStr = "Scale";
-				break;
-			default:
-				pathTypeStr = "Unknown";
-		}
-
-		return fmt::formatter<std::string>::format(pathTypeStr, ctx);
-	}
-};
