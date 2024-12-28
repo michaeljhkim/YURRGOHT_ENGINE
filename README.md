@@ -84,6 +84,19 @@ cmake -G Ninja -S . -B build
 cmake --build build --config Release
 ```
 
+
+**TEMP INSTRUCTIONS** Here for reference, but will make cleaner once I get everything else at the very least functional
+
+```shell
+sudo docker build -t yurrgoht/testapp:1.0 .
+cmake -G Ninja -S . -B build
+cmake --build build --config Release
+
+cd build/source
+./Test
+```
+
+
 ## External libraries
 All external libraries' source codes have been included in the dockerfile, so no further installation will be required :)
 

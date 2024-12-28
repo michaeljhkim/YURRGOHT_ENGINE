@@ -1,14 +1,13 @@
+#include <iostream>
 #include "event_system.h"
 
 namespace Yurrgoht
 {
-	void EventSystem::tick()
-	{
+	void EventSystem::tick() {
 		m_event_queue.process();
 	}
 
-	void* EventSystem::addListener(EEventType event_type, const std::function<void(const EventPointer& event_pointer)>& callback)
-	{
+	void* EventSystem::addListener(EEventType event_type, const std::function<void(const EventPointer& event_pointer)>& callback) {
 		EventHandle* event_handle = new EventHandle;
 		event_handle->type = event_type;
 		event_handle->handle = m_event_queue.appendListener(event_type, callback);

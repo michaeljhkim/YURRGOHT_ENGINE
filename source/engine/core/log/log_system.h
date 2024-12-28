@@ -11,7 +11,7 @@ namespace Yurrgoht
 {
 	enum class ELogLevel
 	{
-		Debug, Info, Warning, Error, Fatal
+		Debug, Info, Warning, Error, Fatal, ConsoleInfo
 	};
 
     class LogSystem
@@ -27,20 +27,57 @@ namespace Yurrgoht
                 switch (level)
                 {
 				case ELogLevel::Debug:
+					c_logger->info(std::forward<TARGS>(args)...);
 					m_logger->debug(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Info:
+					c_logger->info(std::forward<TARGS>(args)...);
 					m_logger->info(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Warning:
+					c_logger->info(std::forward<TARGS>(args)...);
 					m_logger->warn(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Error:
+					c_logger->info(std::forward<TARGS>(args)...);
 					m_logger->error(std::forward<TARGS>(args)...);
 					break;
 				case ELogLevel::Fatal:
 				{
+					c_logger->info(std::forward<TARGS>(args)...);
 					m_logger->critical(args...);
+
+					// throw application runtime error
+					std::string fatal_str = fmt::format(std::forward<TARGS>(args)...);
+					throw std::runtime_error(fatal_str);
+				}
+					break;
+				default:
+					break;
+                }
+            }
+
+            template<typename... TARGS>
+            void console_log(ELogLevel level, TARGS&&... args)
+            {
+                switch (level)
+                {
+				case ELogLevel::Debug:
+					c_logger->debug(std::forward<TARGS>(args)...);
+					break;
+				case ELogLevel::Info:
+					c_logger->info(std::forward<TARGS>(args)...);
+                	//m_logger->flush();
+					break;
+				case ELogLevel::Warning:
+					c_logger->warn(std::forward<TARGS>(args)...);
+					break;
+				case ELogLevel::Error:
+					c_logger->error(std::forward<TARGS>(args)...);
+					break;
+				case ELogLevel::Fatal:
+				{
+					c_logger->critical(args...);
 
 					// throw application runtime error
 					std::string fatal_str = fmt::format(std::forward<TARGS>(args)...);
@@ -57,5 +94,6 @@ namespace Yurrgoht
 
 			std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt> m_ringbuffer_sink;
             std::shared_ptr<spdlog::logger> m_logger;
+            std::shared_ptr<spdlog::logger> c_logger;
     };
 }

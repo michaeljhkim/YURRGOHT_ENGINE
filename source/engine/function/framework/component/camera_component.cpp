@@ -74,55 +74,43 @@ namespace Yurrgoht
 		return getProjectionMatrixYInverted(projection_matrix);
 	}
 
-	glm::mat4 CameraComponent::getViewProjectionMatrix()
-	{
+	glm::mat4 CameraComponent::getViewProjectionMatrix() {
 		return m_view_projection_matrix;
 	}
 
-	glm::mat4 CameraComponent::getViewMatrixNoTranslation()
-	{
+	glm::mat4 CameraComponent::getViewMatrixNoTranslation() {
 		return glm::mat4(glm::mat3(m_view_matrix));
 	}
 
-	glm::mat4 CameraComponent::getProjectionMatrixNoYInverted()
-	{
+	glm::mat4 CameraComponent::getProjectionMatrixNoYInverted() {
 		return getProjectionMatrixYInverted(m_projection_matrix);
 	}
 
-	void CameraComponent::setInput(bool mouse_right_button_pressed, bool mouse_focused)
-	{
+	void CameraComponent::setInput(bool mouse_right_button_pressed, bool mouse_focused) {
 		m_mouse_right_button_pressed = mouse_right_button_pressed;
 		m_mouse_focused = mouse_focused;
 	}
 
-	void CameraComponent::tick(float delta_time)
-	{
+	void CameraComponent::tick(float delta_time) {
 		// update camera position
 		float offset = m_move_speed * delta_time;
-		if (m_mouse_right_button_pressed)
-		{
-			if (m_move_forward)
-			{
+		if (m_mouse_right_button_pressed) {
+			if (m_move_forward) {
 				m_transform_component->m_position += m_forward * offset;
 			}
-			if (m_move_back)
-			{
+			if (m_move_back) {
 				m_transform_component->m_position -= m_forward * offset;
 			}
-			if (m_move_left)
-			{
+			if (m_move_left) {
 				m_transform_component->m_position -= m_right * offset;
 			}
-			if (m_move_right)
-			{
+			if (m_move_right) {
 				m_transform_component->m_position += m_right * offset;
 			}
-			if (m_move_up)
-			{
+			if (m_move_up) {
 				m_transform_component->m_position += k_up_vector * offset;
 			}
-			if (m_move_down)
-			{
+			if (m_move_down) {
 				m_transform_component->m_position -= k_up_vector * offset;
 			}
 		}

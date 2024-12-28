@@ -25,6 +25,16 @@ namespace Yurrgoht {
 		loadWorld(default_world_url);
 	}
 
+	/*
+	void WorldManager::CreateNewDefaultWorld() {
+		URL new_default_world_url = "asset/world/default.world";
+		createWorld(new_default_world_url, new_default_world_url);
+		m_current_world = std::make_unique<World>();
+		m_current_world_url = new_default_world_url;
+		saveAsWorld(new_default_world_url);
+	}
+	*/
+
 	void WorldManager::destroy() {
 		m_current_world.reset();
 	}
@@ -55,6 +65,7 @@ namespace Yurrgoht {
 	}
 
 	void WorldManager::createWorld(const URL& template_url, const URL& save_as_url) {
+        std::cout << "Creating New World" << std::endl;
 		m_template_url = template_url;
 		m_save_as_url = save_as_url;
 		LOG_INFO("create world: {}", m_template_url.str());
@@ -67,6 +78,7 @@ namespace Yurrgoht {
 	}
 
 	bool WorldManager::saveAsWorld(const URL& url) {
+        std::cout << "Saving World As: " << url.getAbsolute() << std::endl;
 		g_engine.assetManager()->serializeAsset(m_current_world, url);
 		return true;
 	}

@@ -7,29 +7,19 @@
 - editor/simulation/simulation_ui is where we call the sky texture
 - asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
 - config folder has a .yaml file that controls locations of the default world
+- asset_manager is where the .world is attempted to be loaded, but fails due to being incompatible
 
 - PROBLEM: cannot open default .world files made by bamboo due to namespaces being different
 - FIX: figure out how 1 world is made, then create a function (or class) that constructs that default world. Just enough to get started
 - Make it a function so that I can make new default worlds in case I need to make bigger changes
+- Eventually make it so that this function can be called through editor ui
+- For now, comment it out after feature is finished
+
+- TO TRY TOMORROW: I don't think a .world is created on init, but I will have to check 
 
 
-sudo docker build -t yurrgoht/testapp:1.0 .
-cmake -G Ninja -S . -B build
-cmake --build build --config Release
 
-cd build/source
-./Test
 
-# Runtime library search paths (optional for dynamically loaded libraries, but not critical for static executables)
-if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/libs)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/libs)
-
-    # Copy dependency libraries (optional)
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "Copying shared libraries..."
-        COMMAND ldd ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME} | cut -d' ' -f3 | xargs -I {} cp -v {} ${CMAKE_CURRENT_BINARY_DIR}/libs/
-    )
-endif()
 
 
 

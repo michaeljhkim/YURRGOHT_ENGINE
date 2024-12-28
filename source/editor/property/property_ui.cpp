@@ -10,7 +10,6 @@ namespace Yurrgoht
 {
 
 	void PropertyUI::init() {
-        std::cout << "PropertyUI initializing" << std::endl;
 		m_title = "Property";
 		m_property_constructors = {
 			{ EPropertyValueType::Bool, std::bind(&PropertyUI::constructPropertyBool, this, std::placeholders::_1, std::placeholders::_2) },
@@ -29,6 +28,7 @@ namespace Yurrgoht
 
 		// get dummy texture2d
 		m_dummy_image = loadImGuiImageFromImageViewSampler(g_engine.assetManager()->getDefaultTexture2D());
+		LOG_INFO("SUCCESS");
 	}
 
 	void PropertyUI::construct()

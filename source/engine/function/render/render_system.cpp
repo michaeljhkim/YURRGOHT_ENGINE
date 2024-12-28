@@ -88,8 +88,9 @@ namespace Yurrgoht
 		};
 	}
 
-	void RenderSystem::tick(float delta_time)
-	{
+	void RenderSystem::tick(float delta_time) {
+		LOG_INFO("Delta Time: {}", delta_time);
+
 		// collect render data from entities of current world
 		collectRenderDatas();
 
@@ -97,84 +98,68 @@ namespace Yurrgoht
 		VulkanRHI::get().render();
 	}
 
-	void RenderSystem::destroy()
-	{
-		for (auto& render_pass : m_render_passes)
-		{
+	void RenderSystem::destroy() {
+		for (auto& render_pass : m_render_passes) {
 			render_pass->destroy();
 		}
-		for (VmaBuffer& uniform_buffer : m_lighting_ubs)
-		{
+		for (VmaBuffer& uniform_buffer : m_lighting_ubs) {
 			uniform_buffer.destroy();
 		}
 
-		for (auto& iter : m_lighting_icons)
-		{
+		for (auto& iter : m_lighting_icons) {
 			iter.second.destroy();
 		}
 
 		m_default_texture_cube.reset();
 	}
 
-	void RenderSystem::resize(uint32_t width, uint32_t height)
-	{
+	void RenderSystem::resize(uint32_t width, uint32_t height) {
 		m_pick_pass->onResize(width, height);
 		m_outline_pass->onResize(width, height);
 		m_main_pass->onResize(width, height);
 		m_postprocess_pass->onResize(width, height);
 	}
 
-	VkImageView RenderSystem::getColorImageView()
-	{
+	VkImageView RenderSystem::getColorImageView() {
 		return m_postprocess_pass->getColorTexture().view;
 	}
 
-	void RenderSystem::onCreateSwapchainObjects(const std::shared_ptr<class Event>& event)
-	{
+	void RenderSystem::onCreateSwapchainObjects(const std::shared_ptr<class Event>& event) {
 		const RenderCreateSwapchainObjectsEvent* p_event = static_cast<const RenderCreateSwapchainObjectsEvent*>(event.get());
 		m_ui_pass->createResizableObjects(p_event->width, p_event->height);
 	}
 
-	void RenderSystem::onDestroySwapchainObjects(const std::shared_ptr<class Event>& event)
-	{
+	void RenderSystem::onDestroySwapchainObjects(const std::shared_ptr<class Event>& event) {
 		m_ui_pass->destroyResizableObjects();
 	}
 
-	void RenderSystem::onRecordFrame(const std::shared_ptr<class Event>& event)
-	{
+	void RenderSystem::onRecordFrame(const std::shared_ptr<class Event>& event) {
 		const RenderRecordFrameEvent* p_event = static_cast<const RenderRecordFrameEvent*>(event.get());
 
 		// ui render pass preparation
-		if (m_ui_pass->isEnabled())
-		{
+		if (m_ui_pass->isEnabled()) {
 			m_ui_pass->prepare();
 		}
 
 		// render pass rendering
-		for (auto& render_pass : m_render_passes)
-		{
-			if (render_pass->isEnabled())
-			{
+		for (auto& render_pass : m_render_passes) {
+			if (render_pass->isEnabled()) {
 				render_pass->render();
 			}
 		}
 	}
 
-	void RenderSystem::onPickEntity(const std::shared_ptr<class Event>& event)
-	{
+	void RenderSystem::onPickEntity(const std::shared_ptr<class Event>& event) {
 		const PickEntityEvent* p_event = static_cast<const PickEntityEvent*>(event.get());
 		m_pick_pass->pick(p_event->mouse_x, p_event->mouse_y);
 	}
 
-	void RenderSystem::onSelectEntity(const std::shared_ptr<class Event>& event)
-	{
+	void RenderSystem::onSelectEntity(const std::shared_ptr<class Event>& event){
 		const SelectEntityEvent* p_event = static_cast<const SelectEntityEvent*>(event.get());
-
 		m_selected_entity_ids = { p_event->entity_id };
 	}
 
-	void RenderSystem::collectRenderDatas()
-	{
+	void RenderSystem::collectRenderDatas() {
 		// mesh render datas
 		std::vector<std::shared_ptr<RenderData>> mesh_render_datas, selected_mesh_render_datas;
 		std::vector<std::shared_ptr<BillboardRenderData>> billboard_render_datas, selected_billboard_render_datas;
@@ -198,12 +183,10 @@ namespace Yurrgoht
 		lighting_render_data->directional_light_shadow_texture = m_directional_light_shadow_pass->getShadowImageViewSampler();
 		lighting_render_data->point_light_shadow_textures.resize(MAX_POINT_LIGHT_NUM);
 		lighting_render_data->spot_light_shadow_textures.resize(MAX_SPOT_LIGHT_NUM);
-		for (uint32_t i = 0; i < MAX_POINT_LIGHT_NUM; ++i)
-		{
+		for (uint32_t i = 0; i < MAX_POINT_LIGHT_NUM; ++i) {
 			lighting_render_data->point_light_shadow_textures[i] = m_default_texture_cube->m_image_view_sampler;
 		}
-		for (uint32_t i = 0; i < MAX_SPOT_LIGHT_NUM; ++i)
-		{
+		for (uint32_t i = 0; i < MAX_SPOT_LIGHT_NUM; ++i) {
 			lighting_render_data->spot_light_shadow_textures[i] = default_texture_2d;
 		}
 		std::shared_ptr<SkyboxRenderData> skybox_render_data = nullptr;
@@ -234,35 +217,29 @@ namespace Yurrgoht
 
 		// traverse all entities
 		const auto& entities = current_world->getEntities();
-		for (const auto& iter : entities)
-		{
+		for (const auto& iter : entities) {
 			const auto& entity = iter.second;
 
 			// get static/skeletal mesh component render data
 			auto static_mesh_component = entity->getComponent(StaticMeshComponent);
 			auto skeletal_mesh_component = entity->getComponent(SkeletalMeshComponent);
 
-			if (static_mesh_component || skeletal_mesh_component)
-			{
+			if (static_mesh_component || skeletal_mesh_component) {
 				// get transform component
 				auto transform_component = entity->getComponent(TransformComponent);
 
 				std::shared_ptr<Mesh> mesh = nullptr;
-				if (static_mesh_component)
-				{
+				if (static_mesh_component) {
 					mesh = static_mesh_component->getStaticMesh();
 				}
-				else
-				{
+				else {
 					mesh = skeletal_mesh_component->getSkeletalMesh();
 				}
 
-				if (mesh)
-				{
+				if (mesh) {
 					// draw mesh bounding boxes
 					BoundingBox bounding_box = mesh->m_bounding_box.transform(transform_component->getGlobalMatrix());
-					if ((m_show_debug_option & (1 << 1)) == (1 << 1))
-					{
+					if ((m_show_debug_option & (1 << 1)) == (1 << 1)) {
 						ddm->drawBox(bounding_box.center(), bounding_box.extent(), k_zero_vector, Color3::Yellow);
 					}
 
@@ -271,13 +248,11 @@ namespace Yurrgoht
 					std::shared_ptr<StaticMeshRenderData> static_mesh_render_data = nullptr;
 					std::shared_ptr<SkeletalMeshRenderData> skeletal_mesh_render_data = nullptr;
 
-					if (is_skeletal_mesh)
-					{
+					if (is_skeletal_mesh) {
 						skeletal_mesh_render_data = std::make_shared<SkeletalMeshRenderData>();
 						static_mesh_render_data = skeletal_mesh_render_data;
 					}
-					else
-					{
+					else {
 						static_mesh_render_data = std::make_shared<StaticMeshRenderData>();
 					}
 
@@ -286,8 +261,7 @@ namespace Yurrgoht
 					static_mesh_render_data->index_buffer = mesh->m_index_buffer;
 
 					// update uniform buffers
-					if (is_skeletal_mesh)
-					{
+					if (is_skeletal_mesh) {
 						auto animator_component = entity->getComponent(AnimatorComponent);
 						skeletal_mesh_render_data->bone_ubs = animator_component->m_bone_ubs;
 					}
@@ -298,8 +272,7 @@ namespace Yurrgoht
 					static_mesh_render_data->transform_pco.mvp = camera_component->getViewProjectionMatrix() * static_mesh_render_data->transform_pco.m;
 
 					// traverse all sub meshes
-					for (size_t i = 0; i < mesh->m_sub_meshes.size(); ++i)
-					{
+					for (size_t i = 0; i < mesh->m_sub_meshes.size(); ++i) {
 						const auto& sub_mesh = mesh->m_sub_meshes[i];
 
 						static_mesh_render_data->index_counts.push_back(sub_mesh.m_index_count);
@@ -326,8 +299,7 @@ namespace Yurrgoht
 					}
 
 					mesh_render_datas.push_back(static_mesh_render_data);
-					if (std::find(m_selected_entity_ids.begin(), m_selected_entity_ids.end(), entity->getID()) != m_selected_entity_ids.end())
-					{
+					if (std::find(m_selected_entity_ids.begin(), m_selected_entity_ids.end(), entity->getID()) != m_selected_entity_ids.end()) {
 						selected_mesh_render_datas.push_back(static_mesh_render_data);
 					}
 				}
@@ -337,8 +309,7 @@ namespace Yurrgoht
 
 			// get directional light component
 			auto directional_light_component = entity->getComponent(DirectionalLightComponent);
-			if (directional_light_component)
-			{
+			if (directional_light_component) {
 				auto transform_component = entity->getComponent(TransformComponent);
 
 				// set lighting uniform buffer object
@@ -356,8 +327,7 @@ namespace Yurrgoht
 
 			// get sky light component
 			auto sky_light_component = entity->getComponent(SkyLightComponent);
-			if (sky_light_component)
-			{
+			if (sky_light_component) {
 				auto transform_component = entity->getComponent(TransformComponent);
 
 				// set lighting render data
@@ -385,8 +355,7 @@ namespace Yurrgoht
 
 			// get point light component
 			auto point_light_component = entity->getComponent(PointLightComponent);
-			if (point_light_component)
-			{
+			if (point_light_component) {
 				auto transform_component = entity->getComponent(TransformComponent);
 
 				// set lighting uniform buffer object
@@ -410,8 +379,7 @@ namespace Yurrgoht
 
 			// get point light component
 			auto spot_light_component = entity->getComponent(SpotLightComponent);
-			if (spot_light_component)
-			{
+			if (spot_light_component) {
 				auto transform_component = entity->getComponent(TransformComponent);
 
 				// set lighting uniform buffer object
@@ -442,70 +410,57 @@ namespace Yurrgoht
 		}
 
 		// directional light shadow pass: n mesh datas
-		if (lighting_ubo.has_directional_light)
-		{
+		if (lighting_ubo.has_directional_light) {
 			m_directional_light_shadow_pass->updateCascades(shadow_cascade_ci);
 
-			for (uint32_t i = 0; i < SHADOW_CASCADE_NUM; ++i)
-			{
+			for (uint32_t i = 0; i < SHADOW_CASCADE_NUM; ++i) {
 				lighting_ubo.directional_light.cascade_splits[i] = m_directional_light_shadow_pass->m_cascade_splits[i];
 				lighting_ubo.directional_light.cascade_view_projs[i] = m_directional_light_shadow_pass->m_shadow_cascade_ubo.cascade_view_projs[i];
 			}
 
-			if (lighting_ubo.directional_light.cast_shadow)
-			{
+			if (lighting_ubo.directional_light.cast_shadow) {
 				m_directional_light_shadow_pass->setRenderDatas(mesh_render_datas);
 			}
 		}
 
 		// point light shadow pass: n mesh datas
-		if (lighting_ubo.point_light_num > 0)
-		{
+		if (lighting_ubo.point_light_num > 0) {
 			m_point_light_shadow_pass->updateCubes(shadow_cube_cis);
 			const auto& point_light_shadow_textures = m_point_light_shadow_pass->getShadowImageViewSamplers();
-			for (size_t i = 0; i < point_light_shadow_textures.size(); ++i)
-			{
+			for (size_t i = 0; i < point_light_shadow_textures.size(); ++i) {
 				lighting_render_data->point_light_shadow_textures[i] = point_light_shadow_textures[i];
 			}
 
 			bool cast_shadow = false;
-			for (uint32_t i = 0; i < lighting_ubo.point_light_num; ++i)
-			{
-				if (lighting_ubo.point_lights[i].cast_shadow)
-				{
+			for (uint32_t i = 0; i < lighting_ubo.point_light_num; ++i) {
+				if (lighting_ubo.point_lights[i].cast_shadow) {
 					cast_shadow = true;
 					break;
 				}
 			}
 
-			if (cast_shadow)
-			{
+			if (cast_shadow) {
 				m_point_light_shadow_pass->setRenderDatas(mesh_render_datas);
 			}
 		}
 
 		// spot light shadow pass: n mesh datas
-		if (lighting_ubo.spot_light_num > 0)
-		{
+		if (lighting_ubo.spot_light_num > 0) {
 			m_spot_light_shadow_pass->updateFrustums(shadow_frustum_cis);
 			const auto& spot_light_shadow_textures = m_spot_light_shadow_pass->getShadowImageViewSamplers();
-			for (size_t i = 0; i < spot_light_shadow_textures.size(); ++i)
-			{
+			for (size_t i = 0; i < spot_light_shadow_textures.size(); ++i) {
 				lighting_render_data->spot_light_shadow_textures[i] = spot_light_shadow_textures[i];
 			}
 
 			bool cast_shadow = false;
-			for (uint32_t i = 0; i < lighting_ubo.spot_light_num; ++i)
-			{
+			for (uint32_t i = 0; i < lighting_ubo.spot_light_num; ++i) {
 				lighting_ubo.spot_lights[i].view_proj = m_spot_light_shadow_pass->m_light_view_projs[i];
-				if (lighting_ubo.spot_lights[i]._pl.cast_shadow)
-				{
+				if (lighting_ubo.spot_lights[i]._pl.cast_shadow) {
 					cast_shadow = true;
 				}
 			}
 
-			if (cast_shadow)
-			{
+			if (cast_shadow) {
 				m_spot_light_shadow_pass->setRenderDatas(mesh_render_datas);
 			}
 		}
@@ -536,6 +491,8 @@ namespace Yurrgoht
 		postprocess_render_data->p_color_texture = m_main_pass->getColorTexture();
 		postprocess_render_data->outline_texture = m_outline_pass->getColorTexture();
 		m_postprocess_pass->setRenderDatas({postprocess_render_data});
+
+		LOG_INFO("END SUCCESS");
 	}
 
 	void RenderSystem::addBillboardRenderData(

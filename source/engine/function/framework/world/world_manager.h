@@ -12,6 +12,7 @@ namespace Yurrgoht
 		void tick(float delta_time);
 
 		void openWorld(const URL& url);
+		void CreateNewDefaultWorld();
 		void createWorld(const URL& template_url, const URL& save_as_url);
 		bool saveWorld();
 		bool saveAsWorld(const URL& url);

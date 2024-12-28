@@ -17,6 +17,7 @@ namespace Yurrgoht {
 	void EditorUI::init() {
 		m_texture_2d_sampler = VulkanUtil::createSampler(VK_FILTER_LINEAR, VK_FILTER_LINEAR, 0,
 			VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+		LOG_INFO("SUCCESS");
 	}
 
 	void EditorUI::destroy()

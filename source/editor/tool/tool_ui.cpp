@@ -7,7 +7,6 @@
 namespace Yurrgoht
 {
 	void ToolUI::init() {
-        std::cout << "ToolUI initializing" << std::endl;
 		m_title = "Tool";
 
 		entity_categories = {
@@ -37,6 +36,7 @@ namespace Yurrgoht
 				entity_typess.front().push_back(std::string(ICON_FA_ASTERISK) + " " + entity_class_name);
 			}
 		}
+		LOG_INFO("SUCCESS");
 	}
 
 	void ToolUI::construct()

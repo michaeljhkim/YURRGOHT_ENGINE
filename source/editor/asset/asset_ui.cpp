@@ -6,8 +6,7 @@
 
 namespace Yurrgoht
 {
-	void AssetUI::init()
-	{
+	void AssetUI::init() {
 		EditorUI::init();
 		m_title = "Asset";
 
@@ -31,6 +30,7 @@ namespace Yurrgoht
 
 		// register drop callback
 		g_engine.eventSystem()->addListener(EEventType::WindowDrop, std::bind(&AssetUI::onDropFiles, this, std::placeholders::_1));
+		LOG_INFO("SUCCESS");
 	}
 
 	void AssetUI::construct()

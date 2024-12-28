@@ -19,14 +19,13 @@ namespace Yurrgoht
         LOG_INFO("start engine");
     }
 
-    void Engine::destroy()
-    {
+    void Engine::destroy() {
         LOG_INFO("stop engine");
         g_engine.destroy();
     }
 
-    bool Engine::tick(float delta_time)
-    {
+    bool Engine::tick(float delta_time) {
+		LOG_INFO("Delta Time: {}", delta_time);
         logicTick(delta_time);
         renderTick(delta_time);
 
@@ -37,44 +36,43 @@ namespace Yurrgoht
         g_engine.windowSystem()->pollEvents();
         g_engine.windowSystem()->setTitle(std::string(APP_NAME) + " - " + std::to_string(getFPS()) + " FPS");
 
+		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
         return !g_engine.windowSystem()->shouldClose();
     }
 
-    float Engine::calcDeltaTime()
-    {
+    float Engine::calcDeltaTime() {
         float delta_time;
         std::chrono::steady_clock::time_point tick_time_point = std::chrono::steady_clock::now();
         std::chrono::duration<float> time_span = std::chrono::duration_cast<std::chrono::duration<float>>(tick_time_point - m_last_tick_time_point);
         delta_time = time_span.count();
         m_last_tick_time_point = tick_time_point;
 
+		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
         return delta_time;
     }
 
-    void Engine::logicTick(float delta_time)
-    {
+    void Engine::logicTick(float delta_time) {
         g_engine.eventSystem()->tick();
         g_engine.worldManager()->tick(delta_time);
 		g_engine.timerManager()->tick(delta_time);
+		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
 	}
 
-    void Engine::renderTick(float delta_time)
-    {
+    void Engine::renderTick(float delta_time) {
         g_engine.renderSystem()->tick(delta_time);
+		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
     }
 
-    void Engine::calcFPS(float delta_time)
-    {
+    void Engine::calcFPS(float delta_time) {
         const float k_update_fps_time = 1.0f;
         static float update_fps_timer = 0.0f;
-        if (update_fps_timer > k_update_fps_time)
-        {
+        if (update_fps_timer > k_update_fps_time) {
             m_fps = static_cast<int>(1.0f / delta_time);
             update_fps_timer -= k_update_fps_time;
         }
-        else
-        {
+        else {
             update_fps_timer += delta_time;
         }
+		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
     }
 }

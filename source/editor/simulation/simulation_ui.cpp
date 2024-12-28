@@ -26,8 +26,7 @@
 namespace Yurrgoht
 {
 
-	void SimulationUI::init()
-	{
+	void SimulationUI::init() {
 		m_title = "Simulation";
 		m_color_texture_sampler = VulkanUtil::createSampler(VK_FILTER_LINEAR, VK_FILTER_LINEAR, 1, VK_SAMPLER_ADDRESS_MODE_REPEAT,
 			VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_ADDRESS_MODE_REPEAT);
@@ -38,10 +37,10 @@ namespace Yurrgoht
 
 		g_engine.eventSystem()->addListener(EEventType::WindowKey, std::bind(&SimulationUI::onKey, this, std::placeholders::_1));
 		g_engine.eventSystem()->addListener(EEventType::SelectEntity, std::bind(&SimulationUI::onSelectEntity, this, std::placeholders::_1));
+		LOG_INFO("SUCCESS");
 	}
 
-	void SimulationUI::construct()
-	{
+	void SimulationUI::construct() {
 		const std::string& world_name = g_engine.worldManager()->getCurrentWorldName();
 		sprintf(m_title_buf, "%s %s###%s", ICON_FA_GAMEPAD, world_name.c_str(), m_title.c_str());
 
@@ -49,8 +48,7 @@ namespace Yurrgoht
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, is_simulating_fullscreen ? 0.0f : 1.0f);
 
-		if (!ImGui::Begin(m_title_buf))
-		{
+		if (!ImGui::Begin(m_title_buf)) {
 			ImGui::End();
 			ImGui::PopStyleVar(2);
 			return;
@@ -58,8 +56,7 @@ namespace Yurrgoht
 		updateWindowRegion();
 
 		// hide window tab bar
-		if (ImGui::IsWindowDocked()) 
-		{
+		if (ImGui::IsWindowDocked()) {
 			ImGuiWindow* window = ImGui::FindWindowByName(m_title_buf);
 			ImGuiDockNode* node = window->DockNode;
 			bool show_tab = !is_simulating_fullscreen;
@@ -76,8 +73,7 @@ namespace Yurrgoht
 		ImVec2 content_size = ImGui::GetContentRegionAvail();
 		ImGui::Image(m_color_texture_desc_set, content_size);
 
-		if (g_engine.isSimulating())
-		{
+		if (g_engine.isSimulating()) {
 			updateCamera();
 
 			ImGui::End();
@@ -100,8 +96,7 @@ namespace Yurrgoht
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.26f, 0.59f, 0.98f, 0.8f));
 		ImGui::SetCursorPos(ImVec2(10, 30));
 		sprintf(m_title_buf, "%s view", ICON_FA_DICE_D6);
-		if (ImGui::Button(m_title_buf, ImVec2(64, 24)))
-		{
+		if (ImGui::Button(m_title_buf, ImVec2(64, 24))) {
 			ImGui::OpenPopup("view");
 		}
 
@@ -112,8 +107,7 @@ namespace Yurrgoht
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(-2.0f, -2.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.0f, 8.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12.0f, 12.0f));
-		if (constructRadioButtonPopup("view", views, view_index))
-		{
+		if (constructRadioButtonPopup("view", views, view_index)) {
 			static glm::vec3 last_camera_rotation;
 			static glm::vec3 ortho_camera_rotations[6] = {
 				glm::vec3(0.0f, 0.0f, -90.0f), glm::vec3(0.0f, 0.0f, 90.0f),
@@ -121,15 +115,12 @@ namespace Yurrgoht
 				glm::vec3(0.0f, 180.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)
 			};
 
-			if (view_index == 0)
-			{
+			if (view_index == 0) {
 				m_camera_component.lock()->m_projection_type = EProjectionType::Perspective;
 				m_camera_component.lock()->getTransformComponent()->m_rotation = last_camera_rotation;
 			}
-			else
-			{
-				if (m_camera_component.lock()->m_projection_type == EProjectionType::Perspective)
-				{
+			else {
+				if (m_camera_component.lock()->m_projection_type == EProjectionType::Perspective) {
 					m_camera_component.lock()->m_projection_type = EProjectionType::Orthographic;
 					last_camera_rotation = m_camera_component.lock()->getTransformComponent()->m_rotation;
 				}
@@ -140,8 +131,7 @@ namespace Yurrgoht
 
 		ImGui::SameLine();
 		sprintf(m_title_buf, "%s shader", ICON_FA_BOWLING_BALL);
-		if (ImGui::Button(m_title_buf, ImVec2(75, 24)))
-		{
+		if (ImGui::Button(m_title_buf, ImVec2(75, 24))) {
 			ImGui::OpenPopup("shader");
 		}
 
@@ -150,15 +140,13 @@ namespace Yurrgoht
 			"lit", "unlit", "wireframe", "lighting only", "depth", "normal", "base color", "emissive color",
 			"metallic", "roughness", "occlusion", "opacity"
 		};
-		if (constructRadioButtonPopup("shader", shaders, shader_index))
-		{
+		if (constructRadioButtonPopup("shader", shaders, shader_index)) {
 			g_engine.renderSystem()->setShaderDebugOption(shader_index);
 		}
 
 		ImGui::SameLine();
 		sprintf(m_title_buf, "%s show", ICON_FA_EYE);
-		if (ImGui::Button(m_title_buf, ImVec2(64, 24)))
-		{
+		if (ImGui::Button(m_title_buf, ImVec2(64, 24))) {
 			ImGui::OpenPopup("show");
 		}
 
@@ -178,29 +166,25 @@ namespace Yurrgoht
 		ImGui::PopStyleVar(2);
 	}
 
-	void SimulationUI::destroy()
-	{
+	void SimulationUI::destroy() {
 		EditorUI::destroy();
 
 		vkDestroySampler(VulkanRHI::get().getDevice(), m_color_texture_sampler, nullptr);
 		ImGui_ImplVulkan_RemoveTexture(m_color_texture_desc_set);
 	}
 
-	void SimulationUI::onWindowResize()
-	{
+	void SimulationUI::onWindowResize() {
 		// resize render pass
 		g_engine.renderSystem()->resize(m_content_region.z, m_content_region.w);
 
 		// recreate color image and view
-		if (m_color_texture_desc_set != VK_NULL_HANDLE)
-		{
+		if (m_color_texture_desc_set != VK_NULL_HANDLE) {
 			ImGui_ImplVulkan_RemoveTexture(m_color_texture_desc_set);
 		}
 		m_color_texture_desc_set = ImGui_ImplVulkan_AddTexture(m_color_texture_sampler, g_engine.renderSystem()->getColorImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	}
 
-	void SimulationUI::loadAsset(const std::string& url)
-	{
+	void SimulationUI::loadAsset(const std::string& url) {
 		const auto& as = g_engine.assetManager();
 		EAssetType asset_type = as->getAssetType(url);
 		std::string basename = g_engine.fileSystem()->basename(url);
@@ -208,15 +192,13 @@ namespace Yurrgoht
 		const auto& world = g_engine.worldManager()->getCurrentWorld();
 		m_created_entity = world->createEntity(basename);
 
-		if (asset_type == EAssetType::StaticMesh)
-		{
+		if (asset_type == EAssetType::StaticMesh) {
 			std::shared_ptr<StaticMeshComponent> static_mesh_component = std::make_shared<StaticMeshComponent>();
 			std::shared_ptr<StaticMesh> static_mesh = as->loadAsset<StaticMesh>(url);
 			static_mesh_component->setStaticMesh(static_mesh);
 			m_created_entity->addComponent(static_mesh_component);
 		}
-		else if (asset_type == EAssetType::SkeletalMesh)
-		{
+		else if (asset_type == EAssetType::SkeletalMesh) {
 			std::shared_ptr<SkeletalMeshComponent> skeletal_mesh_component = std::make_shared<SkeletalMeshComponent>();
 			std::shared_ptr<SkeletalMesh> skeletal_mesh = as->loadAsset<SkeletalMesh>(url);
 			skeletal_mesh_component->setSkeletalMesh(skeletal_mesh);
@@ -224,19 +206,16 @@ namespace Yurrgoht
 
 			const auto& fs = g_engine.fileSystem();
 			std::vector<std::string> filenames = fs->traverse(fs->absolute(fs->dir(url)));
-			for (const std::string& filename : filenames)
-			{
+			for (const std::string& filename : filenames) {
 				URL asset_url(filename);
 				EAssetType asset_type = as->getAssetType(asset_url);
-				if (asset_type == EAssetType::Animation && !m_created_entity->hasComponent(AnimationComponent))
-				{
+				if (asset_type == EAssetType::Animation && !m_created_entity->hasComponent(AnimationComponent)) {
 					std::shared_ptr<AnimationComponent> animation_component = std::make_shared<AnimationComponent>();
 					std::shared_ptr<Animation> animation = as->loadAsset<Animation>(asset_url);
 					animation_component->addAnimation(animation);
 					m_created_entity->addComponent(animation_component);
 				}
-				else if (asset_type == EAssetType::Skeleton && !m_created_entity->hasComponent(AnimatorComponent))
-				{
+				else if (asset_type == EAssetType::Skeleton && !m_created_entity->hasComponent(AnimatorComponent)) {
 					std::shared_ptr<AnimatorComponent> animator_component = std::make_shared<AnimatorComponent>();
 					std::shared_ptr<Skeleton> skeleton = as->loadAsset<Skeleton>(asset_url);
 					animator_component->setTickEnabled(true);
@@ -250,20 +229,15 @@ namespace Yurrgoht
 		}
 	}
 
-	bool SimulationUI::constructRadioButtonPopup(const std::string& popup_name, const std::vector<std::string>& values, int& index)
-	{
+	bool SimulationUI::constructRadioButtonPopup(const std::string& popup_name, const std::vector<std::string>& values, int& index) {
 		bool is_radio_button_pressed = false;
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMax().y));
-		if (ImGui::BeginPopup(popup_name.c_str()))
-		{
-			for (size_t i = 0; i < values.size(); ++i)
-			{
-				if (ImGui::RadioButton(values[i].c_str(), &index, i))
-				{
+		if (ImGui::BeginPopup(popup_name.c_str())) {
+			for (size_t i = 0; i < values.size(); ++i) {
+				if (ImGui::RadioButton(values[i].c_str(), &index, i)) {
 					is_radio_button_pressed = true;
 				}
-				if (i != values.size() - 1)
-				{
+				if (i != values.size() - 1) {
 					ImGui::Spacing();
 				}
 			}
@@ -273,29 +247,22 @@ namespace Yurrgoht
 		return is_radio_button_pressed;
 	}
 
-	void SimulationUI::constructCheckboxPopup(const std::string& popup_name, std::vector<std::pair<std::string, bool>>& values)
-	{
+	void SimulationUI::constructCheckboxPopup(const std::string& popup_name, std::vector<std::pair<std::string, bool>>& values) {
 		static int show_debug_option = 0;
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMax().y));
-		if (ImGui::BeginPopup(popup_name.c_str()))
-		{
-			for (size_t i = 0; i < values.size(); ++i)
-			{
-				if (ImGui::Checkbox(values[i].first.c_str(), &values[i].second))
-				{
-					if (values[i].second)
-					{
+		if (ImGui::BeginPopup(popup_name.c_str())) {
+			for (size_t i = 0; i < values.size(); ++i) {
+				if (ImGui::Checkbox(values[i].first.c_str(), &values[i].second)) {
+					if (values[i].second) {
 						show_debug_option |= (1 << i);
 					}
-					else
-					{
+					else {
 						show_debug_option &= ~(1 << i);
 					}
 
 					g_engine.renderSystem()->setShowDebugOption(show_debug_option);
 				}
-				if (i != values.size() - 1)
-				{
+				if (i != values.size() - 1) {
 					ImGui::Spacing();
 				}
 			}
@@ -303,25 +270,20 @@ namespace Yurrgoht
 		}
 	}
 
-	void SimulationUI::constructOperationModeButtons()
-	{
+	void SimulationUI::constructOperationModeButtons() {
 		std::vector<std::string> names = { ICON_FA_MOUSE_POINTER, ICON_FA_MOVE, ICON_FA_SYNC_ALT, ICON_FA_EXPAND };
-		for (size_t i = 0; i < names.size(); ++i)
-		{
+		for (size_t i = 0; i < names.size(); ++i) {
 			ImGui::SameLine(i == 0 ? ImGui::GetContentRegionAvail().x - 130 : 0.0f);
 			ImGui::PushStyleColor(ImGuiCol_Button, i == (size_t)m_operation_mode ? ImVec4(0.26f, 0.59f, 0.98f, 0.8f) : ImVec4(0.4f, 0.4f, 0.4f, 0.8f));
-			if (ImGui::Button(names[i].c_str(), ImVec2(24, 24)))
-			{
+			if (ImGui::Button(names[i].c_str(), ImVec2(24, 24))) {
 				m_operation_mode = (EOperationMode)i;
 			}
 			ImGui::PopStyleColor();
 		}
 	}
 
-	void SimulationUI::constructImGuizmo()
-	{
- 		if (!m_selected_entity.lock())
- 		{
+	void SimulationUI::constructImGuizmo() {
+ 		if (!m_selected_entity.lock()) {
  			return;
  		}
 
@@ -336,15 +298,12 @@ namespace Yurrgoht
 
 		auto transform_component = m_selected_entity.lock()->getComponent(TransformComponent);
 		glm::mat4 matrix = transform_component->getGlobalMatrix();
-		if (m_operation_mode != EOperationMode::Pick)
-		{
+		if (m_operation_mode != EOperationMode::Pick) {
 			ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
-			if (m_operation_mode == EOperationMode::Rotate)
-			{
+			if (m_operation_mode == EOperationMode::Rotate) {
 				operation = ImGuizmo::ROTATE;
 			}
-			else if (m_operation_mode == EOperationMode::Scale)
-			{
+			else if (m_operation_mode == EOperationMode::Scale) {
 				operation = ImGuizmo::SCALE;
 			}
 
@@ -353,104 +312,81 @@ namespace Yurrgoht
 				glm::value_ptr(matrix), glm::value_ptr(delta_matrix), nullptr, nullptr, nullptr);
 
 			// only set gizmo's transformation to selected entity if the simulation window is focused
-			if (ImGui::IsWindowFocused())
-			{
+			if (ImGui::IsWindowFocused()) {
 				glm::vec3 translation, rotation, scale;
 				ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
 
-				if (m_operation_mode == EOperationMode::Translate)
-				{
+				if (m_operation_mode == EOperationMode::Translate) {
 					transform_component->m_position = translation;
 				}
-				else if (m_operation_mode == EOperationMode::Rotate)
-				{
+				else if (m_operation_mode == EOperationMode::Rotate) {
 					transform_component->m_rotation = rotation;
 				}
-				else if (m_operation_mode == EOperationMode::Scale)
-				{
+				else if (m_operation_mode == EOperationMode::Scale) {
 					transform_component->m_scale = scale;
 				}
 			}
 		}
 	}
 
-	void SimulationUI::onKey(const std::shared_ptr<class Event>& event)
-	{
+	void SimulationUI::onKey(const std::shared_ptr<class Event>& event) {
 		const WindowKeyEvent* key_event = static_cast<const WindowKeyEvent*>(event.get());
-		if (key_event->action != GLFW_PRESS)
-		{
+		if (key_event->action != GLFW_PRESS) {
 			return;
 		}
 
-		if (key_event->key == GLFW_KEY_F11)
-		{
+		if (key_event->key == GLFW_KEY_F11) {
 			g_editor.toggleFullscreen();
 		}
 
-		if (g_engine.isEditor())
-		{
+		if (g_engine.isEditor()) {
 			EWorldMode current_world_mode = g_engine.worldManager()->getWorldMode();
-			if (key_event->mods == GLFW_MOD_ALT && key_event->key == GLFW_KEY_P)
-			{
-				if (current_world_mode == EWorldMode::Edit)
-				{
+			if (key_event->mods == GLFW_MOD_ALT && key_event->key == GLFW_KEY_P) {
+				if (current_world_mode == EWorldMode::Edit) {
 					g_engine.worldManager()->setWorldMode(EWorldMode::Play);
 				}
 			}
-			else if (key_event->key == GLFW_KEY_ESCAPE)
-			{
-				if (current_world_mode == EWorldMode::Play)
-				{
+			else if (key_event->key == GLFW_KEY_ESCAPE) {
+				if (current_world_mode == EWorldMode::Play) {
 					g_engine.worldManager()->setWorldMode(EWorldMode::Edit);
 				}
 			}
 
-			if (m_selected_entity.lock())
-			{
+			if (m_selected_entity.lock()) {
 				uint32_t selected_entity_id = m_selected_entity.lock()->getID();
-				if (key_event->key == GLFW_KEY_ESCAPE || key_event->key == GLFW_KEY_DELETE)
-				{
+				if (key_event->key == GLFW_KEY_ESCAPE || key_event->key == GLFW_KEY_DELETE) {
 					g_engine.eventSystem()->syncDispatch(std::make_shared<SelectEntityEvent>(UINT_MAX));
 				}
-				if (key_event->key == GLFW_KEY_DELETE)
-				{
+				if (key_event->key == GLFW_KEY_DELETE) {
 					g_engine.worldManager()->getCurrentWorld()->removeEntity(selected_entity_id);
 				}
 			}
 
-			if (!isFocused())
-			{
+			if (!isFocused()) {
 				return;
 			}
 
-			if (m_selected_entity.lock() || !m_mouse_right_button_pressed)
-			{
-				if (key_event->key == GLFW_KEY_Q)
-				{
+			if (m_selected_entity.lock() || !m_mouse_right_button_pressed) {
+				if (key_event->key == GLFW_KEY_Q) {
 					m_operation_mode = EOperationMode::Pick;
 				}
-				else if (key_event->key == GLFW_KEY_W)
-				{
+				else if (key_event->key == GLFW_KEY_W) {
 					m_operation_mode = EOperationMode::Translate;
 				}
-				else if (key_event->key == GLFW_KEY_E)
-				{
+				else if (key_event->key == GLFW_KEY_E) {
 					m_operation_mode = EOperationMode::Rotate;
 				}
-				else if (key_event->key == GLFW_KEY_R)
-				{
+				else if (key_event->key == GLFW_KEY_R) {
 					m_operation_mode = EOperationMode::Scale;
 				}
 			}
 		}
 	}
 
-	void SimulationUI::onSelectEntity(const std::shared_ptr<class Event>& event)
-	{
+	void SimulationUI::onSelectEntity(const std::shared_ptr<class Event>& event) {
 		const SelectEntityEvent* p_event = static_cast<const SelectEntityEvent*>(event.get());
 
-		if (p_event->entity_id != m_camera_component.lock()->getParent().lock()->getID())
-		{
+		if (p_event->entity_id != m_camera_component.lock()->getParent().lock()->getID()) {
 			const auto& current_world = g_engine.worldManager()->getCurrentWorld();
 			m_selected_entity = current_world->getEntity(p_event->entity_id);
 		}

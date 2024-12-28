@@ -5,11 +5,11 @@
 namespace Yurrgoht
 {
 
-	void WorldUI::init()
-	{
+	void WorldUI::init() {
 		m_title = "World";
 
 		g_engine.eventSystem()->addListener(EEventType::SelectEntity, std::bind(&WorldUI::onSelectEntity, this, std::placeholders::_1));
+		LOG_INFO("SUCCESS");
 	}
 
 	void WorldUI::construct()

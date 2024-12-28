@@ -17,36 +17,44 @@ namespace Yurrgoht
 {
     void LogSystem::init()
     {
-        // console sink
+        // Console sink for immediate terminal output (synchronous)
         auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         console_sink->set_level(spdlog::level::trace);
         console_sink->set_pattern("[%^%l%$] %v");
 
-        // file sink
+        // File sink for persistent storage with log rotation (asynchronous)
         std::string log_filename = getLogFilename();
-		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(log_filename, MAX_ROTATE_FILE_SIZE, MAX_ROTATE_FILE_NUM);
-		file_sink->set_level(spdlog::level::trace);
-		file_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] %v");
+        auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(log_filename, MAX_ROTATE_FILE_SIZE, MAX_ROTATE_FILE_NUM);
+        file_sink->set_level(spdlog::level::trace);
+        file_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] %v");
 
-        // ring-buffer sink
+        // Ring-buffer sink for real-time log storage in memory (asynchronous)
         m_ringbuffer_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(MAX_RINGBUFFER_SIZE);
         m_ringbuffer_sink->set_level(spdlog::level::trace);
         m_ringbuffer_sink->set_pattern("[%l] %v");
 
-        // create multi-sink logger
+        // Create multi-sink logger (console sink will be synchronous, others async)
         spdlog::init_thread_pool(8192, 1);
 
 #ifdef DEBUG
-        const spdlog::sinks_init_list sink_list = { console_sink, file_sink, m_ringbuffer_sink };
+    const spdlog::sinks_init_list sink_list = { file_sink, m_ringbuffer_sink };
+
+    // synchronous logger to flush logs to terminal immediately - only for console sink
+    c_logger = std::make_shared<spdlog::logger>("console_sink_logger", console_sink);
+    c_logger->flush_on(spdlog::level::info);
+    spdlog::register_logger(c_logger);
 #else
-        const spdlog::sinks_init_list sink_list = { file_sink, m_ringbuffer_sink };
+    const spdlog::sinks_init_list sink_list = { file_sink, m_ringbuffer_sink };
 #endif
-        
+
+        // Create an async logger for the file and ring-buffer sinks
         m_logger = std::make_shared<spdlog::async_logger>("multi_sink_logger",
             sink_list.begin(), sink_list.end(), spdlog::thread_pool(),
             spdlog::async_overflow_policy::block);
         m_logger->set_level(spdlog::level::trace);
+        m_logger->flush_on(spdlog::level::trace); // Flush logs to file
 
+        // Register the logger with spdlog
         spdlog::register_logger(m_logger);
     }
 

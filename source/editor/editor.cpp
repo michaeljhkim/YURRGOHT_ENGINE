@@ -36,6 +36,7 @@ namespace Yurrgoht {
 
         // set construct ui function to UIPass through RenderSystem
         g_engine.eventSystem()->addListener(EEventType::RenderConstructUI, [this](const EventPointer& event) { constructUI(); });
+		LOG_INFO("SUCCESS");
     }
 
     void Editor::destroy() {
@@ -60,8 +61,9 @@ namespace Yurrgoht {
             // TODO
 
             // tick engine
-            if (!m_engine->tick(delta_time))
+            if (!m_engine->tick(delta_time)) {
                 return;
+            }
         }
     }
 
@@ -70,8 +72,9 @@ namespace Yurrgoht {
             m_simulation_ui->construct();
         }
         else {
-			for (auto& editor_ui : m_editor_uis)
+			for (auto& editor_ui : m_editor_uis) {
 				editor_ui->construct();
+            }
         }
 	}
 

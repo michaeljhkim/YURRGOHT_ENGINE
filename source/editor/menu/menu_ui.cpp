@@ -11,7 +11,6 @@ namespace Yurrgoht
 {
 
 	void MenuUI::init() {
-        std::cout << "MenuUI initializing" << std::endl;
 		m_title = "Menu";
 
 		// load editor layout
@@ -23,10 +22,10 @@ namespace Yurrgoht
 			{ "empty", "asset/engine/world/empty.world", loadImGuiImageFromFile("asset/engine/world/empty.png")},
 			{ "basic", "asset/engine/world/basic.world", loadImGuiImageFromFile("asset/engine/world/basic.png")}
 		};
-		for (const auto& template_world : m_template_worlds)
-		{
+		for (const auto& template_world : m_template_worlds) {
 			m_template_world_hover_states[template_world.name] = { false };
 		}
+		LOG_INFO("SUCCESS");
 	}
 
 	void MenuUI::construct()
