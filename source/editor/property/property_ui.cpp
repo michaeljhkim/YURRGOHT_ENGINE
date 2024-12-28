@@ -9,8 +9,8 @@
 namespace Yurrgoht
 {
 
-	void PropertyUI::init()
-	{
+	void PropertyUI::init() {
+        std::cout << "PropertyUI initializing" << std::endl;
 		m_title = "Property";
 		m_property_constructors = {
 			{ EPropertyValueType::Bool, std::bind(&PropertyUI::constructPropertyBool, this, std::placeholders::_1, std::placeholders::_2) },

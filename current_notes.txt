@@ -4,25 +4,21 @@
 - must convert glfw code to sdl2
 - must figure out how to create editor executable seperate from user developer code
 
-- The Test executable technically works, but it seg faults right away
-- first guess is environment differences
-- rttr can only be compiled with gcc, but when done statically, it cannot just be linked with a clang project
+- editor/simulation/simulation_ui is where we call the sky texture
+- asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
+- config folder has a .yaml file that controls locations of the default world
 
-
-- Keep Local dependencies:
-- imgui
-- tinygltf
+- PROBLEM: cannot open default .world files made by bamboo due to namespaces being different
+- FIX: figure out how 1 world is made, then create a function (or class) that constructs that default world. Just enough to get started
+- Make it a function so that I can make new default worlds in case I need to make bigger changes
 
 
 sudo docker build -t yurrgoht/testapp:1.0 .
 cmake -G Ninja -S . -B build
 cmake --build build --config Release
 
-
 cd build/source
 ./Test
-
-
 
 # Runtime library search paths (optional for dynamically loaded libraries, but not critical for static executables)
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/libs)
@@ -36,24 +32,20 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/libs)
 endif()
 
 
-# spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
-#RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
-#    sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
 
+CURRENT CMDLINE ERROR OUTPUT:
 
-
-
-    
-# JoltPhysics dependency
-RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz && \
-    tar -xzvf v5.2.0.tar.gz && \
-    cd JoltPhysics-5.2.0/Build && \ 
-    ./cmake_linux_clang_gcc.sh Debug clang++ -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_EXTENSIONS=OFF -DJPH_PROFILE_ENABLED=ON -DJPH_DEBUG_RENDERER=ON \
-    -DTARGET_HELLO_WORLD=OFF -DTARGET_PERFORMANCE_TEST=OFF -DTARGET_SAMPLES=OFF -DTARGET_UNIT_TESTS=OFF -DTARGET_VIEWER=OFF \
-    -DDOUBLE_PRECISION=OFF -DGENERATE_DEBUG_SYMBOLS=ON -DCROSS_PLATFORM_DETERMINISTIC=OFF -DCROSS_COMPILE_ARM=OFF -DBUILD_SHARED_LIBS=OFF \ 
-    -DINTERPROCEDURAL_OPTIMIZATION=ON -DFLOATING_POINT_EXCEPTIONS_ENABLED=ON -DOBJECT_LAYER_BITS=16 -DENABLE_ALL_WARNINGS=ON -DTRACK_BROADPHASE_STATS=OFF \ 
-    -DTRACK_NARROWPHASE_STATS=OFF -DCPP_RTTI_ENABLED=ON . && \
-    cd Linux_Debug && \
-    make -j $(nproc) && \
-    #./UnitTests && \
-    cmake --install .
+sudo ./Test
+error: XDG_RUNTIME_DIR is invalid or not set in the environment.
+[info] [pickPhysicalDevice] Device[0]: NVIDIA GeForce GTX 1070 Ti DISCRETE_GPU 1.3.242
+[info] [pickPhysicalDevice] Device[1]: llvmpipe (LLVM 15.0.6, 256 bits) CPU 1.3.230
+[info] [pickPhysicalDevice] Selected device: NVIDIA GeForce GTX 1070 Ti DISCRETE_GPU 1.3.242
+Present mode: V-Sync
+WorldManager initializing
+loadWorld - loading asset/engine/world/basic.world
+PROBLEM TEXTURE: ./asset/engine/world/basic.world
+Json
+World initializing
+terminate called after throwing an instance of 'cereal::Exception'
+  what():  JSON Parsing failed - provided NVP (asset_ref) not found
+Aborted

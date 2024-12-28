@@ -15,6 +15,7 @@
 namespace Yurrgoht {
 
 	void WorldManager::init() {
+        std::cout << "WorldManager initializing" << std::endl;
 		URL default_world_url = g_engine.configManager()->getDefaultWorldUrl();
 		const auto& fs = g_engine.fileSystem();
 		std::string cache_dir = fs->getCacheDir();
@@ -107,6 +108,8 @@ namespace Yurrgoht {
 	}
 
 	bool WorldManager::loadWorld(const URL& url) {
+        std::cout << "loadWorld - loading " << url.str() << std::endl;
+		
 		if (m_current_world) {
 			m_current_world.reset();
 		}

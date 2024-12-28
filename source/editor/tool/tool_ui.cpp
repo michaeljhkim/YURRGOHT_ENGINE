@@ -6,8 +6,8 @@
 
 namespace Yurrgoht
 {
-	void ToolUI::init()
-	{
+	void ToolUI::init() {
+        std::cout << "ToolUI initializing" << std::endl;
 		m_title = "Tool";
 
 		entity_categories = {
@@ -32,9 +32,10 @@ namespace Yurrgoht
 		};
 
 		const auto& entity_class_names = g_engine.worldManager()->getCurrentWorld()->getEntityClassNames();
-		for (const std::string& entity_class_name : entity_class_names)
-		{
-			entity_typess.front().push_back(std::string(ICON_FA_ASTERISK) + " " + entity_class_name);
+		if (!entity_class_names.empty()) {
+			for (const std::string& entity_class_name : entity_class_names) {
+				entity_typess.front().push_back(std::string(ICON_FA_ASTERISK) + " " + entity_class_name);
+			}
 		}
 	}
 

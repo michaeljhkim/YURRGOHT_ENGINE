@@ -4,8 +4,8 @@
 
 namespace Yurrgoht
 {
-	void LogUI::init()
-	{
+	void LogUI::init() {
+        std::cout << "LogUI initializing" << std::endl;
 		m_title = "Log";
 	}
 

@@ -30,8 +30,9 @@ namespace Yurrgoht {
         m_editor_uis = { menu_ui, tool_ui, world_ui, property_ui, asset_ui, m_simulation_ui, log_ui };
 
         // init all editor uis
-		for (auto& editor_ui : m_editor_uis)
+		for (auto& editor_ui : m_editor_uis) {
 			editor_ui->init();
+        }
 
         // set construct ui function to UIPass through RenderSystem
         g_engine.eventSystem()->addListener(EEventType::RenderConstructUI, [this](const EventPointer& event) { constructUI(); });

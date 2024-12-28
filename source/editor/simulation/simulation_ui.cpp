@@ -527,7 +527,7 @@ namespace Yurrgoht
 						else if (entity_type.find("Sky") != std::string::npos)
 						{
 							auto sky_light_component = std::make_shared<SkyLightComponent>();
-							auto sky_texture_cube = g_engine.assetManager()->loadAsset<TextureCube>("asset/engine/texture/ibl/texc_cloudy.texc");
+							auto sky_texture_cube = g_engine.assetManager()->loadAsset<TextureCube>(DEFAULT_TEXTURE_CUBE_URL);
 							sky_light_component->setTextureCube(sky_texture_cube);
 							m_created_entity->addComponent(sky_light_component);
 						}

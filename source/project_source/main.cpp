@@ -3,7 +3,7 @@
 
 
 int main() {
-    std::cout << "Bug test!" << std::endl;
+    //std::cout << "Bug test!" << std::endl;
     Yurrgoht::Editor* editor = new Yurrgoht::Editor;
     editor->init();
     editor->run();

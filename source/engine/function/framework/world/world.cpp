@@ -10,6 +10,7 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::World)
 
 namespace Yurrgoht {
 	World::World() {
+        std::cout << "World initializing" << std::endl;
 		auto derived_entity_types = rttr::type::get_by_name("Entity").get_derived_classes();
 		for (const auto& derived_entity_type : derived_entity_types) {
 			m_entity_class_names.push_back(derived_entity_type.get_name().to_string());

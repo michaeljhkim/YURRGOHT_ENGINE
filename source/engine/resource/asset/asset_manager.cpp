@@ -180,11 +180,15 @@ namespace Yurrgoht
 
 		EAssetType asset_type = getAssetType(url);
 		EArchiveType archive_type = m_asset_archive_types[asset_type];
+
+	    std::cout << "PROBLEM TEXTURE: " << url.getAbsolute() << std::endl;
+		if (archive_type == EArchiveType::Json) { std::cout << "Json" << std::endl; }
+		else { std::cout << "Binary" << std::endl; }
+
 		const std::string& asset_ext = m_asset_type_exts[asset_type];
 		std::string filename = url.getAbsolute();
 		std::shared_ptr<Asset> asset = nullptr;
 
-	    std::cout << filename << std::endl;
 		switch (archive_type) {
 			case EArchiveType::Json: {
 				std::ifstream ifs(filename);
@@ -216,8 +220,7 @@ namespace Yurrgoht
 	std::string AssetManager::getAssetName(const std::string& asset_name, EAssetType asset_type, int asset_index, const std::string& basename)
 	{
 		const std::string& ext = m_asset_type_exts[asset_type];
-		if (!asset_name.empty())
-		{
+		if (!asset_name.empty()) {
 			std::string asset_basename = g_engine.fileSystem()->basename(asset_name);
 			asset_basename = g_engine.fileSystem()->validateBasename(asset_basename);
 			return g_engine.fileSystem()->format("%s_%s.%s", ext.c_str(), asset_basename.c_str(), ext.c_str());

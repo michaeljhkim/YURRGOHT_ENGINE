@@ -5,20 +5,16 @@
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <imgui/imgui_internal.h>
 
-namespace Yurrgoht
-{
-	void ImGuiImage::destroy()
-	{
-		if (is_owned)
-		{
+namespace Yurrgoht {
+	void ImGuiImage::destroy() {
+		if (is_owned) {
 			image_view_sampler.destroy();
 		}
 		
 		ImGui_ImplVulkan_RemoveTexture(tex_id);
 	}
 
-	void EditorUI::init()
-	{
+	void EditorUI::init() {
 		m_texture_2d_sampler = VulkanUtil::createSampler(VK_FILTER_LINEAR, VK_FILTER_LINEAR, 0,
 			VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
 	}

@@ -27,6 +27,7 @@ namespace Yurrgoht
 		virtual void destroy();
 		virtual void onWindowResize() {}
 		virtual void onWindowRepos() {}
+		std::string getEditorUiName() { return m_title; };
 
 	protected:
 		void updateWindowRegion();

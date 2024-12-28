@@ -10,8 +10,8 @@
 namespace Yurrgoht
 {
 
-	void MenuUI::init()
-	{
+	void MenuUI::init() {
+        std::cout << "MenuUI initializing" << std::endl;
 		m_title = "Menu";
 
 		// load editor layout
