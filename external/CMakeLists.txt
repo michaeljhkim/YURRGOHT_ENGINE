@@ -30,3 +30,13 @@ if(NOT TARGET imgui)
 endif()
 
 
+if(NOT TARGET Jolt)
+    option(TARGET_HELLO_WORLD "" OFF)
+    option(TARGET_PERFORMANCE_TEST "" OFF)
+    option(TARGET_SAMPLES "" OFF)
+    option(TARGET_UNIT_TESTS "" OFF)
+    option(TARGET_VIEWER "" OFF)
+
+    add_subdirectory(jolt)
+    set_target_properties(Jolt PROPERTIES FOLDER ${external_folder}/jolt)
+endif()

@@ -5,8 +5,7 @@
 
 namespace Yurrgoht
 {
-	enum class ETextureCompressionMode
-	{
+	enum class ETextureCompressionMode {
 		None, ETC1S, ASTC, ZSTD
 	};
 

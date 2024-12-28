@@ -169,14 +169,12 @@ namespace Yurrgoht
 	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url)
 	{
 		// check if the asset url exists
-		if (!g_engine.fileSystem()->exists(url.str()))
-		{
+		if (!g_engine.fileSystem()->exists(url.str())) {
 			return nullptr;
 		}
 
 		// check if the asset has been loaded
-		if (m_assets.find(url) != m_assets.end())
-		{
+		if (m_assets.find(url) != m_assets.end()) {
 			return m_assets[url];
 		}
 
@@ -186,32 +184,29 @@ namespace Yurrgoht
 		std::string filename = url.getAbsolute();
 		std::shared_ptr<Asset> asset = nullptr;
 
-		switch (archive_type)
-		{
-		case EArchiveType::Json:
-		{
-			std::ifstream ifs(filename);
-			cereal::JSONInputArchive archive(ifs);
-			archive(asset);
-		}
-		break;
-		case EArchiveType::Binary:
-		{
-			std::ifstream ifs(filename, std::ios::binary);
-			cereal::BinaryInputArchive archive(ifs);
-			archive(asset);
-		}
-		break;
-		default:
-			break;
+	    std::cout << filename << std::endl;
+		switch (archive_type) {
+			case EArchiveType::Json: {
+				std::ifstream ifs(filename);
+				cereal::JSONInputArchive archive(ifs);
+				archive(asset);
+				break;
+			}
+			case EArchiveType::Binary: {
+				std::ifstream ifs(filename, std::ios::binary);
+				cereal::BinaryInputArchive archive(ifs);
+				archive(asset);
+				break;
+			}
+			default:
+				break;
 		}
 
 		asset->setURL(url);
 		asset->inflate();
 
 		// don't cache world!
-		if (asset_type != EAssetType::World)
-		{
+		if (asset_type != EAssetType::World) {
 			m_assets[url] = asset;
 		}
 		

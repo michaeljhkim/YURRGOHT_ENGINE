@@ -12,13 +12,11 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Texture2D)
 namespace Yurrgoht
 {
 
-	Texture2D::Texture2D()
-	{
+	Texture2D::Texture2D() {
 		m_compression_mode = ETextureCompressionMode::ASTC;
 	}
 
-	void Texture2D::inflate()
-	{
+	void Texture2D::inflate() {
 		m_layers = 1;
 		m_mip_levels = isMipmap() ? VulkanUtil::calcMipLevel(m_width, m_height) : 1;
 
@@ -60,12 +58,10 @@ namespace Yurrgoht
 		uint32_t mip_width = m_width;
 		uint32_t mip_height = m_height;
 		uint32_t pixel_size = VulkanUtil::calcFormatSize(getFormat());
-		for (uint32_t i = 0; i < m_mip_levels; ++i)
-		{
+		for (uint32_t i = 0; i < m_mip_levels; ++i) {
 			const std::vector<uint8_t>* p_mip_data = nullptr;
 
-			if (i == 0)
-			{
+			if (i == 0) {
 				p_mip_data = &m_image_data;
 			}
 			else
@@ -77,13 +73,11 @@ namespace Yurrgoht
 
 				mip_image_datas[i].resize(mip_width * mip_height * pixel_size);
 				const uint8_t* last_mip_data = i == 1 ? m_image_data.data() : mip_image_datas[i - 1].data();
-				if (isSRGB())
-				{
+				if (isSRGB()) {
 					stbir_resize_uint8_srgb(last_mip_data, last_mip_width, last_mip_height, last_mip_width * pixel_size,
 						mip_image_datas[i].data(), mip_width, mip_height, mip_width * pixel_size, STBIR_RGBA);
 				}
-				else
-				{
+				else {
 					stbir_resize_uint8_linear(last_mip_data, last_mip_width, last_mip_height, last_mip_width * pixel_size,
 						mip_image_datas[i].data(), mip_width, mip_height, mip_width * pixel_size, STBIR_RGBA);
 				}

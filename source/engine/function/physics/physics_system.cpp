@@ -209,8 +209,7 @@ namespace Yurrgoht
 	PhysicsSystem::PhysicsSystem() = default;
 	PhysicsSystem::~PhysicsSystem() = default;
 
-	void PhysicsSystem::init()
-	{
+	void PhysicsSystem::init() {
 		// register allocation hook
 		JPH::RegisterDefaultAllocator();
 

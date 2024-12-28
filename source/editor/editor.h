@@ -3,10 +3,8 @@
 #include <memory>
 #include <vector>
 
-namespace Yurrgoht
-{
-    class Editor
-    {
+namespace Yurrgoht {
+    class Editor {
         public:
             void init();
             void destroy();

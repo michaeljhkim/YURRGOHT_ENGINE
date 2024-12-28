@@ -3,15 +3,12 @@
 #include "engine/function/framework/entity/entity.h"
 #include "engine/resource/asset/base/asset.h"
 
-namespace Yurrgoht
-{
-	enum class EWorldMode
-	{
+namespace Yurrgoht {
+	enum class EWorldMode {
 		Edit, Play, Pause
 	};
 
-	class World : public Asset, public std::enable_shared_from_this<World>
-	{
+	class World : public Asset, public std::enable_shared_from_this<World> {
 	public:
 		~World();
 
@@ -32,8 +29,7 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("entities", m_entities));
 		}
 

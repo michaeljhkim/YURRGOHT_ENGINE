@@ -13,12 +13,10 @@
 #include "engine/resource/asset/asset_manager.h"
 #include "engine/core/vulkan/vulkan_rhi.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
     EngineContext g_engine;
 
-    void EngineContext::init()
-    {
+    void EngineContext::init() {
 		m_timer_manager = std::make_shared<TimerManager>();
         m_timer_manager->init();
 
@@ -58,8 +56,7 @@ namespace Yurrgoht
         m_debug_draw_system->init();
     }
 
-    void EngineContext::destroy()
-    {
+    void EngineContext::destroy() {
 		// wait all gpu operations done
         VulkanRHI::get().waitDeviceIdle();
 

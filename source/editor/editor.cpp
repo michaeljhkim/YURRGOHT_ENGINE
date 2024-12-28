@@ -13,10 +13,8 @@
 #include "engine/core/vulkan/vulkan_rhi.h"
 #include "engine/core/event/event_system.h"
 
-namespace Yurrgoht
-{
-    void Editor::init()
-    {
+namespace Yurrgoht {
+    void Editor::init() {
         // init engine
         m_engine = new Yurrgoht::Engine;
         m_engine->init();
@@ -33,34 +31,27 @@ namespace Yurrgoht
 
         // init all editor uis
 		for (auto& editor_ui : m_editor_uis)
-		{
 			editor_ui->init();
-		}
 
         // set construct ui function to UIPass through RenderSystem
         g_engine.eventSystem()->addListener(EEventType::RenderConstructUI, [this](const EventPointer& event) { constructUI(); });
     }
 
-    void Editor::destroy()
-    {
+    void Editor::destroy() {
 		// wait all gpu operations done
 		VulkanRHI::get().waitDeviceIdle();
 
 		// destroy all editor uis
 		for (auto& editor_ui : m_editor_uis)
-		{
 			editor_ui->destroy();
-		}
 
         // destroy engine
         m_engine->destroy();
         delete m_engine;
     }
 
-    void Editor::run()
-    {
-        while (true)
-        {
+    void Editor::run() {
+        while (true) {
             // get delta time
             float delta_time = m_engine->calcDeltaTime();
 
@@ -69,24 +60,17 @@ namespace Yurrgoht
 
             // tick engine
             if (!m_engine->tick(delta_time))
-            {
                 return;
-            }
         }
     }
 
-	void Editor::constructUI()
-	{
-        if (g_editor.isSimulationPanelFullscreen())
-        {
+	void Editor::constructUI() {
+        if (g_editor.isSimulationPanelFullscreen()) {
             m_simulation_ui->construct();
         }
-        else
-        {
+        else {
 			for (auto& editor_ui : m_editor_uis)
-			{
 				editor_ui->construct();
-			}
         }
 	}
 

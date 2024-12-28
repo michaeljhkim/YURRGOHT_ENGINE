@@ -24,7 +24,7 @@ namespace Yurrgoht
 		VkFormat getColorFormat() { return m_surface_format.format; }
 		VkFormat getDepthFormat() { return m_depth_format; }
 		VkDevice getDevice() { return m_device; }
-		uint32_t getGraphicsQueueFamily() { return m_queue_family_indices.graphics; }
+		uint32_t getGraphicsQueueFamily() { return m_queue_family_indices.graphics_family; }
 		VkQueue getGraphicsQueue() { return m_graphics_queue; }
 		VkQueue getTransferQueue() { return m_transfer_queue; }
 		VmaAllocator getAllocator() { return m_allocator; }
@@ -46,9 +46,12 @@ namespace Yurrgoht
 	private:
 		struct QueueFamilyIndices
 		{
-			uint32_t graphics;
-			uint32_t compute;
-			uint32_t transfer;
+			uint32_t graphics_family;
+			uint32_t compute_family;
+			uint32_t transfer_family;
+			bool graphicsFamilyHasValue = false;
+			bool presentFamilyHasValue = false;
+			bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
 		};
 
 		struct SwapchainSupportDetails

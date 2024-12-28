@@ -13,18 +13,8 @@ RUN dnf install -y \
     mesa-libGL mesa-vulkan-drivers \
     wayland-devel libxkbcommon-devel wayland-protocols-devel extra-cmake-modules \ 
     libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel libXrender-devel
-
-    
-# JoltPhysics dependency
-RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz && \
-    tar -xzvf v5.2.0.tar.gz && \
-    cd JoltPhysics-5.2.0/Build && \ 
-    cmake -DBUILD_SHARED_LIBS=OFF . && \
-    ./cmake_linux_clang_gcc.sh && \
-    cd Linux_Debug && \
-    make -j $(nproc) && \
-    ./UnitTests && \
-    cmake --install .
+RUN dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
+    dnf install -y docker
 
 # vulkan memory allocator dependency - static
 RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
@@ -57,8 +47,6 @@ RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.t
     cmake -DBUILD_SHARED_LIBS=OFF -DKTX_FEATURE_TESTS=OFF -DKTX_FEATURE_STATIC_LIBRARY=ON .. && \
     make -j && \
     make install
-
-
     
 
 
@@ -85,9 +73,7 @@ RUN wget https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz && \
     make -j && \
     make install
 
-
-# rttr dependency - static
-# manually had to set install location and then copy header files b/c rttr does not do so for static for some reason
+# rttr dependency - static - manually had to set install location and then copy header files b/c rttr does not do so for static for some reason
 RUN git clone https://github.com/rttrorg/rttr.git && \
     cd rttr && mkdir build && cd build && \
     cmake .. -G Ninja -B . -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_STANDARD=17 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON \
@@ -97,6 +83,8 @@ RUN git clone https://github.com/rttrorg/rttr.git && \
     cmake --install . && \
     cd ../src/rttr && \
     find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
+
+    
 
     
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg

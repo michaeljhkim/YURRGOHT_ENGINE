@@ -9,15 +9,12 @@
 #define DEFAULT_TEXTURE_CUBE_URL "asset/engine/texture/ibl/texc_cloudy.texc"
 #define BRDF_TEXTURE_URL "asset/engine/texture/ibl/tex_brdf_lut.tex"
 
-namespace Yurrgoht
-{
-	enum class EArchiveType
-	{
+namespace Yurrgoht {
+	enum class EArchiveType {
 		Json, Binary
 	};
 
-	class AssetManager
-	{
+	class AssetManager {
 	public:
 		void init();
 		void destroy();
@@ -33,8 +30,7 @@ namespace Yurrgoht
 		EAssetType getAssetType(const URL& url);
 
 		template<typename AssetClass>
-		std::shared_ptr<AssetClass> loadAsset(const URL& url)
-		{
+		std::shared_ptr<AssetClass> loadAsset(const URL& url) {
 			std::shared_ptr<Asset> asset = deserializeAsset(url);
 			return std::dynamic_pointer_cast<AssetClass>(asset);
 		}

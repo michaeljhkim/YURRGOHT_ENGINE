@@ -39,3 +39,21 @@ endif()
 # spdlog dependency - these 2 lines will always cause a problem for some reason that I cannot figure out
 #RUN sed -i 's/#    include <spdlog\/fmt\/bundled\/core.h>/#    include <fmt\/core.h>/' /usr/include/spdlog/fmt/fmt.h && \
 #    sed -i 's/#    include <spdlog\/fmt\/bundled\/format.h>/#    include <fmt\/format.h>/' /usr/include/spdlog/fmt/fmt.h
+
+
+
+
+    
+# JoltPhysics dependency
+RUN wget https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz && \
+    tar -xzvf v5.2.0.tar.gz && \
+    cd JoltPhysics-5.2.0/Build && \ 
+    ./cmake_linux_clang_gcc.sh Debug clang++ -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_EXTENSIONS=OFF -DJPH_PROFILE_ENABLED=ON -DJPH_DEBUG_RENDERER=ON \
+    -DTARGET_HELLO_WORLD=OFF -DTARGET_PERFORMANCE_TEST=OFF -DTARGET_SAMPLES=OFF -DTARGET_UNIT_TESTS=OFF -DTARGET_VIEWER=OFF \
+    -DDOUBLE_PRECISION=OFF -DGENERATE_DEBUG_SYMBOLS=ON -DCROSS_PLATFORM_DETERMINISTIC=OFF -DCROSS_COMPILE_ARM=OFF -DBUILD_SHARED_LIBS=OFF \ 
+    -DINTERPROCEDURAL_OPTIMIZATION=ON -DFLOATING_POINT_EXCEPTIONS_ENABLED=ON -DOBJECT_LAYER_BITS=16 -DENABLE_ALL_WARNINGS=ON -DTRACK_BROADPHASE_STATS=OFF \ 
+    -DTRACK_NARROWPHASE_STATS=OFF -DCPP_RTTI_ENABLED=ON . && \
+    cd Linux_Debug && \
+    make -j $(nproc) && \
+    #./UnitTests && \
+    cmake --install .
