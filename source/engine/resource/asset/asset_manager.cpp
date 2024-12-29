@@ -44,23 +44,19 @@ namespace Yurrgoht
 		m_default_texture_2d = VulkanUtil::loadImageViewSampler(DEFAULT_TEXTURE_2D_FILE);
 	}
 
-	void AssetManager::destroy()
-	{
-		for (auto& iter : m_assets)
-		{
+	void AssetManager::destroy() {
+		for (auto& iter : m_assets) {
 			iter.second.reset();
 		}
 		m_assets.clear();
 		m_default_texture_2d.destroy();
 	}
 
-	bool AssetManager::importGltf(const std::string& filename, const URL& folder, const GltfImportOption& option)
-	{
+	bool AssetManager::importGltf(const std::string& filename, const URL& folder, const GltfImportOption& option) {
 		return GltfImporter::importGltf(filename, folder, option);
 	}
 
-	bool AssetManager::importTexture2D(const std::string& filename, const URL& folder)
-	{
+	bool AssetManager::importTexture2D(const std::string& filename, const URL& folder) {
 		uint32_t width, height;
 		uint32_t k_channels = 4;
 		uint8_t* image_data = stbi_load(filename.c_str(), (int*)&width, (int*)&height, 0, k_channels);
@@ -85,8 +81,7 @@ namespace Yurrgoht
 		return true;
 	}
 
-	bool AssetManager::importTextureCube(const std::string& filename, const URL& folder)
-	{
+	bool AssetManager::importTextureCube(const std::string& filename, const URL& folder) {
 		std::shared_ptr<TextureCube> texture_cube = std::make_shared<TextureCube>();
 		std::string asset_name = getAssetName(filename, EAssetType::TextureCube);
 		URL url = URL::combine(folder.str(), asset_name);

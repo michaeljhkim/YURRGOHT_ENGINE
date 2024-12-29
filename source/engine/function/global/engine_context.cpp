@@ -44,6 +44,8 @@ namespace Yurrgoht {
 
 		m_asset_manager = std::make_shared<AssetManager>();
 		m_asset_manager->init();
+        m_asset_manager->importTexture2D("asset/engine/material/tex_default.png", "asset/engine/texture/ibl/");
+        m_asset_manager->importTextureCube("asset/engine/texture/gizmo/sky_light.png", "asset/engine/texture/ibl/");
 
         m_world_manager = std::make_shared<WorldManager>();
         m_world_manager->init();

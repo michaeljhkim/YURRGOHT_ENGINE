@@ -22,7 +22,7 @@ option(BUILD_SHARED_LIBS "Compile Jolt as a shared library" OFF)
 # When turning this option on, the library will be compiled with interprocedural optimizations enabled, also known as link-time optimizations or link-time code generation.
 # Note that if you turn this on you need to use SET_INTERPROCEDURAL_OPTIMIZATION() or set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON) to enable LTO specificly for your own project as well.
 # If you don't do this you may get an error: /usr/bin/ld: libJolt.a: error adding symbols: file format not recognized
-option(INTERPROCEDURAL_OPTIMIZATION "Enable interprocedural optimizations" ON)
+option(INTERPROCEDURAL_OPTIMIZATION "Enable interprocedural optimizations" OFF)
 
 # When turning this on, in Debug and Release mode, the library will emit extra code to ensure that the 4th component of a 3-vector is kept the same as the 3rd component
 # and will enable floating point exceptions during simulation to detect divisions by zero.
@@ -56,6 +56,7 @@ FetchContent_Declare(
         JoltPhysics
         GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics"
         GIT_TAG "v5.2.0"
+		SOURCE_SUBDIR "Build"
 )
 FetchContent_MakeAvailable(JoltPhysics)
 
@@ -204,12 +205,7 @@ function(SET_INTERPROCEDURAL_OPTIMIZATION)
 endfunction()
 SET_INTERPROCEDURAL_OPTIMIZATION()
 
-# Set repository root
-set(PHYSICS_REPO_ROOT ${JoltPhysics_SOURCE_DIR})
-get_filename_component(PHYSICS_REPO_ROOT ${PHYSICS_REPO_ROOT} DIRECTORY)
-
 # Make Jolt Library
-include(${PHYSICS_REPO_ROOT}/Jolt/Jolt.cmake)
 if (XCODE)
 	# Ensure that we enable SSE4.2 for the x86_64 build, XCode builds multiple architectures
 	set_property(TARGET Jolt PROPERTY XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=x86_64] "$(inherited) -msse4.2 -mpopcnt")
