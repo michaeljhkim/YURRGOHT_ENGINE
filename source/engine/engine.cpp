@@ -25,7 +25,7 @@ namespace Yurrgoht
     }
 
     bool Engine::tick(float delta_time) {
-		LOG_INFO("Delta Time: {}", delta_time);
+		//LOG_INFO("Delta Time: {}", delta_time);
         logicTick(delta_time);
         renderTick(delta_time);
 
@@ -36,7 +36,7 @@ namespace Yurrgoht
         g_engine.windowSystem()->pollEvents();
         g_engine.windowSystem()->setTitle(std::string(APP_NAME) + " - " + std::to_string(getFPS()) + " FPS");
 
-		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
+		//LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
         return !g_engine.windowSystem()->shouldClose();
     }
 
@@ -47,7 +47,7 @@ namespace Yurrgoht
         delta_time = time_span.count();
         m_last_tick_time_point = tick_time_point;
 
-		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
+		//LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
         return delta_time;
     }
 
@@ -55,12 +55,12 @@ namespace Yurrgoht
         g_engine.eventSystem()->tick();
         g_engine.worldManager()->tick(delta_time);
 		g_engine.timerManager()->tick(delta_time);
-		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
+		//LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
 	}
 
     void Engine::renderTick(float delta_time) {
         g_engine.renderSystem()->tick(delta_time);
-		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
+		//LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
     }
 
     void Engine::calcFPS(float delta_time) {
@@ -73,6 +73,6 @@ namespace Yurrgoht
         else {
             update_fps_timer += delta_time;
         }
-		LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
+		//LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
     }
 }

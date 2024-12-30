@@ -13,17 +13,11 @@ NOTE: Log output for terminal and file will be a little different
 
 int main() {
     //std::cout << "Bug test!" << std::endl;
-    /*
     Yurrgoht::Editor* editor = new Yurrgoht::Editor;
     editor->init();
     editor->run();
     editor->destroy();
     delete editor;
-    */
-
-    Yurrgoht::Engine* m_engine = new Yurrgoht::Engine;
-    m_engine->init();
-
     
     return 0;
 }

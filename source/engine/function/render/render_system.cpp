@@ -89,7 +89,7 @@ namespace Yurrgoht
 	}
 
 	void RenderSystem::tick(float delta_time) {
-		LOG_INFO("Delta Time: {}", delta_time);
+		//LOG_INFO("Delta Time: {}", delta_time);
 
 		// collect render data from entities of current world
 		collectRenderDatas();
@@ -492,7 +492,7 @@ namespace Yurrgoht
 		postprocess_render_data->outline_texture = m_outline_pass->getColorTexture();
 		m_postprocess_pass->setRenderDatas({postprocess_render_data});
 
-		LOG_INFO("END SUCCESS");
+		//LOG_INFO("END SUCCESS");
 	}
 
 	void RenderSystem::addBillboardRenderData(

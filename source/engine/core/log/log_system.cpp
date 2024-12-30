@@ -8,15 +8,14 @@
 #include <iomanip>
 #include <ctime>
 
-#define MAX_LOG_FILE_NUM 100
+#define MAX_LOG_FILE_NUM 25
 #define MAX_ROTATE_FILE_NUM 5
 #define MAX_ROTATE_FILE_SIZE 1048576 * 10
 #define MAX_RINGBUFFER_SIZE 100
 
-namespace Yurrgoht
-{
-    void LogSystem::init()
-    {
+namespace Yurrgoht {
+
+    void LogSystem::init() {
         // Console sink for immediate terminal output (synchronous)
         auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         console_sink->set_level(spdlog::level::trace);

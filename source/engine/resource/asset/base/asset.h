@@ -39,16 +39,13 @@
 		prop = g_engine.assetManager()->loadAsset<asset_class>(m_ref_urls[id]); \
 	} \
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	enum class EAssetType
-	{
+	enum class EAssetType {
 		Invalid, Texture2D, TextureCube, Material, Skeleton, StaticMesh, SkeletalMesh, Animation, World
 	};
 
-	class IAssetRef
-	{
+	class IAssetRef {
 	public:
 		// store the reference map: property_name -> asset url
 		std::map<std::string, URL> m_ref_urls;
@@ -59,12 +56,10 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("ref_urls", m_ref_urls));
 
-			if (!m_has_bound)
-			{
+			if (!m_has_bound) {
 				bindRefs();
 			}
 			m_has_bound = true;
@@ -73,9 +68,8 @@ namespace Yurrgoht
 		bool m_has_bound = false;
 	};
 
-    class Asset
-    {
-    public:
+    class Asset {
+	public:
 		void setURL(const URL& url);
 		void setName(const std::string& name) { m_name = name; }
 
@@ -86,17 +80,14 @@ namespace Yurrgoht
 
 		virtual void inflate() {}
 
-    protected:
-        URL m_url;
+	protected:
+		URL m_url;
 		std::string m_name;
-        EAssetType m_asset_type;
+		EAssetType m_asset_type;
 
-    private:
+	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
-
-		}
+		void serialize(Archive& ar) { }
     };
 }

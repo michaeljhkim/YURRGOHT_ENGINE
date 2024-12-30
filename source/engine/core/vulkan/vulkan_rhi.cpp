@@ -682,11 +682,13 @@ namespace Yurrgoht
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRHI::debugUtilsMessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, 
 		VkDebugUtilsMessageTypeFlagsEXT message_type, const VkDebugUtilsMessengerCallbackDataEXT* p_callback_data, void* p_user_data) {
 
-		if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+		if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
 			LOG_WARNING("vulkan validation layer: {}", p_callback_data->pMessage);
+		}
 
-		else if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+		else if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
 			LOG_ERROR("vulkan validation layer: {}", p_callback_data->pMessage);
+		}
 
 		return VK_FALSE;
 	}

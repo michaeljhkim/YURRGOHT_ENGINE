@@ -38,5 +38,5 @@ if(NOT TARGET Jolt)
     option(TARGET_VIEWER "" OFF)
 
     add_subdirectory(jolt)
-    set_target_properties(Jolt PROPERTIES FOLDER ${external_folder}/jolt)
+    #set_target_properties(Jolt PROPERTIES FOLDER ${external_folder}/jolt)
 endif()

@@ -3,7 +3,8 @@
 ## What is Yurrgoht?
 **Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, linux based, and is written in C++17. Dockerfile is included for easy replication of development environment
 
-This project was forked from the Bamboo game engine project by RobotBerry https://github.com/Code-Guy/Bamboo  
+- This project was forked from the Bamboo game engine project by RobotBerry https://github.com/Code-Guy/Bamboo  
+- Assets for testing: https://github.com/SaschaWillems/Vulkan
 
 <!-- 
 ![1](snapshot/robot.png)
@@ -88,7 +89,7 @@ cmake --build build --config Release
 **TEMP INSTRUCTIONS** Here for reference, but will make cleaner once I get everything else at the very least functional
 
 ```shell
-sudo docker build -t yurrgoht/testapp:1.0 .
+docker build -t yurrgoht/testapp:1.0 .
 cmake -G Ninja -S . -B build
 cmake --build build --config Release
 

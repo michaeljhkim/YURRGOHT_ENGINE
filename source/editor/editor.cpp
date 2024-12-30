@@ -14,6 +14,7 @@
 #include "engine/core/event/event_system.h"
 
 namespace Yurrgoht {
+    
     void Editor::init() {
         // init engine
         m_engine = new Yurrgoht::Engine;

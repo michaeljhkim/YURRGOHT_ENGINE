@@ -2,15 +2,15 @@
 #include "engine/core/base/macro.h"
 #include "engine/platform/timer/timer.h"
 
-#include <ktx.h>
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include <ktx.h>
 #include <tinygltf/stb_image_resize2.h>
+#include <tinygltf/stb_image_write.h>
 
 CEREAL_REGISTER_TYPE(Yurrgoht::Texture2D)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Texture2D)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
 	Texture2D::Texture2D() {
 		m_compression_mode = ETextureCompressionMode::ASTC;
@@ -20,24 +20,20 @@ namespace Yurrgoht
 		m_layers = 1;
 		m_mip_levels = isMipmap() ? VulkanUtil::calcMipLevel(m_width, m_height) : 1;
 
-		if (m_compression_mode == ETextureCompressionMode::None)
-		{
+		if (m_compression_mode == ETextureCompressionMode::None) {
 			VulkanUtil::createImageViewSampler(m_width, m_height, m_image_data.data(), m_mip_levels, m_layers, 
 				getFormat(), m_min_filter, m_mag_filter, m_address_mode_u, m_image_view_sampler);
 		}
-		else
-		{
+		else {
 			bool need_compress = m_image_data.size() == m_width * m_height * VulkanUtil::calcFormatSize(getFormat());
-			if (need_compress)
-			{
+			if (need_compress) {
 				compress();
 			}
 			transcode();
 		}
 	}
 
-	bool Texture2D::compress()
-	{
+	bool Texture2D::compress() {
 		ktxTexture* ktx_texture;
 		ktx_error_code_e result;
 		ktxTextureCreateInfo ktx_texture_ci = {};
@@ -64,12 +60,11 @@ namespace Yurrgoht
 			if (i == 0) {
 				p_mip_data = &m_image_data;
 			}
-			else
-			{
+			else {
 				uint32_t last_mip_width = mip_width;
 				uint32_t last_mip_height = mip_height;
-				if (mip_width > 1) mip_width >>= 1;
-				if (mip_height > 1) mip_height >>= 1;
+				if (mip_width > 1) { mip_width >>= 1; }
+				if (mip_height > 1) { mip_height >>= 1; }
 
 				mip_image_datas[i].resize(mip_width * mip_height * pixel_size);
 				const uint8_t* last_mip_data = i == 1 ? m_image_data.data() : mip_image_datas[i - 1].data();
@@ -89,8 +84,7 @@ namespace Yurrgoht
 		}
 		ASSERT(result == KTX_SUCCESS, "failed to create ktx_texture: {}", ktxErrorString(result));
 
-		if (m_compression_mode == ETextureCompressionMode::ETC1S || m_compression_mode == ETextureCompressionMode::ASTC)
-		{
+		if (m_compression_mode == ETextureCompressionMode::ETC1S || m_compression_mode == ETextureCompressionMode::ASTC) {
 			ktxBasisParams basis_params = {};
 			basis_params.structSize = sizeof(ktxBasisParams);
 			basis_params.threadCount = std::max(std::thread::hardware_concurrency(), 1u);
@@ -110,8 +104,7 @@ namespace Yurrgoht
 			ASSERT(result == KTX_SUCCESS, "failed to compress ktx_texture: {}", ktxErrorString(result));
 		}
 
-		if (m_compression_mode == ETextureCompressionMode::ASTC || m_compression_mode == ETextureCompressionMode::ZSTD)
-		{
+		if (m_compression_mode == ETextureCompressionMode::ASTC || m_compression_mode == ETextureCompressionMode::ZSTD) {
 			const uint32_t k_zstd_compression_level = 10;
 			result = ktxTexture2_DeflateZstd((ktxTexture2*)ktx_texture, k_zstd_compression_level);
 			ASSERT(result == KTX_SUCCESS, "failed to deflate ktx_texture: {}", ktxErrorString(result));
@@ -134,24 +127,23 @@ namespace Yurrgoht
 		return true;
 	}
 
-	bool Texture2D::transcode()
-	{
+	bool Texture2D::transcode() {
 		ktxTexture* ktx_texture;
 		ktxResult result = ktxTexture_CreateFromMemory(m_image_data.data(), m_image_data.size(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktx_texture);
 		ASSERT(result == KTX_SUCCESS, "failed to inflate texture");
 
 		VkFormat format = getFormat();
-		if (m_compression_mode == ETextureCompressionMode::ETC1S || m_compression_mode == ETextureCompressionMode::ASTC)
-		{
+		if (m_compression_mode == ETextureCompressionMode::ETC1S || m_compression_mode == ETextureCompressionMode::ASTC) {
 			ktxTexture2* ktx2_texture = (ktxTexture2*)ktx_texture;
 			ktx_transcode_fmt_e target_format = KTX_TTF_BC7_RGBA;
-			if (ktxTexture2_NeedsTranscoding(ktx2_texture))
-			{
+			if (ktxTexture2_NeedsTranscoding(ktx2_texture)) {
 				result = ktxTexture2_TranscodeBasis(ktx2_texture, target_format, 0);
 				ASSERT(result == KTX_SUCCESS, "failed to transcode texture");
 				format = (VkFormat)ktx2_texture->vkFormat;
 			}
 		}
+		//std::string texture_name = m_name + "_Texture2D.ktx";
+		//ktxTexture_WriteToNamedFile(ktx_texture, texture_name.c_str());
 
 		uploadKtxTexture(ktx_texture, format);
 		return true;

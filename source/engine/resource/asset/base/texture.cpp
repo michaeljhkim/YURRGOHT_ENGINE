@@ -4,8 +4,7 @@
 namespace Yurrgoht
 {
 
-	Texture::Texture()
-	{
+	Texture::Texture() {
 		m_width = m_height = 0;
 		m_min_filter = m_mag_filter = VK_FILTER_LINEAR;
 		setAddressMode(VK_SAMPLER_ADDRESS_MODE_REPEAT);
@@ -14,51 +13,45 @@ namespace Yurrgoht
 		m_pixel_type = EPixelType::RGBA8;
 	}
 
-	Texture::~Texture()
-	{
+	Texture::~Texture() {
 		m_image_view_sampler.destroy();
 	}
 
-	void Texture::setAddressMode(VkSamplerAddressMode address_mode)
-	{
+	void Texture::setAddressMode(VkSamplerAddressMode address_mode) {
 		m_address_mode_u = m_address_mode_v = m_address_mode_w = address_mode;
 	}
 
-	bool Texture::isSRGB()
-	{
+	bool Texture::isSRGB() {
 		return m_texture_type == ETextureType::BaseColor || m_texture_type == ETextureType::Emissive;
 	}
 
-	bool Texture::isMipmap()
-	{
+	bool Texture::isMipmap() {
 		return m_texture_type != ETextureType::Data;
 	}
 
-	VkFormat Texture::getFormat()
-	{
+	VkFormat Texture::getFormat() {
 		bool is_srgb = isSRGB();
-		switch (m_pixel_type)
-		{
-		case EPixelType::RGBA8:
-			return is_srgb ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM;
-		case EPixelType::RGBA16:
-			return VK_FORMAT_R16G16B16A16_SFLOAT;
-		case EPixelType::RGBA32:
-			return VK_FORMAT_R32G32B32A32_SFLOAT;
-		case EPixelType::R16:
-			return VK_FORMAT_R16_SFLOAT;
-		case EPixelType::R32:
-			return VK_FORMAT_R32_SFLOAT;
-		case EPixelType::RG16:
-			return VK_FORMAT_R16G16_SFLOAT;
-		default:
-			LOG_FATAL("unsupported pixel type: {}", m_pixel_type);
-			return VK_FORMAT_R8G8B8A8_SRGB;
+		switch (m_pixel_type) {
+			case EPixelType::RGBA8:
+				return is_srgb ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM;
+			case EPixelType::RGBA16:
+				return VK_FORMAT_R16G16B16A16_SFLOAT;
+			case EPixelType::RGBA32:
+				return VK_FORMAT_R32G32B32A32_SFLOAT;
+			case EPixelType::R16:
+				return VK_FORMAT_R16_SFLOAT;
+			case EPixelType::R32:
+				return VK_FORMAT_R32_SFLOAT;
+			case EPixelType::RG16:
+				return VK_FORMAT_R16G16_SFLOAT;
+			default:
+				LOG_FATAL("unsupported pixel type: {}", m_pixel_type);
+				return VK_FORMAT_R8G8B8A8_SRGB;
 		}
 	}
 
-	void Texture::uploadKtxTexture(void* p_ktx_texture, VkFormat format)
-	{
+	// If not defined, uploadKtxTexture will treat texture as 16-bit (like .exr)
+	void Texture::uploadKtxTexture(void* p_ktx_texture, VkFormat format) {
 		ktxTexture* ktx_texture = (ktxTexture*)p_ktx_texture;
 		ktx_uint8_t* ktx_texture_data = ktxTexture_GetData(ktx_texture);
 		ktx_size_t ktx_texture_size = ktxTexture_GetDataSize(ktx_texture);
@@ -72,10 +65,8 @@ namespace Yurrgoht
 
 		// create buffer image copy regions
 		std::vector<VkBufferImageCopy> buffer_image_copies;
-		for (uint32_t f = 0; f < m_layers; ++f)
-		{
-			for (uint32_t m = 0; m < m_mip_levels; ++m)
-			{
+		for (uint32_t f = 0; f < m_layers; ++f) {
+			for (uint32_t m = 0; m < m_mip_levels; ++m) {
 				ktx_size_t offset;
 				KTX_error_code result = ktxTexture_GetImageOffset(ktx_texture, m, 0, f, &offset);
 				ASSERT(result == KTX_SUCCESS, "failed to get ktx image offset");
@@ -95,7 +86,7 @@ namespace Yurrgoht
 		}
 
 		// create vulkan texture
-		format = format != VK_FORMAT_UNDEFINED ? format : getFormat();
+		format = ((format != VK_FORMAT_UNDEFINED) ? format : getFormat());
 		VulkanUtil::createImageViewSampler(m_width, m_height, nullptr, m_mip_levels, m_layers, format,
 			m_min_filter, m_mag_filter, m_address_mode_u, m_image_view_sampler,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);

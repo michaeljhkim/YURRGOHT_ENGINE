@@ -9,14 +9,15 @@
 - config folder has a .yaml file that controls locations of the default world
 - asset_manager is where the .world is attempted to be loaded, but fails due to being incompatible
 
-- PROBLEM: cannot open default .world files made by bamboo due to namespaces being different
-- FIX: figure out how 1 world is made, then create a function (or class) that constructs that default world. Just enough to get started
-- Make it a function so that I can make new default worlds in case I need to make bigger changes
-- Eventually make it so that this function can be called through editor ui
-- For now, comment it out after feature is finished
+- Program works with a ktx2 cubemap file
+- Generate with command below
+- You want a folder with 6 images (.exr, .png, .jpg, .e.tc...) with images labelled in the following fashion (extension is an example):
+- right.png left.png top.png bottom.png front.png back.png
+- NOTE: engine only works with .exr made skyboxes for now; raw 16-bit (or higher) image files
 
-- TO TRY TOMORROW: I don't think a .world is created on init, but I will have to check 
-
+FOR GENERATING DEFAULT SKYBOX - DO INSIDE FOLDER
+ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr default_skybox.ktx
+ktx create --format R8G8B8A8_SRGB --generate-mipmap --cubemap *.png default_skybox.ktx
 
 
 

@@ -7,10 +7,8 @@
 
 namespace Yurrgoht
 {
-	const char* vkErrorString(VkResult result)
-	{
-		switch (result)
-		{
+	const char* vkErrorString(VkResult result) {
+		switch (result) {
 #define STR(r) case VK_##r: return #r
 			STR(NOT_READY);
 			STR(TIMEOUT);
@@ -42,10 +40,8 @@ namespace Yurrgoht
 		}
 	}
 
-	std::string vkPhysicalDeviceTypeString(VkPhysicalDeviceType type)
-	{
-		switch (type)
-		{
+	std::string vkPhysicalDeviceTypeString(VkPhysicalDeviceType type) {
+		switch (type) {
 #define STR(r) case VK_PHYSICAL_DEVICE_TYPE_##r: return #r
 			STR(OTHER);
 			STR(INTEGRATED_GPU);
@@ -57,47 +53,37 @@ namespace Yurrgoht
 		}
 	}
 
-	void VmaBuffer::destroy()
-	{
-		if (buffer != VK_NULL_HANDLE)
-		{
+	void VmaBuffer::destroy() {
+		if (buffer != VK_NULL_HANDLE) {
 			vmaDestroyBuffer(VulkanRHI::get().getAllocator(), buffer, allocation);
 		}
 	}
 
-	void VmaImage::destroy()
-	{
-		if (image != VK_NULL_HANDLE)
-		{
+	void VmaImage::destroy() {
+		if (image != VK_NULL_HANDLE) {
 			vmaDestroyImage(VulkanRHI::get().getAllocator(), image, allocation);
 		}
 	}
 
-	void VmaImageView::destroy()
-	{
-		if (view != VK_NULL_HANDLE)
-		{
+	void VmaImageView::destroy() {
+		if (view != VK_NULL_HANDLE) {
 			vkDestroyImageView(VulkanRHI::get().getDevice(), view, nullptr);
 		}
 
 		vma_image.destroy();
 	}
 
-	void VmaImageViewSampler::destroy()
-	{
-		if (sampler != VK_NULL_HANDLE)
-		{
+	void VmaImageViewSampler::destroy() {
+		if (sampler != VK_NULL_HANDLE) {
 			vkDestroySampler(VulkanRHI::get().getDevice(), sampler, nullptr);
 		}
-		if (view != VK_NULL_HANDLE)
-		{
+		if (view != VK_NULL_HANDLE) {
 			vkDestroyImageView(VulkanRHI::get().getDevice(), view, nullptr);
 		}
 		vma_image.destroy();
 	}
 
-	VkCommandBuffer VulkanUtil::beginInstantCommands()
-	{
+	VkCommandBuffer VulkanUtil::beginInstantCommands() {
 		VkCommandBufferAllocateInfo command_buffer_ai{};
 		command_buffer_ai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		command_buffer_ai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -116,8 +102,7 @@ namespace Yurrgoht
 		return command_buffer;
 	}
 
-	void VulkanUtil::endInstantCommands(VkCommandBuffer command_buffer)
-	{
+	void VulkanUtil::endInstantCommands(VkCommandBuffer command_buffer) {
 		vkEndCommandBuffer(command_buffer);
 
 		VkSubmitInfo submit_info{};
@@ -141,8 +126,7 @@ namespace Yurrgoht
 		vkFreeCommandBuffers(VulkanRHI::get().getDevice(), VulkanRHI::get().getInstantCommandPool(), 1, &command_buffer);
 	}
 
-	void VulkanUtil::createBuffer(VkDeviceSize size, VkBufferUsageFlags buffer_usage, VmaMemoryUsage memory_usage, VmaBuffer& buffer)
-	{
+	void VulkanUtil::createBuffer(VkDeviceSize size, VkBufferUsageFlags buffer_usage, VmaMemoryUsage memory_usage, VmaBuffer& buffer) {
 		VkBufferCreateInfo buffer_ci{};
 		buffer_ci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		buffer_ci.size = size;
@@ -152,8 +136,7 @@ namespace Yurrgoht
 
 		VmaAllocationCreateInfo vma_alloc_ci{};
 		vma_alloc_ci.usage = memory_usage;
-		if (memory_usage == VMA_MEMORY_USAGE_AUTO_PREFER_HOST)
-		{
+		if (memory_usage == VMA_MEMORY_USAGE_AUTO_PREFER_HOST) {
 			vma_alloc_ci.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 		}
 		
@@ -161,8 +144,7 @@ namespace Yurrgoht
 		vmaCreateBuffer(VulkanRHI::get().getAllocator(), &buffer_ci, &vma_alloc_ci, &buffer.buffer, &buffer.allocation, nullptr);
 	}
 
-	void VulkanUtil::copyBuffer(VkBuffer src_buffer, VkBuffer dst_buffer, VkDeviceSize size)
-	{
+	void VulkanUtil::copyBuffer(VkBuffer src_buffer, VkBuffer dst_buffer, VkDeviceSize size) {
 		VkCommandBuffer command_buffer = beginInstantCommands();
 
 		VkBufferCopy copy_region{};
@@ -172,8 +154,7 @@ namespace Yurrgoht
 		endInstantCommands(command_buffer);
 	}
 
-	void VulkanUtil::updateBuffer(VmaBuffer& buffer, void* data, size_t size)
-	{
+	void VulkanUtil::updateBuffer(VmaBuffer& buffer, void* data, size_t size) {
 		void* mapped_data;
 		vmaMapMemory(VulkanRHI::get().getAllocator(), buffer.allocation, &mapped_data);
 		memcpy(mapped_data, data, size);
@@ -204,12 +185,10 @@ namespace Yurrgoht
 	{
 		// create Image
 		VkImageUsageFlags image_usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-		if (image_data)
-		{
+		if (image_data) {
 			image_usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		}
-		if (ext_use_flags)
-		{
+		if (ext_use_flags) {
 			image_usage |= ext_use_flags;
 		}
 
@@ -225,17 +204,14 @@ namespace Yurrgoht
 		// set image layout add descriptor type
 		vma_image_view_sampler.image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		vma_image_view_sampler.descriptor_type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		if (ext_use_flags & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)
-		{
+		if (ext_use_flags & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) {
 			vma_image_view_sampler.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 		}
-		if (ext_use_flags & VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT)
-		{
+		if (ext_use_flags & VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT) {
 			vma_image_view_sampler.descriptor_type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
 		}
 
-		if (image_data)
-		{
+		if (image_data) {
 			size_t image_size = width * height * calcFormatSize(format);
 			VmaBuffer staging_buffer;
 			createBuffer(image_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_AUTO_PREFER_HOST, staging_buffer);
@@ -257,8 +233,7 @@ namespace Yurrgoht
 		}
 	}
 
-	void VulkanUtil::loadImageData(const std::string& filename, uint32_t& width, uint32_t& height, std::vector<uint8_t>& image_data)
-	{
+	void VulkanUtil::loadImageData(const std::string& filename, uint32_t& width, uint32_t& height, std::vector<uint8_t>& image_data) {
 		const int k_channels = 4;
 		const auto& fs = g_engine.fileSystem();
 		uint8_t* p_image_data = stbi_load(fs->absolute(filename).c_str(), (int*)&width, (int*)&height, 0, k_channels);
@@ -275,7 +250,7 @@ namespace Yurrgoht
 	}
 
 	void VulkanUtil::createImage(uint32_t width, uint32_t height, uint32_t mip_levels, uint32_t layers, VkSampleCountFlagBits num_samples,
-		VkFormat format, VkImageTiling tiling, VkImageUsageFlags image_usage, VmaMemoryUsage memory_usage, VmaImage& image)
+		VkFormat format, VkImageTiling tiling, VkImageUsageFlags image_usage, VmaMemoryUsage memory_usage, VmaImage& image) 
 	{
 		VkImageCreateInfo image_ci{};
 		image_ci.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -295,8 +270,7 @@ namespace Yurrgoht
 
 		VmaAllocationCreateInfo vma_alloc_ci{};
 		vma_alloc_ci.usage = memory_usage;
-		if (memory_usage == VMA_MEMORY_USAGE_AUTO_PREFER_HOST)
-		{
+		if (memory_usage == VMA_MEMORY_USAGE_AUTO_PREFER_HOST) {
 			vma_alloc_ci.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 		}
 
@@ -304,8 +278,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "vma create image");
 	}
 
-	VkImageView VulkanUtil::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspect_flags, uint32_t mip_levels, uint32_t layers)
-	{
+	VkImageView VulkanUtil::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspect_flags, uint32_t mip_levels, uint32_t layers) {
 		VkImageViewCreateInfo image_view_ci{};
 		image_view_ci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		image_view_ci.image = image;
@@ -352,8 +325,7 @@ namespace Yurrgoht
 		return sampler;
 	}
 
-	void VulkanUtil::createVertexBuffer(uint32_t buffer_size, void* vertex_data, VmaBuffer& vertex_buffer)
-	{
+	void VulkanUtil::createVertexBuffer(uint32_t buffer_size, void* vertex_data, VmaBuffer& vertex_buffer) {
 		VmaBuffer staging_buffer;
 		createBuffer(buffer_size, 
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
@@ -373,8 +345,7 @@ namespace Yurrgoht
 		vmaDestroyBuffer(VulkanRHI::get().getAllocator(), staging_buffer.buffer, staging_buffer.allocation);
 	}
 
-	void VulkanUtil::createIndexBuffer(const std::vector<uint32_t>& indices, VmaBuffer& index_buffer)
-	{
+	void VulkanUtil::createIndexBuffer(const std::vector<uint32_t>& indices, VmaBuffer& index_buffer) {
 		VkDeviceSize buffer_size = sizeof(indices[0]) * indices.size();
 
 		VmaBuffer staging_buffer;
@@ -396,53 +367,47 @@ namespace Yurrgoht
 		vmaDestroyBuffer(VulkanRHI::get().getAllocator(), staging_buffer.buffer, staging_buffer.allocation);
 	}
 
-	VkAccessFlags accessFlagsForImageLayout(VkImageLayout layout)
-	{
-		switch (layout)
-		{
-		case VK_IMAGE_LAYOUT_PREINITIALIZED:
-			return VK_ACCESS_HOST_WRITE_BIT;
-		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
-			return VK_ACCESS_TRANSFER_WRITE_BIT;
-		case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
-			return VK_ACCESS_TRANSFER_READ_BIT;
-		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
-			return VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-			return VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
-			return VK_ACCESS_SHADER_READ_BIT;
-		default:
-			return VK_IMAGE_LAYOUT_UNDEFINED;
+	VkAccessFlags accessFlagsForImageLayout(VkImageLayout layout) {
+		switch (layout) {
+			case VK_IMAGE_LAYOUT_PREINITIALIZED:
+				return VK_ACCESS_HOST_WRITE_BIT;
+			case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+				return VK_ACCESS_TRANSFER_WRITE_BIT;
+			case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+				return VK_ACCESS_TRANSFER_READ_BIT;
+			case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+				return VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+				return VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+				return VK_ACCESS_SHADER_READ_BIT;
+			default:
+				return VK_IMAGE_LAYOUT_UNDEFINED;
 		}
 	}
 
-	VkPipelineStageFlags pipelineStageForLayout(VkImageLayout layout)
-	{
-		switch (layout)
-		{
-		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
-		case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
-			return VK_PIPELINE_STAGE_TRANSFER_BIT;
-		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
-			return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-			return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
-			return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		case VK_IMAGE_LAYOUT_PREINITIALIZED:
-			return VK_PIPELINE_STAGE_HOST_BIT;
-		case VK_IMAGE_LAYOUT_UNDEFINED:
-			return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-		default:
-			return VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	VkPipelineStageFlags pipelineStageForLayout(VkImageLayout layout) {
+		switch (layout) {
+			case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+			case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+				return VK_PIPELINE_STAGE_TRANSFER_BIT;
+			case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+				return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+				return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+			case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+				return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			case VK_IMAGE_LAYOUT_PREINITIALIZED:
+				return VK_PIPELINE_STAGE_HOST_BIT;
+			case VK_IMAGE_LAYOUT_UNDEFINED:
+				return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			default:
+				return VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 		}
 	}
 
-	void VulkanUtil::transitionImageLayout(VkImage image, VkImageLayout old_layout, VkImageLayout new_layout, VkFormat format, uint32_t mip_levels, uint32_t layers)
-	{
-		if (old_layout == new_layout)
-		{
+	void VulkanUtil::transitionImageLayout(VkImage image, VkImageLayout old_layout, VkImageLayout new_layout, VkFormat format, uint32_t mip_levels, uint32_t layers) {
+		if (old_layout == new_layout) {
 			return;
 		}
 
@@ -480,8 +445,7 @@ namespace Yurrgoht
 		endInstantCommands(command_buffer);
 	}
 
-	void VulkanUtil::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
-	{
+	void VulkanUtil::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
 		VkCommandBuffer command_buffer = beginInstantCommands();
 
 		VkBufferImageCopy region{};
@@ -502,8 +466,7 @@ namespace Yurrgoht
 		endInstantCommands(command_buffer);
 	}
 
-	void VulkanUtil::createImageMipmaps(VkImage image, uint32_t width, uint32_t height, uint32_t mip_levels)
-	{
+	void VulkanUtil::createImageMipmaps(VkImage image, uint32_t width, uint32_t height, uint32_t mip_levels) {
 		VkCommandBuffer command_buffer = beginInstantCommands();
 
 		VkImageMemoryBarrier barrier{};
@@ -519,8 +482,7 @@ namespace Yurrgoht
 		int32_t mip_width = width;
 		int32_t mip_height = height;
 
-		for (uint32_t i = 1; i < mip_levels; ++i)
-		{
+		for (uint32_t i = 1; i < mip_levels; ++i) {
 			barrier.subresourceRange.baseMipLevel = i - 1;
 			barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 			barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -583,57 +545,63 @@ namespace Yurrgoht
 		endInstantCommands(command_buffer);
 	}
 
-	bool VulkanUtil::hasStencil(VkFormat format)
-	{
+	bool VulkanUtil::hasStencil(VkFormat format) {
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	bool VulkanUtil::hasDepth(VkFormat format)
-	{
+	bool VulkanUtil::hasDepth(VkFormat format) {
 		return format == VK_FORMAT_D32_SFLOAT || format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	VkImageAspectFlags VulkanUtil::calcImageAspectFlags(VkFormat format)
-	{
+	VkImageAspectFlags VulkanUtil::calcImageAspectFlags(VkFormat format) {
 		VkImageAspectFlags flags = 0;
-		if (hasDepth(format))
-		{
+		if (hasDepth(format)) {
 			flags |= VK_IMAGE_ASPECT_DEPTH_BIT;
 		}
-		if (hasStencil(format))
-		{
+		if (hasStencil(format)) {
 			flags |= VK_IMAGE_ASPECT_STENCIL_BIT;
 		}
 
 		return flags ? flags : VK_IMAGE_ASPECT_COLOR_BIT;
 	}
 
-	uint32_t VulkanUtil::calcFormatSize(VkFormat format)
-	{
-		switch (format)
-		{
-		case VK_FORMAT_R16_SFLOAT:
-			return 2;
-		case VK_FORMAT_R8G8B8A8_SRGB:
-		case VK_FORMAT_R8G8B8A8_UNORM:
-		case VK_FORMAT_R32_SFLOAT:
-		case VK_FORMAT_D32_SFLOAT:
-		case VK_FORMAT_R16G16_SFLOAT:
-			return 4;
-		case VK_FORMAT_R16G16B16A16_SFLOAT:
-		return 8;
-		case VK_FORMAT_R32G32B32A32_SFLOAT:
-			return 16;
-		default:
-			LOG_FATAL("unsupported format: {}", static_cast<int>(format));
-			return 0;
+	uint32_t VulkanUtil::calcFormatSize(VkFormat format){	
+		switch (format) {
+			case VK_FORMAT_R16_SFLOAT: {
+				return 2;
+				break;
+			}
+			case VK_FORMAT_R8G8B8A8_SRGB: {
+				return 4;
+				break;
+			}
+			case VK_FORMAT_R8G8B8A8_UNORM: {
+				return 4;
+				break;
+			}
+			case VK_FORMAT_R32_SFLOAT:
+			case VK_FORMAT_D32_SFLOAT:
+			case VK_FORMAT_R16G16_SFLOAT: {
+				return 4;
+				break;
+			}
+			case VK_FORMAT_R16G16B16A16_SFLOAT: {
+				return 8;
+				break;
+			}
+			case VK_FORMAT_R32G32B32A32_SFLOAT: {
+				return 16;
+				break;
+			}
+			default:
+				LOG_FATAL("unsupported format: {}", static_cast<int>(format));
+				return 0;
+				break;
 		}
 	}
 
-	uint32_t VulkanUtil::calcMipLevel(uint32_t width, uint32_t height /*= 0*/)
-	{
-		if (height == 0)
-		{
+	uint32_t VulkanUtil::calcMipLevel(uint32_t width, uint32_t height /*= 0*/) {
+		if (height == 0) {
 			height = width;
 		}
 		return static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
@@ -677,8 +645,7 @@ namespace Yurrgoht
 		VulkanUtil::endInstantCommands(command_buffer);
 
 		// reset image layouts
-		if (final_layout != VK_IMAGE_LAYOUT_UNDEFINED)
-		{
+		if (final_layout != VK_IMAGE_LAYOUT_UNDEFINED) {
 			VulkanUtil::transitionImageLayout(image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, final_layout, format, mip_levels, layers);
 		}
 

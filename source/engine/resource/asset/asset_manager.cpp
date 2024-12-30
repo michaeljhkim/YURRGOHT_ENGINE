@@ -9,10 +9,8 @@
 
 #include <fstream>
 
-namespace Yurrgoht
-{
-	void AssetManager::init()
-	{
+namespace Yurrgoht {
+	void AssetManager::init() {
 		m_asset_type_exts = {
 			{ EAssetType::Texture2D, "tex" },
 			{ EAssetType::TextureCube, "texc" }, 
@@ -35,13 +33,19 @@ namespace Yurrgoht
 			{ EAssetType::World, EArchiveType::Json }
 		};
 
-		for (const auto& iter : m_asset_type_exts)
-		{
+		for (const auto& iter : m_asset_type_exts) {
 			m_ext_asset_types[iter.second] = iter.first;
 		}
 
 		// load default texture
 		m_default_texture_2d = VulkanUtil::loadImageViewSampler(DEFAULT_TEXTURE_2D_FILE);
+		/*
+        m_asset_manager->importTextureCube("asset/engine/texture/ibl/test_skybox.ktx", "asset/engine/texture/ibl/");
+        m_asset_manager->importTexture2D("asset/engine/texture/ibl/brdf_lut.hdr", "asset/engine/texture/ibl/");
+		std::cout << "Test import of 8-bit texturecube" << std::endl;
+		loadAsset<TextureCube>("asset/engine/texture/ibl/test_skybox.texc");
+		loadAsset<Texture2D>("asset/engine/texture/ibl/tex_brdf_lut.tex");
+		*/
 	}
 
 	void AssetManager::destroy() {
@@ -53,6 +57,7 @@ namespace Yurrgoht
 	}
 
 	bool AssetManager::importGltf(const std::string& filename, const URL& folder, const GltfImportOption& option) {
+		LOG_INFO("Imported - {}", filename);
 		return GltfImporter::importGltf(filename, folder, option);
 	}
 
@@ -66,7 +71,6 @@ namespace Yurrgoht
 		std::string asset_name = getAssetName(filename, EAssetType::Texture2D);
 		URL url = URL::combine(folder.str(), asset_name);
 		texture->setURL(url);
-
 		texture->m_width = width;
 		texture->m_height = height;
 
@@ -78,6 +82,7 @@ namespace Yurrgoht
 		texture->inflate();
 		serializeAsset(texture);
 
+		LOG_INFO("Imported - {}", filename);
 		return true;
 	}
 
@@ -95,74 +100,64 @@ namespace Yurrgoht
 		texture_cube->inflate();
 		serializeAsset(texture_cube);
 
+		LOG_INFO("Imported - {}", filename);
 		return true;
 	}
 
-	bool AssetManager::isGltfFile(const std::string& filename)
-	{
+	bool AssetManager::isGltfFile(const std::string& filename) {
 		std::string extension = g_engine.fileSystem()->extension(filename);
 		return extension == "glb" || extension == "gltf";
 	}
 
-	bool AssetManager::isTexture2DFile(const std::string& filename)
-	{
+	bool AssetManager::isTexture2DFile(const std::string& filename) {
 		std::string extension = g_engine.fileSystem()->extension(filename);
 		return extension == "png" || extension == "jpg";
 	}
 
-	bool AssetManager::isTextureCubeFile(const std::string& filename)
-	{
+	bool AssetManager::isTextureCubeFile(const std::string& filename) {
 		std::string extension = g_engine.fileSystem()->extension(filename);
 		return extension == "ktx";
 	}
 
-	EAssetType AssetManager::getAssetType(const URL& url)
-	{
+	EAssetType AssetManager::getAssetType(const URL& url) {
 		std::string extension = g_engine.fileSystem()->extension(url.str());
-		if (m_ext_asset_types.find(extension) != m_ext_asset_types.end())
-		{
+		if (m_ext_asset_types.find(extension) != m_ext_asset_types.end()) {
 			return m_ext_asset_types[extension];
 		}
 		return EAssetType::Invalid;
 	}
 
-	void AssetManager::serializeAsset(std::shared_ptr<Asset> asset, const URL& url)
-	{
+	void AssetManager::serializeAsset(std::shared_ptr<Asset> asset, const URL& url) {
 		// reference asset
 		EAssetType asset_type = asset->getAssetType();
 		const std::string& asset_ext = m_asset_type_exts[asset_type];
 		EArchiveType archive_type = m_asset_archive_types[asset_type];
 		std::string filename = url.empty() ? asset->getURL().getAbsolute() : url.getAbsolute();
 
-		switch (archive_type)
-		{
-		case EArchiveType::Json:
-		{
-			std::ofstream ofs(filename);
-			cereal::JSONOutputArchive archive(ofs);
-			archive(cereal::make_nvp(asset_ext.c_str(), asset));
-		}
-		break;
-		case EArchiveType::Binary:
-		{
-			std::ofstream ofs(filename, std::ios::binary);
-			cereal::BinaryOutputArchive archive(ofs);
-			archive(cereal::make_nvp(asset_ext.c_str(), asset));
-		}
-		break;
-		default:
-			break;
+		switch (archive_type) {
+			case EArchiveType::Json: {
+				std::ofstream ofs(filename);
+				cereal::JSONOutputArchive archive(ofs);
+				archive(cereal::make_nvp(asset_ext.c_str(), asset));
+				break;
+			}
+			case EArchiveType::Binary: {
+				std::ofstream ofs(filename, std::ios::binary);
+				cereal::BinaryOutputArchive archive(ofs);
+				archive(cereal::make_nvp(asset_ext.c_str(), asset));
+				break;
+			}
+			default:
+				break;
 		}
 
 		// don't cache world!
-		if (asset_type != EAssetType::World)
-		{
+		if (asset_type != EAssetType::World) {
 			m_assets[url] = asset;
 		}
 	}
 
-	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url)
-	{
+	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url) {
 		// check if the asset url exists
 		if (!g_engine.fileSystem()->exists(url.str())) {
 			return nullptr;
@@ -175,14 +170,14 @@ namespace Yurrgoht
 
 		EAssetType asset_type = getAssetType(url);
 		EArchiveType archive_type = m_asset_archive_types[asset_type];
-
-	    std::cout << "PROBLEM TEXTURE: " << url.getAbsolute() << std::endl;
-		if (archive_type == EArchiveType::Json) { std::cout << "Json" << std::endl; }
-		else { std::cout << "Binary" << std::endl; }
-
 		const std::string& asset_ext = m_asset_type_exts[asset_type];
 		std::string filename = url.getAbsolute();
 		std::shared_ptr<Asset> asset = nullptr;
+		/*
+	    std::cout << "TEXTURE - LOADING: " << url.getAbsolute() << std::endl;
+		if (archive_type == EArchiveType::Json) { std::cout << "Json" << std::endl; }
+		else { std::cout << "Binary" << std::endl; }
+		*/
 
 		switch (archive_type) {
 			case EArchiveType::Json: {
@@ -212,8 +207,7 @@ namespace Yurrgoht
 		return asset;
 	}
 
-	std::string AssetManager::getAssetName(const std::string& asset_name, EAssetType asset_type, int asset_index, const std::string& basename)
-	{
+	std::string AssetManager::getAssetName(const std::string& asset_name, EAssetType asset_type, int asset_index, const std::string& basename) {
 		const std::string& ext = m_asset_type_exts[asset_type];
 		if (!asset_name.empty()) {
 			std::string asset_basename = g_engine.fileSystem()->basename(asset_name);
