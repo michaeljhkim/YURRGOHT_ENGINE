@@ -1,15 +1,22 @@
+#include <fstream>
+#include <filesystem>
+#include <algorithm>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "importer/gltf_importer.h"
+#include <tinygltf/stb_image.h>
+#include <ktx.h>
+#include <ktxvulkan.h>
+
 #include "asset_manager.h"
 #include "engine/resource/asset/texture_2d.h"
 #include "engine/resource/asset/texture_cube.h"
 #include "engine/function/framework/world/world.h"
+#include "engine/function/framework/component/sky_light_component.h"
 
-#include "importer/gltf_importer.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include <tinygltf/stb_image.h>
-
-#include <fstream>
 
 namespace Yurrgoht {
+
 	void AssetManager::init() {
 		m_asset_type_exts = {
 			{ EAssetType::Texture2D, "tex" },
@@ -37,15 +44,12 @@ namespace Yurrgoht {
 			m_ext_asset_types[iter.second] = iter.first;
 		}
 
+		// create default BRDF Texture if it does not exist yet - will try to figure out better place to put the system in than SkyLightComponent
+        SkyLightComponent::createBRDFTexture();
+
 		// load default texture
 		m_default_texture_2d = VulkanUtil::loadImageViewSampler(DEFAULT_TEXTURE_2D_FILE);
-		/*
-        m_asset_manager->importTextureCube("asset/engine/texture/ibl/test_skybox.ktx", "asset/engine/texture/ibl/");
-        m_asset_manager->importTexture2D("asset/engine/texture/ibl/brdf_lut.hdr", "asset/engine/texture/ibl/");
-		std::cout << "Test import of 8-bit texturecube" << std::endl;
-		loadAsset<TextureCube>("asset/engine/texture/ibl/test_skybox.texc");
-		loadAsset<Texture2D>("asset/engine/texture/ibl/tex_brdf_lut.tex");
-		*/
+		LOG_INFO("SUCCESS");
 	}
 
 	void AssetManager::destroy() {
@@ -85,6 +89,7 @@ namespace Yurrgoht {
 		LOG_INFO("Imported - {}", filename);
 		return true;
 	}
+
 
 	bool AssetManager::importTextureCube(const std::string& filename, const URL& folder) {
 		std::shared_ptr<TextureCube> texture_cube = std::make_shared<TextureCube>();
@@ -158,6 +163,8 @@ namespace Yurrgoht {
 	}
 
 	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url) {
+		LOG_INFO("ASSET LOADING: {}", url.getAbsolute());
+
 		// check if the asset url exists
 		if (!g_engine.fileSystem()->exists(url.str())) {
 			return nullptr;
@@ -173,17 +180,15 @@ namespace Yurrgoht {
 		const std::string& asset_ext = m_asset_type_exts[asset_type];
 		std::string filename = url.getAbsolute();
 		std::shared_ptr<Asset> asset = nullptr;
-		/*
-	    std::cout << "TEXTURE - LOADING: " << url.getAbsolute() << std::endl;
-		if (archive_type == EArchiveType::Json) { std::cout << "Json" << std::endl; }
-		else { std::cout << "Binary" << std::endl; }
-		*/
+		if (archive_type == EArchiveType::Json) { LOG_INFO("ASSET TYPE: Json"); }
+		else { LOG_INFO("ASSET TYPE: Binary"); }
 
 		switch (archive_type) {
 			case EArchiveType::Json: {
 				std::ifstream ifs(filename);
 				cereal::JSONInputArchive archive(ifs);
 				archive(asset);
+				LOG_INFO("This is the issue?");
 				break;
 			}
 			case EArchiveType::Binary: {
@@ -203,7 +208,8 @@ namespace Yurrgoht {
 		if (asset_type != EAssetType::World) {
 			m_assets[url] = asset;
 		}
-		
+
+		LOG_INFO("SUCCESS");
 		return asset;
 	}
 

@@ -21,6 +21,8 @@ namespace Yurrgoht
 		VmaImageViewSampler m_brdf_lut_texture_sampler;
 		uint32_t m_prefilter_mip_levels;
 
+		static void createBRDFTexture();
+
 	private:
 		REGISTER_REFLECTION(LightComponent)
 

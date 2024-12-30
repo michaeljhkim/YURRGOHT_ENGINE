@@ -57,6 +57,7 @@ namespace Yurrgoht {
 		m_debug_draw_system = std::make_shared<DebugDrawManager>();
         m_debug_draw_system->init();
 
+
         //m_world_manager->CreateNewDefaultWorld();
 		//LOG_INFO("EngineContext::init {}", "TimerManager | FileSystem | LogSystem - INITIALIZED");
 		LOG_INFO("SUCCESS - {}", "NOTE: Logging cannot start before this point as LogSystem is not initialized");

@@ -29,11 +29,9 @@
 
 #include <random>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	void RenderSystem::init()
-	{
+	void RenderSystem::init() {
 		m_directional_light_shadow_pass = std::make_shared<DirectionalLightShadowPass>();
 		m_point_light_shadow_pass = std::make_shared<PointLightShadowPass>();
 		m_spot_light_shadow_pass = std::make_shared<SpotLightShadowPass>();
@@ -76,8 +74,7 @@ namespace Yurrgoht
 
 		// create lighting uniform buffers
 		m_lighting_ubs.resize(MAX_FRAMES_IN_FLIGHT);
-		for (VmaBuffer& uniform_buffer : m_lighting_ubs)
-		{
+		for (VmaBuffer& uniform_buffer : m_lighting_ubs) {
 			VulkanUtil::createBuffer(sizeof(LightingUBO), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_AUTO_PREFER_HOST, uniform_buffer);
 		}
 		m_lighting_icons = {
@@ -105,11 +102,9 @@ namespace Yurrgoht
 		for (VmaBuffer& uniform_buffer : m_lighting_ubs) {
 			uniform_buffer.destroy();
 		}
-
 		for (auto& iter : m_lighting_icons) {
 			iter.second.destroy();
 		}
-
 		m_default_texture_cube.reset();
 	}
 

@@ -13,50 +13,47 @@ rttr::registration::class_<Yurrgoht::SkyLightComponent>("SkyLightComponent")
 CEREAL_REGISTER_TYPE(Yurrgoht::SkyLightComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::LightComponent, Yurrgoht::SkyLightComponent)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	SkyLightComponent::SkyLightComponent()
-	{
+	SkyLightComponent::SkyLightComponent() {
 		m_intensity = 0.5f;
 		m_prefilter_mip_levels = 0;
 	}
 
-	SkyLightComponent::~SkyLightComponent()
-	{
+	SkyLightComponent::~SkyLightComponent() {
 		m_irradiance_texture_sampler.destroy();
 		m_prefilter_texture_sampler.destroy();
 	}
 
-	void SkyLightComponent::setTextureCube(std::shared_ptr<TextureCube>& texture_cube)
-	{
+	void SkyLightComponent::setTextureCube(std::shared_ptr<TextureCube>& texture_cube) {
 		REF_ASSET(m_texture_cube, texture_cube)
 		createIBLTextures();
 	}
 
-	void SkyLightComponent::bindRefs()
-	{
+	void SkyLightComponent::bindRefs() {
 		BIND_ASSET(m_texture_cube, TextureCube)
 	}
 
-	void SkyLightComponent::inflate()
-	{
+	void SkyLightComponent::inflate() {
 		// create ibl textures
 		createIBLTextures();
 	}
 
-	void SkyLightComponent::createIBLTextures()
-	{
+	void SkyLightComponent::createBRDFTexture() {
 		// create brdf lut texture if not exist
 		const auto& as = g_engine.assetManager();
-		if (!g_engine.fileSystem()->exists(BRDF_TEXTURE_URL))
-		{
+		if (!g_engine.fileSystem()->exists(BRDF_TEXTURE_URL)) {
+			LOG_INFO("CREATING BRDF");
 			std::shared_ptr<BRDFLUTPass> brdf_pass = std::make_shared<BRDFLUTPass>();
 			brdf_pass->init();
 			brdf_pass->render();
 			brdf_pass->destroy();
 		}
+	}
 
+	void SkyLightComponent::createIBLTextures() {
+		createBRDFTexture();
+		
 		// create filter cubemap
 		std::shared_ptr<FilterCubePass> filter_cube_pass = std::make_shared<FilterCubePass>(m_texture_cube);
 		filter_cube_pass->init();

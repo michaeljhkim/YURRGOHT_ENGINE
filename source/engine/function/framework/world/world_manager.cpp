@@ -15,7 +15,6 @@
 namespace Yurrgoht {
 
 	void WorldManager::init() {
-        std::cout << "WorldManager initializing" << std::endl;
 		URL default_world_url = g_engine.configManager()->getDefaultWorldUrl();
 		const auto& fs = g_engine.fileSystem();
 		std::string cache_dir = fs->getCacheDir();
@@ -23,6 +22,7 @@ namespace Yurrgoht {
 		m_world_mode = g_engine.isEditor() ? EWorldMode::Edit : EWorldMode::Play;
 
 		loadWorld(default_world_url);
+		LOG_INFO("SUCCESS");
 	}
 
 	/*
@@ -120,7 +120,7 @@ namespace Yurrgoht {
 	}
 
 	bool WorldManager::loadWorld(const URL& url) {
-        std::cout << "loadWorld - loading " << url.str() << std::endl;
+		LOG_INFO("LOADING: {}", url.str());
 		
 		if (m_current_world) {
 			m_current_world.reset();
@@ -130,6 +130,7 @@ namespace Yurrgoht {
 			m_current_world_url = url;
 		}
 
+		LOG_INFO("SUCCESS");
 		return true;
 	}
 

@@ -4,21 +4,27 @@
 - must convert glfw code to sdl2
 - must figure out how to create editor executable seperate from user developer code
 
+- Now that managed to get the empty.world to work, I now need to work on the basic.world
+- Check tomorrow if imgui code works the same for sdl2 and glfw
+- If so, work on glfw version first, then convert to sdl2 after gui is more serviceable
+- Also, create a function that rebuilds default assets all at once, in case there are some major code changes 
+
+
 - editor/simulation/simulation_ui is where we call the sky texture
 - asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
 - config folder has a .yaml file that controls locations of the default world
-- asset_manager is where the .world is attempted to be loaded, but fails due to being incompatible
 
-- Program works with a ktx2 cubemap file
-- Generate with command below
 - You want a folder with 6 images (.exr, .png, .jpg, .e.tc...) with images labelled in the following fashion (extension is an example):
 - right.png left.png top.png bottom.png front.png back.png
 - NOTE: engine only works with .exr made skyboxes for now; raw 16-bit (or higher) image files
 
 FOR GENERATING DEFAULT SKYBOX - DO INSIDE FOLDER
-ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr default_skybox.ktx
-ktx create --format R8G8B8A8_SRGB --generate-mipmap --cubemap *.png default_skybox.ktx
+ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr cloudy.ktx
+ktx create --format R8G8B8A8_SRGB --generate-mipmap --cubemap *.png cloudy.ktx
 
+- consider adding https://github.com/KhronosGroup/glTF-IBL-Sampler later
+- engine was supposed to generate bdrf, but never got the chance due to bdrf not existing (I believe that was a bug)
+- extracted all textures from bamboo, and placed them in default assets folder
 
 
 

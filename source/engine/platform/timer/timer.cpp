@@ -1,11 +1,9 @@
 #include "timer.h"
 #include <chrono>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	void TimerManager::init()
-	{
+	void TimerManager::init() {
 		m_time = 0.0f;
 	}
 
