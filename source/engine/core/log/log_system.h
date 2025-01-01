@@ -1,6 +1,6 @@
 #pragma once
 
-//#define SPDLOG_FMT_EXTERNAL
+#define SPDLOG_FMT_EXTERNAL
 #include <spdlog/async.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

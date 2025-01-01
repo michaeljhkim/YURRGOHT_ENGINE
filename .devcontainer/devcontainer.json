@@ -1,5 +1,5 @@
 {
-	"name": "Existing Dockerfile",
+	"name": "Yurrgoht Engine Dev Container",
 	"dockerComposeFile": ["docker-compose.yaml"],
 	"service": "devcontainer",
 	"workspaceFolder": "/workspace",
@@ -12,11 +12,21 @@
 			"extensions": ["ms-vscode.cpptools",
 			"ms-vscode.cpptools-extension-pack",
 			"twxs.cmake",
-			"ms-vscode.cmake-tools" ],
+			"ms-vscode.cmake-tools" ], 
 			"settings": {
-			  "terminal.integrated.defaultProfile.linux": "bash"
+				"terminal.integrated.defaultProfile.linux": "bash", 
+				"task.allowAutomaticTasks": "on",
+				"tasks": {
+					"tasks": [
+						{ "label": "bash-init",
+							"type": "shell",
+							"command": "cd build/source && exec bash",
+							"runOptions": { "runOn": "folderOpen" }
+						}
+					]
+				},
+				"overrideCommand": false
 			}
 		}
-	},
-	"initializeCommand": "xhost +local:"
+	}
 }

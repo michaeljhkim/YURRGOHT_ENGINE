@@ -12,6 +12,15 @@ RUN dnf install -y \
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
     graphviz xinput libXinerama
 
+
+# vulkan memory allocator dependency - static
+RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.1.0.tar.gz && \
+    tar -xzvf v3.1.0.tar.gz && \
+    cd VulkanMemoryAllocator-3.1.0 && \
+    cmake -S . -B build -DBUILD_SHARED_LIBS=OFF && \
+    cd build && \
+    cmake --install .
+
 # KTX software dependency (ktx textures 2) - static
 RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
     tar -xzvf v4.3.2.tar.gz && \
@@ -26,6 +35,7 @@ RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
     cd eventpp-0.1.3 && mkdir build && cd build && \
     cmake .. -G Ninja -B . -DBUILD_SHARED_LIBS=OFF && \
     cmake --install .
+    
     
     
 # Download and extract the LunarG Vulkan SDK
