@@ -25,7 +25,7 @@ if(NOT TARGET imgui)
     add_library(imgui ${imgui_sources} ${imgui_impl})
     target_include_directories(imgui PUBLIC ${IMGUI_SOURCE_DIR})
     target_include_directories(imgui PUBLIC ${Vulkan_INCLUDE_DIR})
-    target_link_libraries(imgui PUBLIC glfw3 ${Vulkan_LIBRARY})
+    target_link_libraries(imgui PUBLIC glfw ${Vulkan_LIBRARY})
     set_target_properties(imgui PROPERTIES FOLDER ${external_folder}/imgui)
 endif()
 

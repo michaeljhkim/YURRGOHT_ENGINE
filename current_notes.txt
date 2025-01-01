@@ -3,6 +3,10 @@
 - added assets from bamboo release file for testing - must make it seperate download in the future
 - must convert glfw code to sdl2
 - must figure out how to create editor executable seperate from user developer code
+- must figure out how to update models in editor, through another program 
+- must figure out how to contain an ENTIRE scene inside of a container of some kind (like zip or something)
+- For example, show what the model looks like in-game with the editor, but then change it with blender, and once the file changes, the editor updates the model
+
 
 - Now that managed to get the empty.world to work, I now need to work on the basic.world
 - Check tomorrow if imgui code works the same for sdl2 and glfw
@@ -14,20 +18,22 @@
 - asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
 - config folder has a .yaml file that controls locations of the default world
 
-- You want a folder with 6 images (.exr, .png, .jpg, .e.tc...) with images labelled in the following fashion (extension is an example):
-- right.png left.png top.png bottom.png front.png back.png
-- NOTE: engine only works with .exr made skyboxes for now; raw 16-bit (or higher) image files
-
-FOR GENERATING DEFAULT SKYBOX - DO INSIDE FOLDER
-ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr cloudy.ktx
-ktx create --format R8G8B8A8_SRGB --generate-mipmap --cubemap *.png cloudy.ktx
-
 - consider adding https://github.com/KhronosGroup/glTF-IBL-Sampler later
 - engine was supposed to generate bdrf, but never got the chance due to bdrf not existing (I believe that was a bug)
 - extracted all textures from bamboo, and placed them in default assets folder
 
+- Now must process textures, then place them in correct folders
+- INSTALL GRAPHICS DRIVERS AND FIGURE OUT HOW TO RUN THIS THING IN DOCKER
 
 
+
+
+
+- You want a folder with 6 images (.exr, .png, .jpg, .e.tc...)
+
+FOR GENERATING DEFAULT SKYBOX - DO INSIDE FOLDER
+ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr cloudy.ktx
+ktx create --format R8G8B8A8_SRGB --generate-mipmap --cubemap *.png cloudy.ktx
 
 
 CURRENT CMDLINE ERROR OUTPUT:

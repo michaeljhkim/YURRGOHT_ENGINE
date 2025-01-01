@@ -1,15 +1,11 @@
 #pragma once
 
 #include "engine/resource/asset/base/asset.h"
-#include <spdlog/fmt/fmt.h>
 
+namespace Yurrgoht {
 
-namespace Yurrgoht
-{
-	struct AnimationChannel
-	{
-		enum class EPathType 
-		{ 
+	struct AnimationChannel {
+		enum class EPathType { 
 			Translation, Rotation, Scale 
 		};
 
@@ -20,18 +16,15 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("path_type", m_path_type));
 			ar(cereal::make_nvp("bone_name", m_bone_name));
 			ar(cereal::make_nvp("sampler_index", m_sampler_index));
 		}
 	};
 
-	struct AnimationSampler
-	{
-		enum class EInterpolationType
-		{
+	struct AnimationSampler {
+		enum class EInterpolationType {
 			Linear, Step, CubicSpline
 		};
 
@@ -42,16 +35,14 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("interp_type", m_interp_type));
 			ar(cereal::make_nvp("times", m_times)); 
 			ar(cereal::make_nvp("values", m_values));
 		}
 	};
 
-	class Animation : public Asset
-	{
+	class Animation : public Asset {
 	public:
 		std::vector<AnimationSampler> m_samplers;
 		std::vector<AnimationChannel> m_channels;
@@ -65,8 +56,7 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("name", m_name));
 			ar(cereal::make_nvp("samplers", m_samplers)); 
 			ar(cereal::make_nvp("channels", m_channels));

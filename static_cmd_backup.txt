@@ -3,6 +3,16 @@ FROM quay.io/pypa/manylinux_2_34_x86_64
 WORKDIR /workspaces
 
 
+mv ${VULKAN_SDK_VERSION}/x86_64/lib/libVkLayer_*.so /usr/local/lib/ && \
+mkdir -p /usr/local/share/vulkan/explicit_layer.d && \
+cp ${VULKAN_SDK_VERSION}/x86_64/share/vulkan/explicit_layer.d/VkLayer_*.json /usr/local/share/vulkan/explicit_layer.d
+
+libpng-devel wayland-devel \
+libpciaccess-devel libX11-devel libX11-xcb libXpresent libxcb xcb-util libxcb-devel libXrandr-devel \
+xcb-util-keysyms-devel xcb-util-wm-devel python3 lz4-devel libzstd-devel python3-distutils-extra \
+wayland-protocols-devel python3-jsonschema qt5-qtbase-devel \
+
+
 # Install necessary build tools and libraries
 RUN dnf install -y \
     vulkan-tools vulkan-loader-devel vulkan-validation-layers-devel glslang glslc spirv-tools \

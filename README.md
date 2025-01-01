@@ -41,6 +41,7 @@
 - Increase preformance with further optimization of systems
 - Simple multiplayer features (TBD)
 - Better in-depth documentation
+- Baked in path-traced lighting texturing
 
 
 
@@ -89,6 +90,8 @@ cmake --build build --config Release
 **TEMP INSTRUCTIONS** Here for reference, but will make cleaner once I get everything else at the very least functional
 
 ```shell
+apt-get install -y vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools libassimp-dev libglm-dev libcereal-dev libsdl2-dev libglfw3-dev git wget clang cmake ninja-build doxygen zlib1g-dev graphviz mesa-utils libgl1-mesa-dev mesa-vulkan-drivers
+
 docker build -t yurrgoht/testapp:1.0 .
 cmake -G Ninja -S . -B build
 cmake --build build --config Release

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <spdlog/fmt/fmt.h>
-
 #include "component.h"
 #include "engine/resource/asset/skeleton.h"
 #include "engine/core/vulkan/vulkan_util.h"
@@ -51,27 +49,3 @@ namespace Yurrgoht
 		bool m_paused = false;
 	};
 }
-
-template <>
-struct fmt::formatter<Yurrgoht::AnimationChannel::EPathType> {
-    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
-
-    template <typename FormatContext>
-    auto format(const Yurrgoht::AnimationChannel::EPathType& type, FormatContext& ctx) const { // Add `const` here
-        std::string name;
-        switch (type) {
-            case Yurrgoht::AnimationChannel::EPathType::Translation:
-                name = "Translation";
-                break;
-            case Yurrgoht::AnimationChannel::EPathType::Rotation:
-                name = "Rotation";
-                break;
-            case Yurrgoht::AnimationChannel::EPathType::Scale:
-                name = "Scale";
-                break;
-            default:
-                name = "Unknown";
-        }
-        return fmt::format_to(ctx.out(), "{}", name);
-    }
-};
