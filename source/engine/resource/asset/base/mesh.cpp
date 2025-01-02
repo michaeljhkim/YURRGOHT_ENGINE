@@ -1,10 +1,8 @@
 #include "mesh.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	Mesh::~Mesh()
-	{
+	Mesh::~Mesh() {
 		m_vertex_buffer.destroy();
 		m_index_buffer.destroy();
 	}

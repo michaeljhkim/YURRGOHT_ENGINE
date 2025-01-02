@@ -10,6 +10,7 @@
 #define BRDF_TEXTURE_URL "asset/engine/texture/ibl/tex_brdf_lut.tex"
 
 namespace Yurrgoht {
+	
 	enum class EArchiveType {
 		Json, Binary
 	};
@@ -21,6 +22,7 @@ namespace Yurrgoht {
 
 		bool importGltf(const std::string& filename, const URL& folder, const GltfImportOption& option);
 		bool importTexture2D(const std::string& filename, const URL& folder);
+		bool importTexture2D_KTX(const std::string& filename, const URL& folder);
 		bool importTextureCube(const std::string& filename, const URL& folder);
 
 		bool isGltfFile(const std::string& filename);

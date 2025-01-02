@@ -52,7 +52,7 @@ namespace Yurrgoht
 
 	// If not defined, uploadKtxTexture will treat texture as 16-bit (like .exr)
 	void Texture::uploadKtxTexture(void* p_ktx_texture, VkFormat format) {
-		ktxTexture* ktx_texture = (ktxTexture*)p_ktx_texture;
+		ktx_texture = (ktxTexture*)p_ktx_texture;
 		ktx_uint8_t* ktx_texture_data = ktxTexture_GetData(ktx_texture);
 		ktx_size_t ktx_texture_size = ktxTexture_GetDataSize(ktx_texture);
 

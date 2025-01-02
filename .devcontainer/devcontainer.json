@@ -1,5 +1,5 @@
 {
-	"name": "Yurrgoht Engine Dev Container",
+	"name": "Yurrgoht Engine",
 	"dockerComposeFile": ["docker-compose.yaml"],
 	"service": "devcontainer",
 	"workspaceFolder": "/workspace",
@@ -28,5 +28,6 @@
 				"overrideCommand": false
 			}
 		}
-	}
+	},
+	"initializeCommand": "xhost +local:"
 }

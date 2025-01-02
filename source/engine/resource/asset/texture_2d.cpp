@@ -3,7 +3,6 @@
 #include "engine/platform/timer/timer.h"
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include <ktx.h>
 #include <tinygltf/stb_image_resize2.h>
 #include <tinygltf/stb_image_write.h>
 
@@ -33,8 +32,17 @@ namespace Yurrgoht {
 		}
 	}
 
+	// TEMPORARY - TESTING
+	void Texture2D::inflate_ktx(ktxTexture* ktx_texture) {
+		m_layers = 1;
+		m_mip_levels = isMipmap() ? VulkanUtil::calcMipLevel(m_width, m_height) : 1;
+
+		VulkanUtil::createImageViewSampler(m_width, m_height, m_image_data.data(), m_mip_levels, m_layers, 
+			getFormat(), m_min_filter, m_mag_filter, m_address_mode_u, m_image_view_sampler);
+		//transcode(ktx_texture);
+	}
+
 	bool Texture2D::compress() {
-		ktxTexture* ktx_texture;
 		ktx_error_code_e result;
 		ktxTextureCreateInfo ktx_texture_ci = {};
 		ktx_texture_ci.vkFormat = getFormat();
@@ -127,10 +135,15 @@ namespace Yurrgoht {
 		return true;
 	}
 
-	bool Texture2D::transcode() {
-		ktxTexture* ktx_texture;
-		ktxResult result = ktxTexture_CreateFromMemory(m_image_data.data(), m_image_data.size(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktx_texture);
-		ASSERT(result == KTX_SUCCESS, "failed to inflate texture");
+	bool Texture2D::transcode(ktxTexture* ktx_texture_import) {
+		ktxResult result;
+		if (ktx_texture_import == NULL) {
+			result = ktxTexture_CreateFromMemory(m_image_data.data(), m_image_data.size(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktx_texture);
+			ASSERT(result == KTX_SUCCESS, "failed to inflate texture");
+		}
+		else {
+			ktx_texture = ktx_texture_import;
+		}
 
 		VkFormat format = getFormat();
 		if (m_compression_mode == ETextureCompressionMode::ETC1S || m_compression_mode == ETextureCompressionMode::ASTC) {

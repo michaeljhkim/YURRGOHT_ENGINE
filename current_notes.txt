@@ -20,10 +20,14 @@
 
 - consider adding https://github.com/KhronosGroup/glTF-IBL-Sampler later
 - engine was supposed to generate bdrf, but never got the chance due to bdrf not existing (I believe that was a bug)
-- extracted all textures from bamboo, and placed them in default assets folder
 
-- Now must process textures, then place them in correct folders
-- INSTALL GRAPHICS DRIVERS AND FIGURE OUT HOW TO RUN THIS THING IN DOCKER
+- Engine should not be serializing everything in the editor
+- Change so that the editor only saves which model it used, and the variables
+- Perhaps serialize everything but the class somehow?
+- For example, when a texture or model inflates, it just opens the model and texture files
+- Serializing everthing is the solution for max efficiency, but for editing, Im not sure
+- Create hash when serializing model or textures, then compare that hash with a new hash when you make edits to the model file
+
 
 
 

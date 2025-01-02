@@ -331,39 +331,30 @@ namespace Yurrgoht
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
 			VMA_MEMORY_USAGE_AUTO_PREFER_HOST, 
 			staging_buffer);
-
 		// copy vertex staging_buffer_data to staging buffer
 		updateBuffer(staging_buffer, vertex_data, static_cast<size_t>(buffer_size));
-
 		createBuffer(buffer_size,
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 			VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE,
 			vertex_buffer);
-
 		copyBuffer(staging_buffer.buffer, vertex_buffer.buffer, buffer_size);
-
 		vmaDestroyBuffer(VulkanRHI::get().getAllocator(), staging_buffer.buffer, staging_buffer.allocation);
 	}
 
 	void VulkanUtil::createIndexBuffer(const std::vector<uint32_t>& indices, VmaBuffer& index_buffer) {
 		VkDeviceSize buffer_size = sizeof(indices[0]) * indices.size();
-
 		VmaBuffer staging_buffer;
 		createBuffer(buffer_size,
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VMA_MEMORY_USAGE_AUTO_PREFER_HOST,
 			staging_buffer);
-
 		// copy index data to staging buffer
 		updateBuffer(staging_buffer, (void*)indices.data(), static_cast<size_t>(buffer_size));
-
 		createBuffer(buffer_size,
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 			VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE,
 			index_buffer);
-
 		copyBuffer(staging_buffer.buffer, index_buffer.buffer, buffer_size);
-
 		vmaDestroyBuffer(VulkanRHI::get().getAllocator(), staging_buffer.buffer, staging_buffer.allocation);
 	}
 
@@ -571,14 +562,8 @@ namespace Yurrgoht
 				return 2;
 				break;
 			}
-			case VK_FORMAT_R8G8B8A8_SRGB: {
-				return 4;
-				break;
-			}
-			case VK_FORMAT_R8G8B8A8_UNORM: {
-				return 4;
-				break;
-			}
+			case VK_FORMAT_R8G8B8A8_SRGB:
+			case VK_FORMAT_R8G8B8A8_UNORM: 
 			case VK_FORMAT_R32_SFLOAT:
 			case VK_FORMAT_D32_SFLOAT:
 			case VK_FORMAT_R16G16_SFLOAT: {

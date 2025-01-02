@@ -50,6 +50,19 @@ namespace Yurrgoht {
 		// load default texture
 		m_default_texture_2d = VulkanUtil::loadImageViewSampler(DEFAULT_TEXTURE_2D_FILE);
 		LOG_INFO("SUCCESS");
+		/*
+		importTexture2D_KTX("asset/car/car_0.ktx", "asset/car/");
+		importTexture2D_KTX("asset/car/car_0.ktx", "asset/car/");
+		importTexture2D_KTX("asset/car/car_1.ktx", "asset/car/");
+		importTexture2D_KTX("asset/car/car_2.ktx", "asset/car/");
+		importTexture2D_KTX("asset/car/car_3.ktx", "asset/car/");
+		importTexture2D_KTX("asset/engine/mesh/floor/floor_0.ktx", "asset/engine/mesh/floor/");
+		importTexture2D_KTX("asset/engine/mesh/floor/floor_1.ktx", "asset/engine/mesh/floor/");
+		importTexture2D_KTX("asset/engine/mesh/floor/floor_2.ktx", "asset/engine/mesh/floor/");
+		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_0.ktx", "asset/engine/mesh/shader_ball/");
+		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_1.ktx", "asset/engine/mesh/shader_ball/");
+		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_2.ktx", "asset/engine/mesh/shader_ball/");
+		*/
 	}
 
 	void AssetManager::destroy() {
@@ -61,7 +74,6 @@ namespace Yurrgoht {
 	}
 
 	bool AssetManager::importGltf(const std::string& filename, const URL& folder, const GltfImportOption& option) {
-		LOG_INFO("Imported - {}", filename);
 		return GltfImporter::importGltf(filename, folder, option);
 	}
 
@@ -84,6 +96,30 @@ namespace Yurrgoht {
 		stbi_image_free(image_data);
 
 		texture->inflate();
+		serializeAsset(texture);
+
+		LOG_INFO("Imported - {}", filename);
+		return true;
+	}
+
+	//figure out more direct way of importing ktx files, this is just a temp solution for now
+	bool AssetManager::importTexture2D_KTX(const std::string& filename, const URL& folder) {
+		ktxTexture* ktx_texture2D;
+		ktxResult result = ktxTexture_CreateFromNamedFile(filename.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktx_texture2D);
+		ASSERT(result == KTX_SUCCESS, "failed to import texture: {}", filename);
+
+		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>();
+		std::string asset_name = getAssetName(filename, EAssetType::Texture2D);
+		URL url = URL::combine(folder.str(), asset_name);
+		texture->setURL(url);
+		texture->m_width = ktx_texture2D->baseWidth;
+		texture->m_height = ktx_texture2D->baseHeight;
+
+		size_t image_size = ktxTexture_GetDataSize(ktx_texture2D);
+		texture->m_image_data.resize(image_size);
+		memcpy(texture->m_image_data.data(), ktxTexture_GetData(ktx_texture2D), image_size);
+
+		texture->inflate_ktx(ktx_texture2D);
 		serializeAsset(texture);
 
 		LOG_INFO("Imported - {}", filename);
@@ -164,12 +200,10 @@ namespace Yurrgoht {
 
 	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url) {
 		LOG_INFO("ASSET LOADING: {}", url.getAbsolute());
-
 		// check if the asset url exists
 		if (!g_engine.fileSystem()->exists(url.str())) {
 			return nullptr;
 		}
-
 		// check if the asset has been loaded
 		if (m_assets.find(url) != m_assets.end()) {
 			return m_assets[url];

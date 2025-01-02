@@ -1,6 +1,6 @@
 #include <iostream>
 #include "editor/editor.h"
-#include "engine/engine.h"
+//#include "engine/engine.h"
 
 /*
 NOTE: Log output for terminal and file will be a little different
@@ -12,7 +12,6 @@ NOTE: Log output for terminal and file will be a little different
 
 
 int main() {
-    //std::cout << "Bug test!" << std::endl;
     Yurrgoht::Editor* editor = new Yurrgoht::Editor;
     editor->init();
     editor->run();

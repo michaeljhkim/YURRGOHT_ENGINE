@@ -38,6 +38,8 @@ namespace Yurrgoht
 		void setAddressMode(VkSamplerAddressMode address_mode);
 
 	protected:
+		ktxTexture* ktx_texture;
+
 		bool isSRGB();
 		bool isMipmap();
 		VkFormat getFormat();
@@ -46,8 +48,7 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("width", m_width));
 			ar(cereal::make_nvp("height", m_height));
 			ar(cereal::make_nvp("min_filter", m_min_filter));

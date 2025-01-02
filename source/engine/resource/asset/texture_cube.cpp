@@ -13,7 +13,6 @@ namespace Yurrgoht {
 		m_layers = 6;
 
 		// create texture cube from ktx image data
-		ktxTexture* ktx_texture;
 		ktxResult result = ktxTexture_CreateFromMemory(m_image_data.data(), m_image_data.size(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktx_texture);
 		ASSERT(result == KTX_SUCCESS, "failed to inflate texture cube");
 

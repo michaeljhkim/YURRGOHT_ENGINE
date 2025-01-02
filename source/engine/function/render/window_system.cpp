@@ -5,13 +5,11 @@
 
 #include <tinygltf/stb_image.h>
 
-namespace Yurrgoht
-{
-	void WindowSystem::init()
-	{
+namespace Yurrgoht {
+
+	void WindowSystem::init() {
 		// initialize glfw
-		if (!glfwInit())
-		{
+		if (!glfwInit()) {
 			LOG_FATAL("failed to initialize glfw");
 			return;
 		}
