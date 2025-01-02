@@ -2,10 +2,9 @@
 
 #include "editor/base/editor_ui.h"
 
-namespace Yurrgoht
-{
-	class SceneUI : public EditorUI
-	{
+namespace Yurrgoht {
+
+	class SceneUI : public EditorUI {
 	public:
 		virtual void init() override;
 		virtual void construct() override;

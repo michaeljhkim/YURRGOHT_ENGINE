@@ -395,19 +395,16 @@ namespace Yurrgoht
 	void SimulationUI::updateCamera()
 	{
 		// try to get new camera if current camera is not valid
-		if (!m_camera_component.lock())
-		{
+		if (!m_camera_component.lock()) {
 			m_camera_component = g_engine.sceneManager()->getCameraComponent();
 		}
 
 		// set camera component
 		m_camera_component.lock()->m_aspect_ratio = (float)m_content_region.z / m_content_region.w;
-		if (g_engine.isSimulating())
-		{
+		if (g_engine.isSimulating()) {
 			m_mouse_right_button_pressed = ImGui::IsMouseDown(ImGuiMouseButton_Right);
 		}
-		else
-		{
+		else {
 			m_mouse_right_button_pressed = ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right);
 		}
 		

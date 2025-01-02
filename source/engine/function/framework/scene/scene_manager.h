@@ -2,10 +2,9 @@
 
 #include "scene.h"
 
-namespace Yurrgoht
-{
-	class SceneManager
-	{
+namespace Yurrgoht {
+	
+	class SceneManager {
 	public:
 		void init();
 		void destroy();

@@ -6,8 +6,8 @@
 
 #define DEFAULT_MATERIAL_URL "asset/engine/material/mat_default.mat"
 #define DEFAULT_TEXTURE_2D_FILE "asset/engine/material/tex_default.png"
-#define DEFAULT_TEXTURE_CUBE_URL "asset/engine/texture/ibl/texc_cloudy.texc"
-#define BRDF_TEXTURE_URL "asset/engine/texture/ibl/tex_brdf_lut.tex"
+#define DEFAULT_TEXTURE_CUBE_URL "asset/engine/texture/ibl/texc_cloudy.txcube"
+#define BRDF_TEXTURE_URL "asset/engine/texture/ibl/tex_brdf_lut.tx2d"
 
 namespace Yurrgoht {
 	
