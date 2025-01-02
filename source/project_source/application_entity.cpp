@@ -2,7 +2,7 @@
 #include "engine/core/base/macro.h"
 #include "engine/platform/string/string_util.h"
 #include "engine/core/math/math_util.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/resource/asset/asset_manager.h"
 #include "engine/function/framework/component/static_mesh_component.h"
 #include "engine/function/framework/component/transform_component.h"
@@ -34,8 +34,8 @@ namespace Yurrgoht
 		Entity::beginPlay();
 
 		// add floor rigidbody
-		const auto& world = g_engine.worldManager()->getCurrentWorld();
-		std::shared_ptr<Entity> floor_entity = world->getEntity("sm_floor").lock();
+		const auto& scene = g_engine.sceneManager()->getCurrentScene();
+		std::shared_ptr<Entity> floor_entity = scene->getEntity("sm_floor").lock();
 
 		std::shared_ptr<RigidbodyComponent> rigidbody_component = std::make_shared<RigidbodyComponent>();
 		rigidbody_component->m_motion_type = EMotionType::Static;
@@ -58,7 +58,7 @@ namespace Yurrgoht
 			std::string url = StringUtil::format("asset/engine/mesh/primitive/sm_%s.sm", primitive_type.c_str());
 
 			// create primitive entity
-			const auto& entity = world->createEntity(StringUtil::format("%s_%d", primitive_type.c_str(), i));
+			const auto& entity = scene->createEntity(StringUtil::format("%s_%d", primitive_type.c_str(), i));
 
 			// add static mesh component
 			std::shared_ptr<StaticMeshComponent> static_mesh_component = std::make_shared<StaticMeshComponent>();

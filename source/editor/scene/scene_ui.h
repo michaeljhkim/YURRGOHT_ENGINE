@@ -4,7 +4,7 @@
 
 namespace Yurrgoht
 {
-	class WorldUI : public EditorUI
+	class SceneUI : public EditorUI
 	{
 	public:
 		virtual void init() override;

@@ -20,10 +20,10 @@ namespace Yurrgoht
 
 		void pollShortcuts();
 
-		void newWorld();
-		void openWorld(); 
-		void saveWorld();
-		void saveAsWorld();
+		void newScene();
+		void openScene(); 
+		void saveScene();
+		void saveAsScene();
 		void quit(); 
 
 		void undo(); 
@@ -35,30 +35,30 @@ namespace Yurrgoht
 		void editorSettings(); 
 		void projectSettings();
 
-		void constructTemplateWorldPanel();
-		void constructWorldURLPanel();
+		void constructTemplateScenePanel();
+		void constructSceneURLPanel();
 
 		void clearEntitySelection();
 
 		std::string m_layout_path;
 
-		bool showing_new_world_popup = false;
-		bool showing_open_world_popup = false;
-		bool showing_save_as_world_popup = false;
+		bool showing_new_scene_popup = false;
+		bool showing_open_scene_popup = false;
+		bool showing_save_as_scene_popup = false;
 
-		// new world
-		struct TemplateWorld
+		// new scene
+		struct TemplateScene
 		{
 			std::string name;
 			std::string url;
 			std::shared_ptr<ImGuiImage> icon;
 		};
-		std::vector<TemplateWorld> m_template_worlds;
-		std::map<std::string, HoverState> m_template_world_hover_states;
-		uint32_t m_selected_template_world_index;
+		std::vector<TemplateScene> m_template_scenes;
+		std::map<std::string, HoverState> m_template_scene_hover_states;
+		uint32_t m_selected_template_scene_index;
 
-		// open world
-		std::vector<std::string> m_current_world_urls;
-		std::string m_selected_world_url;
+		// open scene
+		std::vector<std::string> m_current_scene_urls;
+		std::string m_selected_scene_url;
 	};
 }

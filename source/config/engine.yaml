@@ -3,7 +3,7 @@ window:
   height: 720
   fullscreen: true
 
-default_world_url: "asset/engine/world/basic.world"
+default_scene_url: "asset/engine/scene/empty.scene"
 editor_layout: "default.layout"
 save_layout: false
 is_editor: true

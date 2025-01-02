@@ -1,6 +1,6 @@
 #include "entity.h"
 #include "engine/core/base/macro.h"
-#include "engine/function/framework/world/world.h"
+#include "engine/function/framework/scene/scene.h"
 #include "engine/function/framework/component/transform_component.h"
 
 #include <queue>
@@ -59,10 +59,10 @@ namespace Yurrgoht
 			component->inflate();
 		}
 
-		m_parent = m_world.lock()->getEntity(m_pid);
+		m_parent = m_scene.lock()->getEntity(m_pid);
 		for (uint32_t cid : m_cids)
 		{
-			m_children.push_back(m_world.lock()->getEntity(cid));
+			m_children.push_back(m_scene.lock()->getEntity(cid));
 		}
 	}
 
@@ -72,17 +72,14 @@ namespace Yurrgoht
 		m_parent.lock()->m_children.push_back(weak_from_this());
 	}
 
-	void Entity::detach()
-	{
+	void Entity::detach() {
 		auto& children = m_parent.lock()->m_children;
 		children.erase(std::remove_if(children.begin(), children.end(), [this](const auto& child) {
-			return child.lock()->m_id == m_id;
-			}), children.end());
+			return child.lock()->m_id == m_id; }), children.end());
 		m_parent.reset();
 	}
 
-	void Entity::addComponent(std::shared_ptr<Component> component)
-	{
+	void Entity::addComponent(std::shared_ptr<Component> component) {
 		// set component type name
 		component->setTypeName(rttr::type::get(*component.get()).get_name().to_string());
 
@@ -91,33 +88,26 @@ namespace Yurrgoht
 		component->attach(weakEntity);
 		component->inflate();
 		
-		if (g_engine.isSimulating())
-		{
+		if (g_engine.isSimulating()) {
 			component->beginPlay();
 		}
 
 		m_components.push_back(component);
 	}
 
-	void Entity::removeComponent(std::shared_ptr<Component> component)
-	{
-		if (g_engine.isSimulating())
-		{
+	void Entity::removeComponent(std::shared_ptr<Component> component) {
+		if (g_engine.isSimulating()) {
 			component->endPlay();
 		}
 		component->detach();
 		m_components.erase(std::remove(m_components.begin(), m_components.end(), component), m_components.end());
 	}
 
-	void Entity::updateTransforms()
-	{
-		if (!isRoot())
-		{
+	void Entity::updateTransforms() {
+		if (!isRoot()) {
 			return;
-		}
-
-		if (m_children.empty())
-		{
+		} 
+		if (m_children.empty()) {
 			getComponent(TransformComponent)->update();
 			return;
 		}
@@ -125,8 +115,7 @@ namespace Yurrgoht
 		std::queue<std::tuple<Entity*, bool, glm::mat4>> queue;
 		queue.push(std::make_tuple(this, false, glm::mat4(1.0)));
 
-		while (!queue.empty())
-		{
+		while (!queue.empty()) {
 			std::tuple<Entity*, bool, glm::mat4> tuple = queue.front();
 			queue.pop();
 
@@ -138,8 +127,7 @@ namespace Yurrgoht
 			const auto& transform_component = entity->getComponent(TransformComponent);
 			is_chain_dirty = transform_component->update(is_chain_dirty, parent_global_matrix);
 
-			for (auto& child : entity->m_children)
-			{
+			for (auto& child : entity->m_children) {
 				queue.push(std::make_tuple(child.lock().get(), is_chain_dirty, transform_component->getGlobalMatrix()));
 			}
 		}

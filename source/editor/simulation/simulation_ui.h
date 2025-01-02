@@ -12,7 +12,7 @@ namespace Yurrgoht
 
 	enum class ECoordinateMode
 	{
-		Local, World
+		Local, Scene
 	};
 
 	class SimulationUI : public EditorUI

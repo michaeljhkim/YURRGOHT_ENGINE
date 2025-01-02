@@ -15,7 +15,7 @@ namespace Yurrgoht
 		int getWindowHeight();
 		bool isFullscreen();
 
-		std::string getDefaultWorldUrl();
+		std::string getDefaultSceneUrl();
 		std::string getEditorLayout();
 		bool getSaveLayout();
 		

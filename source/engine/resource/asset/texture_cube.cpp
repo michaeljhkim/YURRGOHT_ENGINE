@@ -10,6 +10,7 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::TextureCube)
 
 namespace Yurrgoht {
 	void TextureCube::inflate() {	
+		ktxTexture* ktx_texture;
 		m_layers = 6;
 
 		// create texture cube from ktx image data

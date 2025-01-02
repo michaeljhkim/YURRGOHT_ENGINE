@@ -1,6 +1,6 @@
 #include "tool_ui.h"
 #include "engine/core/base/macro.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/function/physics/physics_system.h"
 #include <map>
 
@@ -30,7 +30,7 @@ namespace Yurrgoht
 			}
 		};
 
-		const auto& entity_class_names = g_engine.worldManager()->getCurrentWorld()->getEntityClassNames();
+		const auto& entity_class_names = g_engine.sceneManager()->getCurrentScene()->getEntityClassNames();
 		if (!entity_class_names.empty()) {
 			for (const std::string& entity_class_name : entity_class_names) {
 				entity_typess.front().push_back(std::string(ICON_FA_ASTERISK) + " " + entity_class_name);
@@ -51,15 +51,14 @@ namespace Yurrgoht
 
 		float region_w = ImGui::GetContentRegionAvail().x;
 		ImVec2 spacing = ImGui::GetStyle().ItemSpacing;
-		const auto& wm = g_engine.worldManager();
+		const auto& wm = g_engine.sceneManager();
 
 		// save
 		const float kButtonHeight = 30.0f;
 		const ImVec2 kButtonSize = ImVec2(kButtonHeight, kButtonHeight);
 		ImGui::PushFont(bigIconFont());
-		if (ImGui::Button(ICON_FA_SAVE, kButtonSize))
-		{
-			wm->saveWorld();
+		if (ImGui::Button(ICON_FA_SAVE, kButtonSize)) {
+			wm->saveScene();
 		}
 		ImGui::PopFont();
 
@@ -76,21 +75,21 @@ namespace Yurrgoht
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(region_w * 0.5f - kButtonSize.x * 1.5f - spacing.x);
 
-		EWorldMode current_world_mode = wm->getWorldMode();
-		const char* play_icon_text = current_world_mode == EWorldMode::Edit ? ICON_FA_PLAY :
-			(current_world_mode == EWorldMode::Play ? ICON_FA_PAUSE : ICON_FA_FORWARD);
+		ESceneMode current_scene_mode = wm->getSceneMode();
+		const char* play_icon_text = current_scene_mode == ESceneMode::Edit ? ICON_FA_PLAY :
+			(current_scene_mode == ESceneMode::Play ? ICON_FA_PAUSE : ICON_FA_FORWARD);
 		if (ImGui::Button(play_icon_text, kButtonSize))
 		{
-			switch (current_world_mode)
+			switch (current_scene_mode)
 			{
-			case EWorldMode::Edit:
-				wm->setWorldMode(EWorldMode::Play);
+			case ESceneMode::Edit:
+				wm->setSceneMode(ESceneMode::Play);
 				break;
-			case EWorldMode::Play:
-				wm->setWorldMode(EWorldMode::Pause);
+			case ESceneMode::Play:
+				wm->setSceneMode(ESceneMode::Pause);
 				break;
-			case EWorldMode::Pause:
-				wm->setWorldMode(EWorldMode::Play);
+			case ESceneMode::Pause:
+				wm->setSceneMode(ESceneMode::Play);
 				break;
 			default:
 				break;
@@ -98,30 +97,26 @@ namespace Yurrgoht
 		}
 
 		ImGui::SameLine();
-		if (current_world_mode != EWorldMode::Pause)
-		{
+		if (current_scene_mode != ESceneMode::Pause) {
 			ImGui::BeginDisabled(true);
 		}
-		if (ImGui::Button(ICON_FA_STEP_FORWARD, kButtonSize))
-		{
+		if (ImGui::Button(ICON_FA_STEP_FORWARD, kButtonSize)) {
 			g_engine.physicsSystem()->step();
-			wm->getCurrentWorld()->step();
+			wm->getCurrentScene()->step();
 		}
-		if (current_world_mode != EWorldMode::Pause)
-		{
+		if (current_scene_mode != ESceneMode::Pause) {
 			ImGui::EndDisabled();
 		}
 
 		ImGui::SameLine();
-		if (current_world_mode == EWorldMode::Edit)
-		{
+		if (current_scene_mode == ESceneMode::Edit) {
 			ImGui::BeginDisabled(true);
 		}
 		if (ImGui::Button(ICON_FA_STOP, kButtonSize))
 		{
-			wm->setWorldMode(EWorldMode::Edit);
+			wm->setSceneMode(ESceneMode::Edit);
 		}
-		if (current_world_mode == EWorldMode::Edit)
+		if (current_scene_mode == ESceneMode::Edit)
 		{
 			ImGui::EndDisabled();
 		}

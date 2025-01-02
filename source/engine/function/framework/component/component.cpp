@@ -1,31 +1,23 @@
 #include "component.h"
 #include "engine/function/framework/entity/entity.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 	RTTR_REGISTRATION
 	{
 	rttr::registration::class_<Yurrgoht::Component>("Component");
 	}
 
-	void ITickable::tickable(float delta_time)
-	{
-		if (!m_tick_enabled)
-		{
+	void ITickable::tickable(float delta_time) {
+		if (!m_tick_enabled) {
 			return;
 		}
-
-		if (m_tick_interval == 0.0f)
-		{
+		if (m_tick_interval == 0.0f) {
 			tick(delta_time);
 		}
-		else
-		{
+		else {
 			m_tick_timer += delta_time;
-			if (m_tick_timer > m_tick_interval)
-			{
-				while (m_tick_timer > m_tick_interval)
-				{
+			if (m_tick_timer > m_tick_interval) {
+				while (m_tick_timer > m_tick_interval) {
 					m_tick_timer -= m_tick_interval;
 				}
 
@@ -38,13 +30,11 @@ namespace Yurrgoht
 		}
 	}
 
-	void Component::attach(std::weak_ptr<Entity>& parent)
-	{
+	void Component::attach(std::weak_ptr<Entity>& parent) {
 		m_parent = parent;
 	}
 
-	void Component::detach()
-	{
+	void Component::detach() {
 		m_parent.reset();
 	}
 

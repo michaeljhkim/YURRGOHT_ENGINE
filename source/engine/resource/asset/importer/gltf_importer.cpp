@@ -407,6 +407,7 @@ namespace Yurrgoht {
 		};
 
 		// 1.load textures and samplers
+		// Does not need to connect anything
 		std::vector<std::shared_ptr<Texture2D>> textures;
 		for (const tinygltf::Texture& gltf_texture : gltf_model.textures) {
 			const tinygltf::Image& gltf_image = gltf_model.images[gltf_texture.source];
@@ -427,6 +428,7 @@ namespace Yurrgoht {
 		}
 
 		// 2.load materials
+		// Connects model textures
 		std::vector<std::shared_ptr<Material>> materials;
 		for (const tinygltf::Material& gltf_material : gltf_model.materials) {
 			EAssetType asset_type = EAssetType::Material;
@@ -464,7 +466,7 @@ namespace Yurrgoht {
 		}
 
 		// 3.load nodes recursively
-		// load all nodes into one single vector, with global world matrix
+		// load all nodes into one single vector, with global scene matrix
 		glm::mat4 root_bone_matrix = glm::mat4(1.0);
 		std::vector<std::pair<glm::mat4, const tinygltf::Node*>> nodes;
 		for (const tinygltf::Scene& gltf_scene : gltf_model.scenes) {

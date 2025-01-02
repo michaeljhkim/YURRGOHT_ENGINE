@@ -4,13 +4,13 @@
 #include "engine/resource/asset/base/asset.h"
 
 namespace Yurrgoht {
-	enum class EWorldMode {
+	enum class ESceneMode {
 		Edit, Play, Pause
 	};
 
-	class World : public Asset, public std::enable_shared_from_this<World> {
+	class Scene : public Asset, public std::enable_shared_from_this<Scene> {
 	public:
-		~World();
+		~Scene();
 
 		virtual void inflate() override;
 		void beginPlay();
@@ -33,8 +33,8 @@ namespace Yurrgoht {
 			ar(cereal::make_nvp("entities", m_entities));
 		}
 
-		friend class WorldManager;
-		World();
+		friend class SceneManager;
+		Scene();
 
 		uint32_t m_next_entity_id = 0;
 		std::weak_ptr<Entity> m_camera_entity;

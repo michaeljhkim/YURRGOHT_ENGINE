@@ -4,21 +4,18 @@
 #include <cereal/access.hpp>
 #include <cereal/cereal.hpp>
 
-enum class ETextureType
-{
+enum class ETextureType {
 	BaseColor, MetallicRoughnessOcclusion, Normal, Emissive, Cube, UI, Data
 };
 
-enum class EPixelType
-{
+enum class EPixelType {
 	RGBA8, RGBA16, RGBA32, RG16, R16, R32
 };
 
 
-namespace Yurrgoht
-{
-	class Texture
-	{
+namespace Yurrgoht {
+
+	class Texture {
 	public:
 		Texture();
 		virtual ~Texture();
@@ -38,8 +35,6 @@ namespace Yurrgoht
 		void setAddressMode(VkSamplerAddressMode address_mode);
 
 	protected:
-		ktxTexture* ktx_texture;
-
 		bool isSRGB();
 		bool isMipmap();
 		VkFormat getFormat();

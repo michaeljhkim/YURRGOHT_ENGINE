@@ -11,14 +11,27 @@
 #include "asset_manager.h"
 #include "engine/resource/asset/texture_2d.h"
 #include "engine/resource/asset/texture_cube.h"
-#include "engine/function/framework/world/world.h"
+#include "engine/function/framework/scene/scene.h"
 #include "engine/function/framework/component/sky_light_component.h"
 
 
 namespace Yurrgoht {
 
 	void AssetManager::init() {
+		/*
+		.tx2d = texture 2d
+		.txcube = texture cube
+		.mat = material
+		.skl = skeleton
+		.stmesh = static mesh
+		.skl = skeleton
+		.stmesh = static mesh
+		.skmesh = skeleton mesh
+		.anim = animation
+		.scene = scene (a bit obvious)
+		*/
 		m_asset_type_exts = {
+			/*
 			{ EAssetType::Texture2D, "tex" },
 			{ EAssetType::TextureCube, "texc" }, 
 			{ EAssetType::Material, "mat" }, 
@@ -26,7 +39,15 @@ namespace Yurrgoht {
 			{ EAssetType::StaticMesh, "sm"}, 
 			{ EAssetType::SkeletalMesh, "skm" }, 
 			{ EAssetType::Animation, "anim" },
-			{ EAssetType::World, "world" }
+			*/
+			{ EAssetType::Texture2D, "tx2d" },
+			{ EAssetType::TextureCube, "txcube" },
+			{ EAssetType::Material, "mat" },
+			{ EAssetType::Skeleton, "skl" },
+			{ EAssetType::StaticMesh, "stmesh" },
+			{ EAssetType::SkeletalMesh, "skmesh" },
+			{ EAssetType::Animation, "anim" },
+			{ EAssetType::Scene, "scene" }
 		};
 
 		m_asset_archive_types = {
@@ -37,7 +58,7 @@ namespace Yurrgoht {
 			{ EAssetType::StaticMesh, EArchiveType::Binary },
 			{ EAssetType::SkeletalMesh, EArchiveType::Binary },
 			{ EAssetType::Animation, EArchiveType::Binary },
-			{ EAssetType::World, EArchiveType::Json }
+			{ EAssetType::Scene, EArchiveType::Json }
 		};
 
 		for (const auto& iter : m_asset_type_exts) {
@@ -169,6 +190,7 @@ namespace Yurrgoht {
 	}
 
 	void AssetManager::serializeAsset(std::shared_ptr<Asset> asset, const URL& url) {
+		LOG_INFO("ASSET SERIALIZING: {}", url.getAbsolute());
 		// reference asset
 		EAssetType asset_type = asset->getAssetType();
 		const std::string& asset_ext = m_asset_type_exts[asset_type];
@@ -192,14 +214,14 @@ namespace Yurrgoht {
 				break;
 		}
 
-		// don't cache world!
-		if (asset_type != EAssetType::World) {
+		// don't cache scene!
+		if (asset_type != EAssetType::Scene) {
 			m_assets[url] = asset;
 		}
 	}
 
 	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url) {
-		LOG_INFO("ASSET LOADING: {}", url.getAbsolute());
+		LOG_INFO("ASSET DESERIALIZING: {}", url.getAbsolute());
 		// check if the asset url exists
 		if (!g_engine.fileSystem()->exists(url.str())) {
 			return nullptr;
@@ -238,8 +260,8 @@ namespace Yurrgoht {
 		asset->setURL(url);
 		asset->inflate();
 
-		// don't cache world!
-		if (asset_type != EAssetType::World) {
+		// don't cache scene!
+		if (asset_type != EAssetType::Scene) {
 			m_assets[url] = asset;
 		}
 

@@ -1,18 +1,18 @@
-#include "world_ui.h"
+#include "scene_ui.h"
 #include "engine/core/event/event_system.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 
 namespace Yurrgoht
 {
 
-	void WorldUI::init() {
-		m_title = "World";
+	void SceneUI::init() {
+		m_title = "Scene";
 
-		g_engine.eventSystem()->addListener(EEventType::SelectEntity, std::bind(&WorldUI::onSelectEntity, this, std::placeholders::_1));
+		g_engine.eventSystem()->addListener(EEventType::SelectEntity, std::bind(&SceneUI::onSelectEntity, this, std::placeholders::_1));
 		LOG_INFO("SUCCESS");
 	}
 
-	void WorldUI::construct()
+	void SceneUI::construct()
 	{
 		sprintf(m_title_buf, "%s %s###%s", ICON_FA_GLOBE, m_title.c_str(), m_title.c_str());
 		if (!ImGui::Begin(m_title_buf))
@@ -21,13 +21,13 @@ namespace Yurrgoht
 			return;
 		}
 
-		// get current active world
-		const auto& current_world = g_engine.worldManager()->getCurrentWorld();
+		// get current active scene
+		const auto& current_scene = g_engine.sceneManager()->getCurrentScene();
 
 		// traverse all entities
 		const float k_unindent_w = 16;
 		ImGui::Unindent(k_unindent_w);
-		const auto& entities = current_world->getEntities();
+		const auto& entities = current_scene->getEntities();
 		for (const auto& iter : entities)
 		{
 			const auto& entity = iter.second;
@@ -40,13 +40,13 @@ namespace Yurrgoht
 		ImGui::End();
 	}
 
-	void WorldUI::destroy()
+	void SceneUI::destroy()
 	{
 		EditorUI::destroy();
 
 	}
 
-	void WorldUI::constructEntityTree(const std::shared_ptr<class Entity>& entity)
+	void SceneUI::constructEntityTree(const std::shared_ptr<class Entity>& entity)
 	{
 		uint32_t entity_id = entity->getID();
 
@@ -75,7 +75,7 @@ namespace Yurrgoht
 		ImGui::TreePop();
 	}
 
-	void WorldUI::onSelectEntity(const std::shared_ptr<class Event>& event)
+	void SceneUI::onSelectEntity(const std::shared_ptr<class Event>& event)
 	{
 		const SelectEntityEvent* p_event = static_cast<const SelectEntityEvent*>(event.get());
 		m_selected_entity_id = p_event->entity_id;

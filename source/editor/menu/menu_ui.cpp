@@ -3,7 +3,7 @@
 #include "engine/core/config/config_manager.h"
 #include "engine/core/event/event_system.h"
 #include "engine/resource/asset/asset_manager.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 
 #include <imgui/imgui_internal.h>
 
@@ -18,12 +18,12 @@ namespace Yurrgoht
 		m_layout_path = g_engine.fileSystem()->absolute("asset/engine/layout/" + layout_name);
 		ImGui::LoadIniSettingsFromDisk(m_layout_path.c_str());
 
-		m_template_worlds = {
-			{ "empty", "asset/engine/world/empty.world", loadImGuiImageFromFile("asset/engine/world/empty.png")},
-			{ "basic", "asset/engine/world/basic.world", loadImGuiImageFromFile("asset/engine/world/basic.png")}
+		m_template_scenes = {
+			{ "empty", "asset/engine/scene/empty.scene", loadImGuiImageFromFile("asset/engine/scene/empty.png")},
+			{ "basic", "asset/engine/scene/basic.scene", loadImGuiImageFromFile("asset/engine/scene/basic.png")}
 		};
-		for (const auto& template_world : m_template_worlds) {
-			m_template_world_hover_states[template_world.name] = { false };
+		for (const auto& template_scene : m_template_scenes) {
+			m_template_scene_hover_states[template_scene.name] = { false };
 		}
 		LOG_INFO("SUCCESS");
 	}
@@ -66,15 +66,15 @@ namespace Yurrgoht
 		ImGui::PopStyleColor();
 
 		// construct popups
-		static char world_name[128];
+		static char scene_name[128];
 		const float k_spacing = 4;
-		if (showing_new_world_popup)
+		if (showing_new_scene_popup)
 		{
 			ImGui::SetNextWindowSize(ImVec2(420, 500));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
-			ImGui::OpenPopup("New World");
-			if (ImGui::BeginPopupModal("New World", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+			ImGui::OpenPopup("New Scene");
+			if (ImGui::BeginPopupModal("New Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 			{
 				const float k_middle_height = 55.0f;
 				const float k_bottom_height = 30.0f;
@@ -82,11 +82,11 @@ namespace Yurrgoht
 				ImVec2 content_size = ImGui::GetContentRegionAvail();
 
 				float top_height = content_size.y - k_middle_height - k_bottom_height - k_spacing * 2;
-				ImGui::BeginChild("new_world_top", ImVec2(content_size.x, top_height));
+				ImGui::BeginChild("new_scene_top", ImVec2(content_size.x, top_height));
 
 				const float k_folder_tree_width_scale = 0.5f;
-				ImGui::BeginChild("template_world", ImVec2(content_size.x * k_folder_tree_width_scale - k_spacing, top_height), true);
-				constructTemplateWorldPanel();
+				ImGui::BeginChild("template_scene", ImVec2(content_size.x * k_folder_tree_width_scale - k_spacing, top_height), true);
+				constructTemplateScenePanel();
 				ImGui::EndChild();
 
 				ImGui::SameLine();
@@ -96,39 +96,39 @@ namespace Yurrgoht
 				ImGui::EndChild();
 				ImGui::EndChild();
 
-				ImGui::BeginChild("new_world_middle", ImVec2(content_size.x, k_middle_height), true);
+				ImGui::BeginChild("new_scene_middle", ImVec2(content_size.x, k_middle_height), true);
 				ImGui::Text("path:");
 				ImGui::SameLine();
 				ImGui::Text("%s", m_selected_folder.c_str());
 
 				ImGui::Text("name:");
 				ImGui::SameLine();
-				ImGui::InputText("##world_name", world_name, IM_ARRAYSIZE(world_name));
+				ImGui::InputText("##scene_name", scene_name, IM_ARRAYSIZE(scene_name));
 				ImGui::EndChild();
 				
-				ImGui::BeginChild("new_world_bottom", ImVec2(content_size.x, k_bottom_height), false);
+				ImGui::BeginChild("new_scene_bottom", ImVec2(content_size.x, k_bottom_height), false);
 				float button_width = 60.0f;
 				float button_offset_x = (ImGui::GetContentRegionAvail().x - button_width * 2 - k_spacing) / 2.0f;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + button_offset_x);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 				if (ImGui::Button("create", ImVec2(button_width, 0)))
 				{
-					std::string world_name_str = world_name;
-					if (!m_selected_folder.empty() && !world_name_str.empty())
+					std::string scene_name_str = scene_name;
+					if (!m_selected_folder.empty() && !scene_name_str.empty())
 					{
-						const std::string& template_url = m_template_worlds[m_selected_template_world_index].url;
-						std::string save_as_url = m_selected_folder + "/" + world_name_str + ".world";
+						const std::string& template_url = m_template_scenes[m_selected_template_scene_index].url;
+						std::string save_as_url = m_selected_folder + "/" + scene_name_str + ".scene";
 
 						clearEntitySelection();
-						g_engine.worldManager()->createWorld(template_url, save_as_url);
+						g_engine.sceneManager()->createScene(template_url, save_as_url);
 
-						showing_new_world_popup = false;
+						showing_new_scene_popup = false;
 					}
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("cancel", ImVec2(button_width, 0)))
 				{
-					showing_new_world_popup = false;
+					showing_new_scene_popup = false;
 				}
 				ImGui::EndChild();
 
@@ -136,31 +136,31 @@ namespace Yurrgoht
 			}
 		}
 
-		if (showing_open_world_popup)
+		if (showing_open_scene_popup)
 		{
 			ImGui::SetNextWindowSize(ImVec2(300, 500));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
-			ImGui::OpenPopup("Open World");
-			if (ImGui::BeginPopupModal("Open World", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+			ImGui::OpenPopup("Open Scene");
+			if (ImGui::BeginPopupModal("Open Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 			{
-				for (const std::string& current_world_url : m_current_world_urls)
+				for (const std::string& current_scene_url : m_current_scene_urls)
 				{
 					ImGuiTreeNodeFlags tree_node_flags = 0;
 					tree_node_flags |= ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-					if (current_world_url == m_selected_world_url)
+					if (current_scene_url == m_selected_scene_url)
 					{
 						tree_node_flags |= ImGuiTreeNodeFlags_Selected;
 					}
 
-					if (ImGui::TreeNodeEx(current_world_url.c_str(), tree_node_flags))
+					if (ImGui::TreeNodeEx(current_scene_url.c_str(), tree_node_flags))
 					{
 						ImGui::TreePop();
 					}
 
 					if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 					{
-						m_selected_world_url = current_world_url;
+						m_selected_scene_url = current_scene_url;
 					}
 				}
 
@@ -171,27 +171,27 @@ namespace Yurrgoht
 				if (ImGui::Button("open", ImVec2(button_width, 0)))
 				{
 					clearEntitySelection();
-					g_engine.worldManager()->openWorld(m_selected_world_url);
-					showing_open_world_popup = false;
+					g_engine.sceneManager()->openScene(m_selected_scene_url);
+					showing_open_scene_popup = false;
 				}
 
 				ImGui::SameLine();
 				if (ImGui::Button("cancel", ImVec2(button_width, 0)))
 				{
-					showing_open_world_popup = false;
+					showing_open_scene_popup = false;
 				}
 
 				ImGui::EndPopup();
 			}
 		}
 
-		if (showing_save_as_world_popup)
+		if (showing_save_as_scene_popup)
 		{
 			ImGui::SetNextWindowSize(ImVec2(300, 500));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
-			ImGui::OpenPopup("Save As World");
-			if (ImGui::BeginPopupModal("Save As World", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+			ImGui::OpenPopup("Save As Scene");
+			if (ImGui::BeginPopupModal("Save As Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 			{
 				const float k_middle_height = 55.0f;
 				const float k_bottom_height = 30.0f;
@@ -199,41 +199,41 @@ namespace Yurrgoht
 				ImVec2 content_size = ImGui::GetContentRegionAvail();
 
 				float top_height = content_size.y - k_middle_height - k_bottom_height - k_spacing * 2;
-				ImGui::BeginChild("new_world_top", ImVec2(content_size.x, top_height), true);
+				ImGui::BeginChild("new_scene_top", ImVec2(content_size.x, top_height), true);
 				constructFolderTree();
 				ImGui::EndChild();
 
-				ImGui::BeginChild("new_world_middle", ImVec2(content_size.x, k_middle_height), true);
+				ImGui::BeginChild("new_scene_middle", ImVec2(content_size.x, k_middle_height), true);
 				ImGui::Text("path:");
 				ImGui::SameLine();
 				ImGui::Text("%s", m_selected_folder.c_str());
 
 				ImGui::Text("name:");
 				ImGui::SameLine();
-				ImGui::InputText("##world_name", world_name, IM_ARRAYSIZE(world_name));
+				ImGui::InputText("##scene_name", scene_name, IM_ARRAYSIZE(scene_name));
 				ImGui::EndChild();
 
-				ImGui::BeginChild("new_world_bottom", ImVec2(content_size.x, k_bottom_height), false);
+				ImGui::BeginChild("new_scene_bottom", ImVec2(content_size.x, k_bottom_height), false);
 				float button_width = 60.0f;
 				float button_offset_x = (ImGui::GetContentRegionAvail().x - button_width * 2 - k_spacing) / 2.0f;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + button_offset_x);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 				if (ImGui::Button("save", ImVec2(button_width, 0)))
 				{
-					std::string world_name_str = world_name;
-					if (!m_selected_folder.empty() && !world_name_str.empty())
+					std::string scene_name_str = scene_name;
+					if (!m_selected_folder.empty() && !scene_name_str.empty())
 					{
-						std::string url = m_selected_folder + "/" + world_name_str + ".world";
-						g_engine.worldManager()->saveAsWorld(url);
+						std::string url = m_selected_folder + "/" + scene_name_str + ".scene";
+						g_engine.sceneManager()->saveAsScene(url);
 
-						showing_save_as_world_popup = false;
+						showing_save_as_scene_popup = false;
 					}
 				}
 
 				ImGui::SameLine();
 				if (ImGui::Button("cancel", ImVec2(button_width, 0)))
 				{
-					showing_save_as_world_popup = false;
+					showing_save_as_scene_popup = false;
 				}
 				ImGui::EndChild();
 
@@ -256,26 +256,26 @@ namespace Yurrgoht
 	{
 		if (ImGui::MenuItem("New", "Ctrl+N"))
 		{
-			newWorld();
+			newScene();
 		}
 
 		if (ImGui::MenuItem("Open", "Ctrl+O"))
 		{
-			openWorld();
+			openScene();
 		}
 
 		if (ImGui::BeginMenu("Open Recent"))
 		{
-			ImGui::MenuItem("a.world");
-			ImGui::MenuItem("b.world");
-			ImGui::MenuItem("c.world");
+			ImGui::MenuItem("a.scene");
+			ImGui::MenuItem("b.scene");
+			ImGui::MenuItem("c.scene");
 			if (ImGui::BeginMenu("More.."))
 			{
-				ImGui::MenuItem("d.world");
-				ImGui::MenuItem("e.world");
-				ImGui::MenuItem("f.world");
-				ImGui::MenuItem("g.world");
-				ImGui::MenuItem("h.world");
+				ImGui::MenuItem("d.scene");
+				ImGui::MenuItem("e.scene");
+				ImGui::MenuItem("f.scene");
+				ImGui::MenuItem("g.scene");
+				ImGui::MenuItem("h.scene");
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
@@ -285,12 +285,12 @@ namespace Yurrgoht
 
 		if (ImGui::MenuItem("Save", "Ctrl+S"))
 		{
-			saveWorld();
+			saveScene();
 		}
 
 		if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S"))
 		{
-			saveAsWorld();
+			saveAsScene();
 		}
 
 		ImGui::Separator();
@@ -373,19 +373,19 @@ namespace Yurrgoht
 	{
 		if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_N, 0, ImGuiInputFlags_RouteAlways))
 		{
-			newWorld();
+			newScene();
 		}
 		else if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_O, 0, ImGuiInputFlags_RouteAlways))
 		{
-			openWorld();
+			openScene();
 		}
 		else if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S, 0, ImGuiInputFlags_RouteAlways))
 		{
-			saveWorld();
+			saveScene();
 		}
 		else if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_N, 0, ImGuiInputFlags_RouteAlways))
 		{
-			saveAsWorld();
+			saveAsScene();
 		}
 		else if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_Q, 0, ImGuiInputFlags_RouteAlways))
 		{
@@ -421,63 +421,63 @@ namespace Yurrgoht
 		}
 	}
 
-	void MenuUI::newWorld()
+	void MenuUI::newScene()
 	{
 		if (isPoppingUp())
 		{
 			return;
 		}
 
-		showing_new_world_popup = true;
+		showing_new_scene_popup = true;
 		pollFolders();
 	}
 
-	void MenuUI::openWorld()
+	void MenuUI::openScene()
 	{
 		if (isPoppingUp())
 		{
 			return;
 		}
 
-		showing_open_world_popup = true;
+		showing_open_scene_popup = true;
 		pollFolders();
 
-		m_current_world_urls.clear();
+		m_current_scene_urls.clear();
 		for (const auto& folder_node : m_folder_nodes)
 		{
 			for (const auto& child_file : folder_node.child_files)
 			{
-				if (g_engine.assetManager()->getAssetType(child_file) == EAssetType::World)
+				if (g_engine.assetManager()->getAssetType(child_file) == EAssetType::Scene)
 				{
-					std::string world_name = g_engine.fileSystem()->basename(child_file);
-					std::string current_world_name = g_engine.worldManager()->getCurrentWorldName();
-					if (world_name != current_world_name)
+					std::string scene_name = g_engine.fileSystem()->basename(child_file);
+					std::string current_scene_name = g_engine.sceneManager()->getCurrentSceneName();
+					if (scene_name != current_scene_name)
 					{
-						m_current_world_urls.push_back(g_engine.fileSystem()->relative(child_file));
+						m_current_scene_urls.push_back(g_engine.fileSystem()->relative(child_file));
 					}
 				}
 			}
 		}
 	}
 
-	void MenuUI::saveWorld()
+	void MenuUI::saveScene()
 	{
 		if (isPoppingUp())
 		{
 			return;
 		}
 
-		g_engine.worldManager()->saveWorld();
+		g_engine.sceneManager()->saveScene();
 	}
 
-	void MenuUI::saveAsWorld()
+	void MenuUI::saveAsScene()
 	{
 		if (isPoppingUp())
 		{
 			return;
 		}
 
-		showing_save_as_world_popup = true;
+		showing_save_as_scene_popup = true;
 		pollFolders();
 	}
 
@@ -521,7 +521,7 @@ namespace Yurrgoht
 
 	}
 
-	void MenuUI::constructTemplateWorldPanel()
+	void MenuUI::constructTemplateScenePanel()
 	{
 		ImVec2 icon_size(80, 80);
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -531,16 +531,16 @@ namespace Yurrgoht
 		float clip_rect_max_y = clip_rect_min_y + ImGui::GetContentRegionAvail().y;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(15.0f, 24.0f));
-		for (size_t i = 0; i < m_template_worlds.size(); ++i)
+		for (size_t i = 0; i < m_template_scenes.size(); ++i)
 		{
-			const std::string& template_world_name = m_template_worlds[i].name;
-			HoverState& hover_state = m_template_world_hover_states[template_world_name];
+			const std::string& template_scene_name = m_template_scenes[i].name;
+			HoverState& hover_state = m_template_scene_hover_states[template_scene_name];
 
 			ImGui::BeginGroup();
 
 			// draw hovered/selected background rect
 			bool is_hovered = hover_state.is_hovered;
-			bool is_selected = m_selected_template_world_index == i;
+			bool is_selected = m_selected_template_scene_index == i;
 			if (is_hovered || is_selected)
 			{
 				ImVec4 color = ImVec4(50, 50, 50, 255);
@@ -561,21 +561,21 @@ namespace Yurrgoht
 			}
 
 			// draw image
-			ImGui::Image(m_template_worlds[i].icon->tex_id, icon_size);
+			ImGui::Image(m_template_scenes[i].icon->tex_id, icon_size);
 
 			// draw asset name text
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);
-			float text_width = ImGui::CalcTextSize(template_world_name.c_str()).x;
+			float text_width = ImGui::CalcTextSize(template_scene_name.c_str()).x;
 			if (text_width > icon_size.x)
 			{
 				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + icon_size.x);
-				ImGui::Text("%s", template_world_name.c_str());
+				ImGui::Text("%s", template_scene_name.c_str());
 				ImGui::PopTextWrapPos();
 			}
 			else
 			{
 				ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (icon_size.x - text_width) * 0.5f);
-				ImGui::Text("%s", template_world_name.c_str());
+				ImGui::Text("%s", template_scene_name.c_str());
 			}
 
 			ImGui::EndGroup();
@@ -584,28 +584,25 @@ namespace Yurrgoht
 			hover_state.is_hovered = ImGui::IsItemHovered();
 			if (ImGui::IsItemClicked())
 			{
-				m_selected_template_world_index = i;
+				m_selected_template_scene_index = i;
 			}
 			hover_state.rect_min = ImGui::GetItemRectMin();
 			hover_state.rect_max = ImGui::GetItemRectMax();
 
 			float current_pos_x = ImGui::GetItemRectMax().x;
 			float next_pos_x = current_pos_x + style.ItemSpacing.x + icon_size.x;
-			if (i < m_template_worlds.size() - 1 && next_pos_x < max_pos_x)
-			{
+			if (i < m_template_scenes.size() - 1 && next_pos_x < max_pos_x) {
 				ImGui::SameLine();
 			}
 		}
 		ImGui::PopStyleVar();
 	}
 
-	void MenuUI::constructWorldURLPanel()
-	{
+	void MenuUI::constructSceneURLPanel() {
 
 	}
 
-	void MenuUI::clearEntitySelection()
-	{
+	void MenuUI::clearEntitySelection() {
 		g_engine.eventSystem()->syncDispatch(std::make_shared<SelectEntityEvent>(UINT_MAX));
 	}
 

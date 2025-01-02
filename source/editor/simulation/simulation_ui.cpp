@@ -7,7 +7,7 @@
 
 #include "engine/platform/timer/timer.h"
 #include "engine/resource/asset/asset_manager.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/function/framework/component/transform_component.h"
 #include "engine/function/framework/component/camera_component.h"
 #include "engine/function/framework/component/static_mesh_component.h"
@@ -41,8 +41,8 @@ namespace Yurrgoht
 	}
 
 	void SimulationUI::construct() {
-		const std::string& world_name = g_engine.worldManager()->getCurrentWorldName();
-		sprintf(m_title_buf, "%s %s###%s", ICON_FA_GAMEPAD, world_name.c_str(), m_title.c_str());
+		const std::string& scene_name = g_engine.sceneManager()->getCurrentSceneName();
+		sprintf(m_title_buf, "%s %s###%s", ICON_FA_GAMEPAD, scene_name.c_str(), m_title.c_str());
 
 		bool is_simulating_fullscreen = g_engine.isSimulating() && g_editor.isSimulationPanelFullscreen();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -189,8 +189,8 @@ namespace Yurrgoht
 		EAssetType asset_type = as->getAssetType(url);
 		std::string basename = g_engine.fileSystem()->basename(url);
 
-		const auto& world = g_engine.worldManager()->getCurrentWorld();
-		m_created_entity = world->createEntity(basename);
+		const auto& scene = g_engine.sceneManager()->getCurrentScene();
+		m_created_entity = scene->createEntity(basename);
 
 		if (asset_type == EAssetType::StaticMesh) {
 			std::shared_ptr<StaticMeshComponent> static_mesh_component = std::make_shared<StaticMeshComponent>();
@@ -340,15 +340,15 @@ namespace Yurrgoht
 		}
 
 		if (g_engine.isEditor()) {
-			EWorldMode current_world_mode = g_engine.worldManager()->getWorldMode();
+			ESceneMode current_scene_mode = g_engine.sceneManager()->getSceneMode();
 			if (key_event->mods == GLFW_MOD_ALT && key_event->key == GLFW_KEY_P) {
-				if (current_world_mode == EWorldMode::Edit) {
-					g_engine.worldManager()->setWorldMode(EWorldMode::Play);
+				if (current_scene_mode == ESceneMode::Edit) {
+					g_engine.sceneManager()->setSceneMode(ESceneMode::Play);
 				}
 			}
 			else if (key_event->key == GLFW_KEY_ESCAPE) {
-				if (current_world_mode == EWorldMode::Play) {
-					g_engine.worldManager()->setWorldMode(EWorldMode::Edit);
+				if (current_scene_mode == ESceneMode::Play) {
+					g_engine.sceneManager()->setSceneMode(ESceneMode::Edit);
 				}
 			}
 
@@ -358,7 +358,7 @@ namespace Yurrgoht
 					g_engine.eventSystem()->syncDispatch(std::make_shared<SelectEntityEvent>(UINT_MAX));
 				}
 				if (key_event->key == GLFW_KEY_DELETE) {
-					g_engine.worldManager()->getCurrentWorld()->removeEntity(selected_entity_id);
+					g_engine.sceneManager()->getCurrentScene()->removeEntity(selected_entity_id);
 				}
 			}
 
@@ -387,8 +387,8 @@ namespace Yurrgoht
 		const SelectEntityEvent* p_event = static_cast<const SelectEntityEvent*>(event.get());
 
 		if (p_event->entity_id != m_camera_component.lock()->getParent().lock()->getID()) {
-			const auto& current_world = g_engine.worldManager()->getCurrentWorld();
-			m_selected_entity = current_world->getEntity(p_event->entity_id);
+			const auto& current_scene = g_engine.sceneManager()->getCurrentScene();
+			m_selected_entity = current_scene->getEntity(p_event->entity_id);
 		}
 	}
 
@@ -397,7 +397,7 @@ namespace Yurrgoht
 		// try to get new camera if current camera is not valid
 		if (!m_camera_component.lock())
 		{
-			m_camera_component = g_engine.worldManager()->getCameraComponent();
+			m_camera_component = g_engine.sceneManager()->getCameraComponent();
 		}
 
 		// set camera component
@@ -439,7 +439,7 @@ namespace Yurrgoht
 			{
 				if (!m_created_entity)
 				{
-					const auto& world = g_engine.worldManager()->getCurrentWorld();
+					const auto& scene = g_engine.sceneManager()->getCurrentScene();
 					std::string playload_str((const char*)payload->Data, payload->DataSize);
 					std::vector<std::string> splits = StringUtil::split(playload_str, "-");
 					const std::string& entity_category = splits[0];
@@ -447,11 +447,11 @@ namespace Yurrgoht
 
 					if (entity_category == "Entities")
 					{
-						m_created_entity = world->createEntity(entity_type);
+						m_created_entity = scene->createEntity(entity_type);
 					}
 					else if (entity_category == "Lights")
 					{
-						m_created_entity = world->createEntity(entity_type);
+						m_created_entity = scene->createEntity(entity_type);
 						auto transform_component = m_created_entity->getComponent(TransformComponent);
 
 						// add light component

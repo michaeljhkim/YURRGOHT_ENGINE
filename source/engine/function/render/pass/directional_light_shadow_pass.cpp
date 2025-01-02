@@ -381,7 +381,7 @@ namespace Yurrgoht
 				glm::vec3(-1.0f, -1.0f, 1.0f)
 			};
 
-			// Project frustum corners into world space
+			// Project frustum corners into scene space
 			for (uint32_t i = 0; i < 8; ++i)
 			{
 				glm::vec4 inv_frustum_corner = shadow_cascade_ci.inv_camera_view_proj * glm::vec4(frustum_corners[i], 1.0f);

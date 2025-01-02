@@ -1,7 +1,7 @@
 #include "property_ui.h"
 #include "engine/core/event/event_system.h"
 #include "engine/resource/asset/asset_manager.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/core/color/color.h"
 
 #define DRAG_SPEED 0.1f
@@ -77,8 +77,8 @@ namespace Yurrgoht
 	{
 		const SelectEntityEvent* p_event = static_cast<const SelectEntityEvent*>(event.get());
 
-		const auto& current_world = g_engine.worldManager()->getCurrentWorld();
-		m_selected_entity = current_world->getEntity(p_event->entity_id);
+		const auto& current_scene = g_engine.sceneManager()->getCurrentScene();
+		m_selected_entity = current_scene->getEntity(p_event->entity_id);
 	}
 
 	void PropertyUI::constructEntity(const rttr::instance& instance)

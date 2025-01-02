@@ -4,7 +4,7 @@
 #include "engine/core/event/event_system.h"
 #include "engine/function/render/window_system.h"
 #include "engine/function/render/render_system.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 
 namespace Yurrgoht
 {
@@ -53,7 +53,7 @@ namespace Yurrgoht
 
     void Engine::logicTick(float delta_time) {
         g_engine.eventSystem()->tick();
-        g_engine.worldManager()->tick(delta_time);
+        g_engine.sceneManager()->tick(delta_time);
 		g_engine.timerManager()->tick(delta_time);
 		//LOG_INFO("SUCCESS - Delta Time: {}", delta_time);
 	}

@@ -5,7 +5,7 @@
 #include "engine/core/config/config_manager.h"
 #include "engine/core/event/event_system.h"
 #include "engine/function/render/window_system.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/function/physics/physics_system.h"
 #include "engine/function/render/render_system.h"
 #include "engine/function/render/debug_draw_manager.h"
@@ -45,8 +45,8 @@ namespace Yurrgoht {
 		m_asset_manager = std::make_shared<AssetManager>();
 		m_asset_manager->init();
 
-        m_world_manager = std::make_shared<WorldManager>();
-        m_world_manager->init();
+        m_scene_manager = std::make_shared<SceneManager>();
+        m_scene_manager->init();
 
 		m_physics_system = std::make_shared<PhysicsSystem>();
         m_physics_system->init();
@@ -57,7 +57,7 @@ namespace Yurrgoht {
 		m_debug_draw_system = std::make_shared<DebugDrawManager>();
         m_debug_draw_system->init();
 
-        //m_world_manager->CreateNewDefaultWorld();
+        //m_scene_manager->CreateNewDefaultScene();
 		//LOG_INFO("EngineContext::init {}", "TimerManager | FileSystem | LogSystem - INITIALIZED");
 		LOG_INFO("SUCCESS - {}", "NOTE: Logging cannot start before this point as LogSystem is not initialized");
     }   
@@ -70,7 +70,7 @@ namespace Yurrgoht {
         m_debug_draw_system->destroy();
         m_render_system->destroy();
         m_physics_system->destroy();
-        m_world_manager->destroy();
+        m_scene_manager->destroy();
 		m_asset_manager->destroy();
         m_shader_manager->destroy();
         VulkanRHI::get().destroy();
@@ -89,17 +89,17 @@ namespace Yurrgoht {
 
 	bool EngineContext::isEditing()
 	{
-        return m_world_manager->getWorldMode() == EWorldMode::Edit;
+        return m_scene_manager->getSceneMode() == ESceneMode::Edit;
 	}
 
 	bool EngineContext::isPlaying()
 	{
-        return m_world_manager->getWorldMode() == EWorldMode::Play;
+        return m_scene_manager->getSceneMode() == ESceneMode::Play;
 	}
 
 	bool EngineContext::isPausing()
 	{
-        return m_world_manager->getWorldMode() == EWorldMode::Pause;
+        return m_scene_manager->getSceneMode() == ESceneMode::Pause;
 	}
 
 }

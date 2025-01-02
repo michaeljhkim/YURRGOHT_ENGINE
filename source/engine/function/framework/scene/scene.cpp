@@ -1,16 +1,16 @@
-#include "world.h"
+#include "scene.h"
 #include "engine/core/base/macro.h"
 #include "engine/function/framework/component/camera_component.h"
 #include "engine/function/framework/component/transform_component.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include <fstream>
 
-CEREAL_REGISTER_TYPE(Yurrgoht::World)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::World)
+CEREAL_REGISTER_TYPE(Yurrgoht::Scene)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Scene)
 
 namespace Yurrgoht {
 
-	World::World() {
+	Scene::Scene() {
 		auto derived_entity_types = rttr::type::get_by_name("Entity").get_derived_classes();
 		for (const auto& derived_entity_type : derived_entity_types) {
 			m_entity_class_names.push_back(derived_entity_type.get_name().to_string());
@@ -18,7 +18,7 @@ namespace Yurrgoht {
 		LOG_INFO("SUCCESS");
 	}
 
-	World::~World() {
+	Scene::~Scene() {
 		m_camera_entity.reset();
 		for (auto iter : m_entities) {
 			iter.second->endPlay();
@@ -27,11 +27,11 @@ namespace Yurrgoht {
 		m_entities.clear();
 	}
 
-	void World::inflate() {
+	void Scene::inflate() {
 		for (const auto& iter : m_entities) {
 			const auto& entity = iter.second;
 			LOG_INFO("LOADING ENTITY: {}" , entity->getName());
-			entity->m_world = weak_from_this();
+			entity->m_scene = weak_from_this();
 			entity->inflate();
 			if (g_engine.isSimulating()) {
 				entity->beginPlay();
@@ -48,13 +48,13 @@ namespace Yurrgoht {
 		LOG_INFO("SUCCESS");
 	}
 
-	void World::beginPlay() {
+	void Scene::beginPlay() {
 		for (const auto& iter : m_entities) {
 			iter.second->beginPlay();
 		}
 	}
 
-	void World::tick(float delta_time) {
+	void Scene::tick(float delta_time) {
 		for (const auto& iter : m_entities) {
 			auto entity = iter.second;
 
@@ -72,11 +72,11 @@ namespace Yurrgoht {
 		}
 	}
 
-	void World::step() {
+	void Scene::step() {
 		is_stepping = true;
 	}
 
-	std::weak_ptr<Entity> World::getEntity(uint32_t id) {
+	std::weak_ptr<Entity> Scene::getEntity(uint32_t id) {
 		const auto& iter = m_entities.find(id);
 		if (iter != m_entities.end()) {
 			return iter->second;
@@ -85,7 +85,7 @@ namespace Yurrgoht {
 		return {};
 	}
 
-	std::weak_ptr<Entity> World::getEntity(const std::string& name) {
+	std::weak_ptr<Entity> Scene::getEntity(const std::string& name) {
 		for (const auto& entity : m_entities) {
 			if (name == entity.second->getName()) {
 				return entity.second;
@@ -94,7 +94,7 @@ namespace Yurrgoht {
 		return {};
 	}
 
-	const std::shared_ptr<Entity>& World::createEntity(const std::string& name) {
+	const std::shared_ptr<Entity>& Scene::createEntity(const std::string& name) {
 		std::shared_ptr<Entity> entity;
 		if (std::find(m_entity_class_names.begin(), m_entity_class_names.end(), name) == m_entity_class_names.end()) {
 			entity = std::make_shared<Entity>();
@@ -107,7 +107,7 @@ namespace Yurrgoht {
 
 		entity->m_id = m_next_entity_id++;
 		entity->m_name = name;
-		entity->m_world = weak_from_this();
+		entity->m_scene = weak_from_this();
 
 		// every entity has transform component
 		entity->addComponent(std::make_shared<TransformComponent>());
@@ -120,7 +120,7 @@ namespace Yurrgoht {
 		return m_entities[entity->m_id];
 	}
 
-	bool World::removeEntity(uint32_t id) {
+	bool Scene::removeEntity(uint32_t id) {
 		if (g_engine.isSimulating()) {
 			m_entities[id]->endPlay();
 		}

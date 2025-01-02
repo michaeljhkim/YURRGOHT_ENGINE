@@ -24,7 +24,7 @@ namespace Yurrgoht
 		m_asset_images[EAssetType::StaticMesh] = loadImGuiImageFromFile("asset/engine/texture/ui/static_mesh.png");
 		m_asset_images[EAssetType::SkeletalMesh] = loadImGuiImageFromFile("asset/engine/texture/ui/skeletal_mesh.png");
 		m_asset_images[EAssetType::Animation] = loadImGuiImageFromFile("asset/engine/texture/ui/animation.png");
-		m_asset_images[EAssetType::World] = loadImGuiImageFromFile("asset/engine/texture/ui/world.png");
+		m_asset_images[EAssetType::Scene] = loadImGuiImageFromFile("asset/engine/texture/ui/scene.png");
 		m_empty_folder_image = loadImGuiImageFromFile("asset/engine/texture/ui/empty_folder.png");
 		m_non_empty_folder_image = loadImGuiImageFromFile("asset/engine/texture/ui/non_empty_folder.png");
 

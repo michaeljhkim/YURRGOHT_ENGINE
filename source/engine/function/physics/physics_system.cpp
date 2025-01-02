@@ -2,7 +2,7 @@
 #include "engine/core/base/macro.h"
 #include "engine/platform/timer/timer.h"
 #include "engine/core/math/math_util.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/function/framework/component/transform_component.h"
 #include "engine/function/framework/component/rigidbody_component.h"
 #include "engine/function/framework/component/box_collider_component.h"
@@ -405,8 +405,8 @@ namespace Yurrgoht
 
 	void PhysicsSystem::collectRigidbodies()
 	{
-		const auto& world = g_engine.worldManager()->getCurrentWorld();
-		const auto& entities = world->getEntities();
+		const auto& scene = g_engine.sceneManager()->getCurrentScene();
+		const auto& entities = scene->getEntities();
 		std::vector<uint32_t> current_body_ids;
 		for (const auto& iter : entities)
 		{

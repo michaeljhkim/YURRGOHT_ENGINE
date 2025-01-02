@@ -7,37 +7,30 @@
 
 namespace Yurrgoht
 {
-	struct URL
-	{
+	struct URL {
 	public:
 		URL() = default;
-		URL(const std::string& url): m_url(url)
-		{
+		URL(const std::string& url): m_url(url) {
 			toRelative();
 		}
 
-		URL(std::string&& url): m_url(std::move(url))
-		{
+		URL(std::string&& url): m_url(std::move(url)) {
 			toRelative();
 		}
 
-		URL(const char* url) : m_url(std::string(url))
-		{
+		URL(const char* url) : m_url(std::string(url)) {
 			toRelative();
 		}
 
-		bool operator<(const URL& other) const
-		{
+		bool operator<(const URL& other) const {
 			return m_url < other.m_url;
 		}
 
-		bool operator==(const URL& other) const
-		{
+		bool operator==(const URL& other) const {
 			return m_url == other.m_url;
 		}
 
-		bool operator!=(const URL& other) const
-		{
+		bool operator!=(const URL& other) const {
 			return m_url != other.m_url;
 		}
 
@@ -47,8 +40,7 @@ namespace Yurrgoht
 
 		bool empty() const;
 		void clear();
-		const std::string& str() const
-		{
+		const std::string& str() const {
 			return m_url;
 		}
 
@@ -57,8 +49,7 @@ namespace Yurrgoht
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("url", m_url));
 		}
 

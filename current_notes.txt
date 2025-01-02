@@ -1,3 +1,5 @@
+Written down thoughts to remember stuff:
+
 - test build with c++17 again now that dependencies are properly made
 - THEN change to use c++20
 - added assets from bamboo release file for testing - must make it seperate download in the future
@@ -22,12 +24,22 @@
 - engine was supposed to generate bdrf, but never got the chance due to bdrf not existing (I believe that was a bug)
 
 - Engine should not be serializing everything in the editor
-- Change so that the editor only saves which model it used, and the variables
-- Perhaps serialize everything but the class somehow?
-- For example, when a texture or model inflates, it just opens the model and texture files
 - Serializing everthing is the solution for max efficiency, but for editing, Im not sure
 - Create hash when serializing model or textures, then compare that hash with a new hash when you make edits to the model file
 
+- VALVE'S FOSSILIZE IS GOOD: https://github.com/ValveSoftware/Fossilize
+
+- Wait a minute, the current serialization system is amazing, the only problem being that it is inflexible
+- The only changes needing to be made is to just save the path name of the model/texture entity (along with changes), and then it re-loads it from scratch
+- The custom serialization where even the base models are processed will come into play once the game is just about ready to ship out
+
+
+- Engine imports assets first, then user has to attach them to entity
+- Good idea, except very inflexible for keeping as .glb models or .gltf
+
+- Entity
+    - Components 
+        - 
 
 
 
@@ -38,21 +50,3 @@
 FOR GENERATING DEFAULT SKYBOX - DO INSIDE FOLDER
 ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr cloudy.ktx
 ktx create --format R8G8B8A8_SRGB --generate-mipmap --cubemap *.png cloudy.ktx
-
-
-CURRENT CMDLINE ERROR OUTPUT:
-
-sudo ./Test
-error: XDG_RUNTIME_DIR is invalid or not set in the environment.
-[info] [pickPhysicalDevice] Device[0]: NVIDIA GeForce GTX 1070 Ti DISCRETE_GPU 1.3.242
-[info] [pickPhysicalDevice] Device[1]: llvmpipe (LLVM 15.0.6, 256 bits) CPU 1.3.230
-[info] [pickPhysicalDevice] Selected device: NVIDIA GeForce GTX 1070 Ti DISCRETE_GPU 1.3.242
-Present mode: V-Sync
-WorldManager initializing
-loadWorld - loading asset/engine/world/basic.world
-PROBLEM TEXTURE: ./asset/engine/world/basic.world
-Json
-World initializing
-terminate called after throwing an instance of 'cereal::Exception'
-  what():  JSON Parsing failed - provided NVP (asset_ref) not found
-Aborted

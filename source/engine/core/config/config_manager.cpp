@@ -23,9 +23,9 @@ namespace Yurrgoht
 		return m_config_node["window"]["fullscreen"].as<bool>();
 	}
 
-	std::string ConfigManager::getDefaultWorldUrl()
+	std::string ConfigManager::getDefaultSceneUrl()
 	{
-		return m_config_node["default_world_url"].as<std::string>();
+		return m_config_node["default_scene_url"].as<std::string>();
 	}
 
 	std::string ConfigManager::getEditorLayout()

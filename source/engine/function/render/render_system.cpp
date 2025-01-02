@@ -2,7 +2,7 @@
 #include "engine/core/base/macro.h"
 #include "engine/core/event/event_system.h"
 #include "engine/core/math/math_util.h"
-#include "engine/function/framework/world/world_manager.h"
+#include "engine/function/framework/scene/scene_manager.h"
 #include "engine/resource/asset/asset_manager.h"
 #include "engine/function/render/debug_draw_manager.h"
 #include "engine/platform/timer/timer.h"
@@ -88,7 +88,7 @@ namespace Yurrgoht {
 	void RenderSystem::tick(float delta_time) {
 		//LOG_INFO("Delta Time: {}", delta_time);
 
-		// collect render data from entities of current world
+		// collect render data from entities of current scene
 		collectRenderDatas();
 
 		// vulkan rendering
@@ -160,11 +160,11 @@ namespace Yurrgoht {
 		std::vector<std::shared_ptr<BillboardRenderData>> billboard_render_datas, selected_billboard_render_datas;
 		std::vector<uint32_t> mesh_entity_ids, billboard_entity_ids;
 
-		// get current active world
-		const auto& current_world = g_engine.worldManager()->getCurrentWorld();
+		// get current active scene
+		const auto& current_scene = g_engine.sceneManager()->getCurrentScene();
 
 		// get camera entity
-		const auto& camera_entity = current_world->getCameraEntity();
+		const auto& camera_entity = current_scene->getCameraEntity();
 		auto camera_transform_component = camera_entity.lock()->getComponent(TransformComponent);
 		auto camera_component = camera_entity.lock()->getComponent(CameraComponent);
 
@@ -211,7 +211,7 @@ namespace Yurrgoht {
 		ddm->clear();
 
 		// traverse all entities
-		const auto& entities = current_world->getEntities();
+		const auto& entities = current_scene->getEntities();
 		for (const auto& iter : entities) {
 			const auto& entity = iter.second;
 

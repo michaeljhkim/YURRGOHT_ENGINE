@@ -51,7 +51,7 @@ vec3 importanceSample_GGX(vec2 Xi, float roughness, vec3 normal)
 	vec3 tangentX = normalize(cross(up, normal));
 	vec3 tangentY = normalize(cross(normal, tangentX));
 
-	// Convert to world Space
+	// Convert to scene Space
 	return normalize(tangentX * H.x + tangentY * H.y + normal * H.z);
 }
 

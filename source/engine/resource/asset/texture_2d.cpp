@@ -43,6 +43,7 @@ namespace Yurrgoht {
 	}
 
 	bool Texture2D::compress() {
+		ktxTexture* ktx_texture;
 		ktx_error_code_e result;
 		ktxTextureCreateInfo ktx_texture_ci = {};
 		ktx_texture_ci.vkFormat = getFormat();
@@ -136,6 +137,7 @@ namespace Yurrgoht {
 	}
 
 	bool Texture2D::transcode(ktxTexture* ktx_texture_import) {
+		ktxTexture* ktx_texture;
 		ktxResult result;
 		if (ktx_texture_import == NULL) {
 			result = ktxTexture_CreateFromMemory(m_image_data.data(), m_image_data.size(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktx_texture);

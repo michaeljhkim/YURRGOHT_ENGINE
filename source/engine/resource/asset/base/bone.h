@@ -25,7 +25,7 @@ namespace Yurrgoht
 		// update bone matrix
 		void update(const glm::mat4& parent_global_bind_pose_matrix);
 
-		// get bone to world matrix of this bone
+		// get bone to scene matrix of this bone
 		glm::mat4 matrix() const;
 
 	private:

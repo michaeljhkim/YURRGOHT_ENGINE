@@ -8,11 +8,10 @@
 
 #include <cereal/types/vector.hpp>
 
-namespace Yurrgoht
-{
-	class World;
-	class Entity : public std::enable_shared_from_this<Entity>, public ITickable
-	{
+namespace Yurrgoht {
+
+	class Scene;
+	class Entity : public std::enable_shared_from_this<Entity>, public ITickable {
 	public:
 		Entity() = default;
 		~Entity();
@@ -26,7 +25,7 @@ namespace Yurrgoht
 		void detach();
 
 		uint32_t getID() { return m_id; }
-		const std::weak_ptr<World>& getWorld() { return m_world; }
+		const std::weak_ptr<Scene>& getScene() { return m_scene; }
 		const std::string& getName() const { return m_name; }
 		const std::weak_ptr<Entity>& getParent() { return m_parent; }
 		const std::vector<std::weak_ptr<Entity>>& getChildren() { return m_children; }
@@ -35,12 +34,9 @@ namespace Yurrgoht
 		void addComponent(std::shared_ptr<Component> component);
 		void removeComponent(std::shared_ptr<Component> component);
 
-		bool hasComponent(const std::string& type_name) const
-		{
-			for (auto& component : m_components)
-			{
-				if (component->getTypeName() == type_name)
-				{
+		bool hasComponent(const std::string& type_name) const {
+			for (auto& component : m_components) {
+				if (component->getTypeName() == type_name) {
 					return true;
 				}
 			}
@@ -48,12 +44,9 @@ namespace Yurrgoht
 		}
 
 		template<typename TComponent>
-		std::shared_ptr<TComponent> getComponent(const std::string& type_name)
-		{
-			for (const auto& component : m_components)
-			{
-				if (component->getTypeName() == type_name)
-				{
+		std::shared_ptr<TComponent> getComponent(const std::string& type_name) {
+			for (const auto& component : m_components) {
+				if (component->getTypeName() == type_name) {
 					return std::static_pointer_cast<TComponent>(component);
 				}
 			}
@@ -62,13 +55,10 @@ namespace Yurrgoht
 		}
 
 		template<typename TComponent>
-		std::vector<std::shared_ptr<TComponent>> getChildComponents(const std::string& type_name)
-		{
+		std::vector<std::shared_ptr<TComponent>> getChildComponents(const std::string& type_name) {
 			std::vector<std::shared_ptr<TComponent>> child_components;
-			for (const auto& component : m_components)
-			{
-				if (component->getTypeName().find(type_name) != std::string::npos)
-				{
+			for (const auto& component : m_components) {
+				if (component->getTypeName().find(type_name) != std::string::npos) {
 					child_components.push_back(std::static_pointer_cast<TComponent>(component));
 				}
 			}
@@ -88,11 +78,10 @@ namespace Yurrgoht
 	private:
 		RTTR_ENABLE()
 
-		friend World;
+		friend Scene;
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("tickable", cereal::base_class<ITickable>(this)));
 
 			ar(cereal::make_nvp("name", m_name));
@@ -109,7 +98,7 @@ namespace Yurrgoht
 		std::vector<uint32_t> m_cids;
 
 		std::string m_name;
-		std::weak_ptr<World> m_world;
+		std::weak_ptr<Scene> m_scene;
 		std::weak_ptr<Entity> m_parent;
 		std::vector<std::weak_ptr<Entity>> m_children;
 		std::vector<std::shared_ptr<Component>> m_components;

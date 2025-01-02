@@ -10,12 +10,10 @@
 #include "engine/resource/asset/skeletal_mesh.h"
 #include "engine/resource/asset/skeleton.h"
 #include "engine/resource/asset/animation.h"
-#include "engine/function/framework/world/world.h"
+#include "engine/function/framework/scene/scene.h"
 
-namespace Yurrgoht
-{
-	void Asset::setURL(const URL& url)
-	{
+namespace Yurrgoht {
+	void Asset::setURL(const URL& url) {
 		m_url = url;
 		m_name = g_engine.fileSystem()->basename(m_url.str());
 		m_asset_type = g_engine.assetManager()->getAssetType(m_url);
