@@ -8,10 +8,9 @@
 
 #define ENABLE_VALIDATION_LAYER DEBUG
 
-namespace Yurrgoht
-{
-	void VulkanRHI::init()
-	{
+namespace Yurrgoht {
+	
+	void VulkanRHI::init() {
 		createInstance();
 #if ENABLE_VALIDATION_LAYER
 		createDebugging();
@@ -31,8 +30,7 @@ namespace Yurrgoht
 		createSynchronizationPrimitives();
 	}
 
-	void VulkanRHI::render()
-	{
+	void VulkanRHI::render() {
 		waitFrame();
 		recordFrame();
 		submitFrame();

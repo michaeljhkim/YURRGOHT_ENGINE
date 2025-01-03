@@ -41,7 +41,7 @@ namespace Yurrgoht
 		}
 
 		m_skybox_texture_cube = skybox_texture_cube;
-		m_skybox_mesh = g_engine.assetManager()->loadAsset<StaticMesh>("asset/engine/mesh/primitive/sm_cube.sm");
+		m_skybox_mesh = g_engine.assetManager()->loadAsset<StaticMesh>("asset/engine/mesh/primitive/stm_cube.stm");
 	}
 
 	void FilterCubePass::init()

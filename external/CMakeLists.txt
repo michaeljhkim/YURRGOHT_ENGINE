@@ -19,6 +19,8 @@ if(NOT TARGET imgui)
     file(GLOB imgui_impl CONFIGURE_DEPENDS
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp" 
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h"
+    #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp" 
+    #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h"
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp" 
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h")
  

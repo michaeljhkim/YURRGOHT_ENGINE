@@ -8,38 +8,38 @@ Written down thoughts to remember stuff:
 - must figure out how to update models in editor, through another program 
 - must figure out how to contain an ENTIRE scene inside of a container of some kind (like zip or something)
 - For example, show what the model looks like in-game with the editor, but then change it with blender, and once the file changes, the editor updates the model
-
-
-- Now that managed to get the empty.world to work, I now need to work on the basic.world
-- Check tomorrow if imgui code works the same for sdl2 and glfw
-- If so, work on glfw version first, then convert to sdl2 after gui is more serviceable
-- Also, create a function that rebuilds default assets all at once, in case there are some major code changes 
-
+- use blender to create very simple test assets
+- samples from here as well: https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/Models/Models.md
 
 - editor/simulation/simulation_ui is where we call the sky texture
 - asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
 - config folder has a .yaml file that controls locations of the default world
+- filter_cube_pass.cpp calls for default cube static mesh
 
 - consider adding https://github.com/KhronosGroup/glTF-IBL-Sampler later
 - engine was supposed to generate bdrf, but never got the chance due to bdrf not existing (I believe that was a bug)
 
-- Engine should not be serializing everything in the editor
-- Serializing everthing is the solution for max efficiency, but for editing, Im not sure
-- Create hash when serializing model or textures, then compare that hash with a new hash when you make edits to the model file
-
 - VALVE'S FOSSILIZE IS GOOD: https://github.com/ValveSoftware/Fossilize
 
+- Create hash when serializing model or textures, then compare that hash with a new hash when you make edits to the model file
 - Wait a minute, the current serialization system is amazing, the only problem being that it is inflexible
-- The only changes needing to be made is to just save the path name of the model/texture entity (along with changes), and then it re-loads it from scratch
-- The custom serialization where even the base models are processed will come into play once the game is just about ready to ship out
-
-
-- Engine imports assets first, then user has to attach them to entity
-- Good idea, except very inflexible for keeping as .glb models or .gltf
+- The only changes needing to be made is to just save the name path of the original model/texture 
+- Then combine together for exporting
 
 - Entity
-    - Components 
-        - 
+    - Component 1
+    - Component 2
+
+- It is time to finally convert glfw to sdl2
+- After, add more functionality to editor GUI 
+- Must create a variable for assets to store original file names (like *.gltf, *.glb, *.png, e.t.c) 
+- Then create an export function that packages together assets from the original file type
+- Test and then finally package together 0.1.0
+
+- Json
+    - Name of original asset (.glb, or .png, e.t.c) 
+    - All paths to serialized assets of model/texture
+    - when we need to export, we just open all of the assets and then make the appropriate file
 
 
 

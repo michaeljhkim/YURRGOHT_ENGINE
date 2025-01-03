@@ -1,6 +1,8 @@
 #pragma once
 
 #include <tinygltf/tiny_gltf.h>
+#include <cereal/access.hpp>
+#include <cereal/cereal.hpp>
 
 #include "import_option.h"
 #include "engine/resource/asset/material.h"
@@ -35,5 +37,30 @@ namespace Yurrgoht
 			std::shared_ptr<SkeletalMesh>& skeletal_mesh);
 
 		static bool importGltf(const std::string& filename, const URL& folder, const GltfImportOption& option);
+
+	private:
+		friend class cereal::access;
+		template<class Archive>
+		void serialize(Archive& ar) {
+			/*
+			(maybe do in a different class?)
+			Should contain the following:
+			- Name of original asset (.glb, or .png, e.t.c) 
+			- all paths to serialized assets of model/texture
+			- when we need to export, we just open all of the assets and then make the appropriate file
+			*/
+			/*
+			ar(cereal::make_nvp("width", m_width));
+			ar(cereal::make_nvp("height", m_height));
+			ar(cereal::make_nvp("min_filter", m_min_filter));
+			ar(cereal::make_nvp("mag_filter", m_mag_filter));
+			ar(cereal::make_nvp("address_mode_u", m_address_mode_u));
+			ar(cereal::make_nvp("address_mode_v", m_address_mode_v));
+			ar(cereal::make_nvp("address_mode_w", m_address_mode_w));
+			ar(cereal::make_nvp("texture_type", m_texture_type));
+			ar(cereal::make_nvp("pixel_type", m_pixel_type));
+			ar(cereal::make_nvp("image_data", m_image_data));
+			*/
+		}
 	};
 }

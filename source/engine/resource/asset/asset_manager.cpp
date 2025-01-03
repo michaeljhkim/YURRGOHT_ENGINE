@@ -25,8 +25,8 @@ namespace Yurrgoht {
 		.skl = skeleton
 		.stmesh = static mesh
 		.skl = skeleton
-		.stmesh = static mesh
-		.skmesh = skeleton mesh
+		.stm = static mesh
+		.skm = skeleton mesh
 		.anim = animation
 		.scene = scene (a bit obvious)
 		*/
@@ -40,12 +40,12 @@ namespace Yurrgoht {
 			{ EAssetType::SkeletalMesh, "skm" }, 
 			{ EAssetType::Animation, "anim" },
 			*/
-			{ EAssetType::Texture2D, "tx2d" },
-			{ EAssetType::TextureCube, "txcube" },
+			{ EAssetType::Texture2D, "tex2d" },
+			{ EAssetType::TextureCube, "texcb" },
 			{ EAssetType::Material, "mat" },
 			{ EAssetType::Skeleton, "skl" },
-			{ EAssetType::StaticMesh, "stmesh" },
-			{ EAssetType::SkeletalMesh, "skmesh" },
+			{ EAssetType::StaticMesh, "stm" },
+			{ EAssetType::SkeletalMesh, "skm" },
 			{ EAssetType::Animation, "anim" },
 			{ EAssetType::Scene, "scene" }
 		};
@@ -83,6 +83,12 @@ namespace Yurrgoht {
 		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_0.ktx", "asset/engine/mesh/shader_ball/");
 		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_1.ktx", "asset/engine/mesh/shader_ball/");
 		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_2.ktx", "asset/engine/mesh/shader_ball/");
+		*/
+		/*
+		bool force_static_mesh = false;
+		bool combine_meshes = true;
+		bool contains_occlusion_channel = false;
+		importGltf("asset/engine/mesh/primitive/cube.glb", "asset/engine/mesh/primitive/", { combine_meshes, force_static_mesh, contains_occlusion_channel });
 		*/
 	}
 
@@ -218,6 +224,7 @@ namespace Yurrgoht {
 		if (asset_type != EAssetType::Scene) {
 			m_assets[url] = asset;
 		}
+		LOG_INFO("SUCCESS: {}", url.getAbsolute());
 	}
 
 	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url) {
@@ -265,7 +272,7 @@ namespace Yurrgoht {
 			m_assets[url] = asset;
 		}
 
-		LOG_INFO("SUCCESS");
+		LOG_INFO("SUCCESS: {}", url.getAbsolute());
 		return asset;
 	}
 

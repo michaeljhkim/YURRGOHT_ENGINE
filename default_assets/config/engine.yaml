@@ -1,0 +1,9 @@
+window:
+  width: 1280
+  height: 720
+  fullscreen: true
+
+default_scene_url: "asset/engine/scene/basic.scene"
+editor_layout: "default.layout"
+save_layout: false
+is_editor: true
