@@ -18,13 +18,13 @@
 #include "engine/function/framework/component/sky_light_component.h"
 #include "engine/function/framework/component/spot_light_component.h"
 
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
 #include <imgui/imgui_internal.h>
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <imgui/ImGuizmo.h>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
 	void SimulationUI::init() {
 		m_title = "Simulation";
@@ -60,8 +60,7 @@ namespace Yurrgoht
 			ImGuiWindow* window = ImGui::FindWindowByName(m_title_buf);
 			ImGuiDockNode* node = window->DockNode;
 			bool show_tab = !is_simulating_fullscreen;
-			if ((!show_tab && !node->IsHiddenTabBar()) || (show_tab && node->IsHiddenTabBar())) 
-			{
+			if ((!show_tab && !node->IsHiddenTabBar()) || (show_tab && node->IsHiddenTabBar())) {
 				node->WantHiddenTabBarToggle = true;
 			}
 		}
@@ -83,9 +82,7 @@ namespace Yurrgoht
 
 		ImGui::SetCursorScreenPos(cursor_screen_pos);
 		ImGui::SetNextItemAllowOverlap();
-		if (ImGui::InvisibleButton("image", content_size) && 
-			(!m_selected_entity.lock() || !ImGuizmo::IsOver()))
-		{
+		if (ImGui::InvisibleButton("image", content_size) &&  (!m_selected_entity.lock() || !ImGuizmo::IsOver())) {
 			g_engine.eventSystem()->syncDispatch(std::make_shared<PickEntityEvent>(mouse_x, mouse_y));
 		}
 		updateCamera();
@@ -123,8 +120,7 @@ namespace Yurrgoht
 				if (m_camera_component.lock()->m_projection_type == EProjectionType::Perspective) {
 					m_camera_component.lock()->m_projection_type = EProjectionType::Orthographic;
 					last_camera_rotation = m_camera_component.lock()->getTransformComponent()->m_rotation;
-				}
-				
+				} 
 				m_camera_component.lock()->getTransformComponent()->m_rotation = ortho_camera_rotations[view_index - 1];
 			}
 		}
@@ -331,52 +327,45 @@ namespace Yurrgoht
 
 	void SimulationUI::onKey(const std::shared_ptr<class Event>& event) {
 		const WindowKeyEvent* key_event = static_cast<const WindowKeyEvent*>(event.get());
-		if (key_event->action != GLFW_PRESS) {
+		if (key_event->action != SDL_PRESSED) {
 			return;
-		}
-
-		if (key_event->key == GLFW_KEY_F11) {
+		} if (key_event->key == SDL_SCANCODE_F11) {
 			g_editor.toggleFullscreen();
 		}
 
 		if (g_engine.isEditor()) {
 			ESceneMode current_scene_mode = g_engine.sceneManager()->getSceneMode();
-			if (key_event->mods == GLFW_MOD_ALT && key_event->key == GLFW_KEY_P) {
+			if ((key_event->mods & KMOD_ALT) && key_event->key == SDL_SCANCODE_P) {
 				if (current_scene_mode == ESceneMode::Edit) {
 					g_engine.sceneManager()->setSceneMode(ESceneMode::Play);
 				}
-			}
-			else if (key_event->key == GLFW_KEY_ESCAPE) {
+			} 
+			else if (key_event->key == SDL_SCANCODE_ESCAPE) {
 				if (current_scene_mode == ESceneMode::Play) {
 					g_engine.sceneManager()->setSceneMode(ESceneMode::Edit);
 				}
 			}
-
 			if (m_selected_entity.lock()) {
 				uint32_t selected_entity_id = m_selected_entity.lock()->getID();
-				if (key_event->key == GLFW_KEY_ESCAPE || key_event->key == GLFW_KEY_DELETE) {
+				//if (key_event->key == SDL_SCANCODE_ESCAPE || key_event->key == SDL_SCANCODE_DELETE) {
+				if (key_event->key == SDL_SCANCODE_ESCAPE) {
 					g_engine.eventSystem()->syncDispatch(std::make_shared<SelectEntityEvent>(UINT_MAX));
-				}
-				if (key_event->key == GLFW_KEY_DELETE) {
+				} if (key_event->key == SDL_SCANCODE_DELETE) {
 					g_engine.sceneManager()->getCurrentScene()->removeEntity(selected_entity_id);
 				}
 			}
-
 			if (!isFocused()) {
 				return;
 			}
 
 			if (m_selected_entity.lock() || !m_mouse_right_button_pressed) {
-				if (key_event->key == GLFW_KEY_Q) {
+				if (key_event->key == SDL_SCANCODE_Q) {
 					m_operation_mode = EOperationMode::Pick;
-				}
-				else if (key_event->key == GLFW_KEY_W) {
+				} else if (key_event->key == SDL_SCANCODE_W) {
 					m_operation_mode = EOperationMode::Translate;
-				}
-				else if (key_event->key == GLFW_KEY_E) {
+				} else if (key_event->key == SDL_SCANCODE_E) {
 					m_operation_mode = EOperationMode::Rotate;
-				}
-				else if (key_event->key == GLFW_KEY_R) {
+				} else if (key_event->key == SDL_SCANCODE_R) {
 					m_operation_mode = EOperationMode::Scale;
 				}
 			}

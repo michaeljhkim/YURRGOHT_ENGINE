@@ -150,7 +150,7 @@
                                                             {
                                                                 "key": "m_texture_cube",
                                                                 "value": {
-                                                                    "url": "asset/engine/texture/ibl/txcube_cloudy.txcube"
+                                                                    "url": "asset/engine/texture/ibl/texcb_cloudy.texcb"
                                                                 }
                                                             }
                                                         ]

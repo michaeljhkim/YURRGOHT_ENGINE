@@ -7,18 +7,16 @@
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_vulkan.h>
-#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_sdl2.h>
 #include <imgui/font/IconsFontAwesome5.h>
 
-namespace Yurrgoht
-{
-	void checkVkResult(VkResult result)
-	{
+namespace Yurrgoht {
+
+	void checkVkResult(VkResult result) {
 		CHECK_VULKAN_RESULT(result, "handle imgui");
 	}
 
-	void UIPass::init()
-	{
+	void UIPass::init() {
 		StopWatch stop_watch;
 		stop_watch.start();
 
@@ -43,7 +41,7 @@ namespace Yurrgoht
 		RenderPass::init();
 
 		// setup platform/renderer backends
-		ImGui_ImplGlfw_InitForVulkan(g_engine.windowSystem()->getWindow(), true);
+		ImGui_ImplSDL2_InitForVulkan(g_engine.windowSystem()->getWindow());
 		ImGui_ImplVulkan_InitInfo init_info{};
 		init_info.Instance = VulkanRHI::get().getInstance();
 		init_info.PhysicalDevice = VulkanRHI::get().getPhysicalDevice();
@@ -98,11 +96,10 @@ namespace Yurrgoht
 		LOG_INFO("ui pass init time: {}ms", stop_watch.stopMs());
 	}
 
-	void UIPass::prepare()
-	{
+	void UIPass::prepare() {
 		// process imgui frame and get draw data
 		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
 		// set docking over viewport
@@ -116,8 +113,7 @@ namespace Yurrgoht
 		ImGui::Render();
 	}
 
-	void UIPass::render()
-	{
+	void UIPass::render() {
 		VkCommandBuffer command_buffer = VulkanRHI::get().getCommandBuffer();
 		uint32_t flight_index = VulkanRHI::get().getFlightIndex();
 
@@ -141,18 +137,16 @@ namespace Yurrgoht
 		vkCmdEndRenderPass(command_buffer);
 	}
 
-	void UIPass::destroy()
-	{
+	void UIPass::destroy() {
 		// destroy imgui
 		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();
 
 		RenderPass::destroy();
 	}
 
-	void UIPass::createRenderPass()
-	{
+	void UIPass::createRenderPass() {
 		// create renderpass
 		VkAttachmentDescription attachment{};
 		attachment.format = VulkanRHI::get().getColorFormat();
@@ -193,11 +187,9 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create imgui render pass");
 	}
 
-	void UIPass::createDescriptorPool()
-	{
+	void UIPass::createDescriptorPool() {
 		const uint32_t k_max_image_count = 128;
-		VkDescriptorPoolSize pool_sizes[] =
-		{
+		VkDescriptorPoolSize pool_sizes[] = {
 			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, k_max_image_count }
 		};
 		VkDescriptorPoolCreateInfo pool_info{};
@@ -210,8 +202,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create imgui descriptor pool");
 	}
 
-	void UIPass::createFramebuffer()
-	{
+	void UIPass::createFramebuffer() {
 		// create framebuffers
 		VkImageView image_view;
 		VkFramebufferCreateInfo framebuffer_ci{};
@@ -225,18 +216,15 @@ namespace Yurrgoht
 
 		uint32_t image_count = VulkanRHI::get().getSwapchainImageCount();
 		m_framebuffers.resize(image_count);
-		for (uint32_t i = 0; i < image_count; ++i)
-		{
+		for (uint32_t i = 0; i < image_count; ++i) {
 			image_view = VulkanRHI::get().getSwapchainImageViews()[i];
 			VkResult result = vkCreateFramebuffer(VulkanRHI::get().getDevice(), &framebuffer_ci, nullptr, &m_framebuffers[i]);
 			CHECK_VULKAN_RESULT(result, "create imgui frame buffer");
 		}
 	}
 
-	void UIPass::destroyResizableObjects()
-	{
-		for (VkFramebuffer framebuffer : m_framebuffers)
-		{
+	void UIPass::destroyResizableObjects() {
+		for (VkFramebuffer framebuffer : m_framebuffers) {
 			vkDestroyFramebuffer(VulkanRHI::get().getDevice(), framebuffer, nullptr);
 		}
 		m_framebuffers.clear();

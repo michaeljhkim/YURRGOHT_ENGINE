@@ -4,8 +4,8 @@
 #include "engine/core/event/event_system.h"
 #include <queue>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
+
 	void AssetUI::init() {
 		EditorUI::init();
 		m_title = "Asset";
@@ -33,12 +33,10 @@ namespace Yurrgoht
 		LOG_INFO("SUCCESS");
 	}
 
-	void AssetUI::construct()
-	{
+	void AssetUI::construct() {
 		// draw asset widget
 		sprintf(m_title_buf, "%s %s###%s", ICON_FA_FAN, m_title.c_str(), m_title.c_str());
-		if (!ImGui::Begin(m_title_buf))
-		{
+		if (!ImGui::Begin(m_title_buf)) {
 			m_imported_files.clear();
 			ImGui::End();
 			return;
@@ -59,14 +57,10 @@ namespace Yurrgoht
 		ImGui::EndChild();
 
 		ImGui::BeginChild("folder_tree");
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		{
-			if (is_folder_tree_hovered)
-			{
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+			if (is_folder_tree_hovered) {
 				ImGui::OpenPopup("folder_op_tree_hovered_popups");
-			}
-			else
-			{
+			} else {
 				ImGui::OpenPopup("folder_op_background_hovered_popups");
 			}
 		}
@@ -124,15 +118,13 @@ namespace Yurrgoht
 		is_asset_hovered = false;
 	}
 
-	void AssetUI::destroy()
-	{
+	void AssetUI::destroy() {
 		EditorUI::destroy();
 
 		g_engine.timerManager()->removeTimer(m_poll_folder_timer_handle);
 	}
 
-	void AssetUI::constructAssetNavigator()
-	{
+	void AssetUI::constructAssetNavigator() {
 		ImVec2 button_size(20, 20);
 		ImGui::Button(ICON_FA_ARROW_LEFT, button_size);
 
@@ -150,23 +142,19 @@ namespace Yurrgoht
 		ImGui::Text("%s", m_formatted_selected_folder.c_str());
 
 		ImGui::SameLine(ImGui::GetWindowWidth() - 22);
-		if (ImGui::Button(ICON_FA_COG, button_size))
-		{
+		if (ImGui::Button(ICON_FA_COG, button_size)) {
 			ImGui::OpenPopup("asset settings");
 		}
 
-		if (ImGui::BeginPopup("asset settings"))
-		{
-			if (ImGui::Checkbox("show engine assets", &show_engine_assets))
-			{
+		if (ImGui::BeginPopup("asset settings")) {
+			if (ImGui::Checkbox("show engine assets", &show_engine_assets)) {
 				pollFolders();
 			}
 			ImGui::EndPopup();
 		}
 	}
 
-	void AssetUI::constructFolderFiles()
-	{
+	void AssetUI::constructFolderFiles() {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
 
 		ImVec2 icon_size(80, 80);
@@ -179,24 +167,19 @@ namespace Yurrgoht
 		constructAssetFilePopups();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(15.0f, 24.0f));
-		for (size_t i = 0; i < m_selected_files.size(); ++i)
-		{
+		for (size_t i = 0; i < m_selected_files.size(); ++i) {
 			bool is_clipping = false;
 			HoverState& hover_state = m_selected_file_hover_states[m_selected_files[i]];
-			if (hover_state.rect_min.y != 0.0f && hover_state.rect_max.y != 0.0f)
-			{
-				if (hover_state.rect_max.y < clip_rect_min_y || hover_state.rect_min.y > clip_rect_max_y)
-				{
+			if (hover_state.rect_min.y != 0.0f && hover_state.rect_max.y != 0.0f) {
+				if (hover_state.rect_max.y < clip_rect_min_y || hover_state.rect_min.y > clip_rect_max_y) {
 					is_clipping = true;
 				}
 			}
 
-			if (!is_clipping)
-			{
+			if (!is_clipping) {
 				constructAsset(m_selected_files[i], icon_size);
 			}
-			else
-			{
+			else {
 				ImGui::Dummy(icon_size);
 			}
 			hover_state.rect_min = ImGui::GetItemRectMin();
@@ -204,46 +187,36 @@ namespace Yurrgoht
 
 			float current_pos_x = ImGui::GetItemRectMax().x;
 			float next_pos_x = current_pos_x + style.ItemSpacing.x + icon_size.x;
-			if (i < m_selected_files.size() - 1 && next_pos_x < max_pos_x)
-			{
+			if (i < m_selected_files.size() - 1 && next_pos_x < max_pos_x) {
 				ImGui::SameLine();
 			}
 		}
 		ImGui::PopStyleVar();
 	}
 
-	void AssetUI::constructAsset(const std::string& filename, const ImVec2& size)
-	{
+	void AssetUI::constructAsset(const std::string& filename, const ImVec2& size) {
 		ImTextureID tex_id = nullptr;
 		std::string basename = g_engine.fileSystem()->basename(filename);
 
 		const auto& asset_manager = g_engine.assetManager();
 
-		if (g_engine.fileSystem()->isFile(filename))
-		{
+		if (g_engine.fileSystem()->isFile(filename)) {
 			EAssetType asset_type = asset_manager->getAssetType(filename);
 			tex_id = m_asset_images[asset_type]->tex_id;
-			if (asset_type == EAssetType::Texture2D)
-			{
-				if (isImGuiImageLoaded(filename))
-				{
+			if (asset_type == EAssetType::Texture2D) {
+				if (isImGuiImageLoaded(filename)) {
 					tex_id = getImGuiImageFromCache(filename)->tex_id;
-				}
-				else
-				{
+				} else {
 					std::shared_ptr<Texture2D> tex = asset_manager->loadAsset<Texture2D>(filename);
 					auto imgui_tex = loadImGuiImageFromTexture2D(tex);
 					tex_id = imgui_tex->tex_id;
 				}
 			}
 		}
-		else if (g_engine.fileSystem()->isDir(filename))
-		{
+		else if (g_engine.fileSystem()->isDir(filename)) {
 			bool is_empty = g_engine.fileSystem()->isEmptyDir(filename);
 			tex_id = is_empty ? m_empty_folder_image->tex_id : m_non_empty_folder_image->tex_id;
-		}
-		else
-		{
+		} else {
 			return;
 		}
 		
@@ -253,15 +226,11 @@ namespace Yurrgoht
 		HoverState& hover_state = m_selected_file_hover_states[filename];
 		bool is_hovered = hover_state.is_hovered;
 		bool is_selected = m_selected_file == filename;
-		if (is_hovered || is_selected)
-		{
+		if (is_hovered || is_selected) {
 			ImVec4 color = ImVec4(50, 50, 50, 255);
-			if (!is_hovered && is_selected)
-			{
+			if (!is_hovered && is_selected) {
 				color = ImVec4(0, 112, 224, 255);
-			}
-			else if (is_hovered && is_selected)
-			{
+			} else if (is_hovered && is_selected) {
 				color = ImVec4(14, 134, 255, 255);
 			}
 
@@ -279,18 +248,13 @@ namespace Yurrgoht
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);
 		float text_width = ImGui::CalcTextSize(basename.c_str()).x;
 
-		if (is_renaming && m_selected_file == filename)
-		{
+		if (is_renaming && m_selected_file == filename) {
 			is_renaming = rename(filename, size);
-		}
-		else if (text_width > size.x)
-		{
+		} else if (text_width > size.x) {
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + size.x);
 			ImGui::Text("%s", basename.c_str());
 			ImGui::PopTextWrapPos();
-		}
-		else
-		{
+		} else {
 			ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (size.x - text_width) * 0.5f);
 			ImGui::Text("%s", basename.c_str());
 		}
@@ -298,14 +262,12 @@ namespace Yurrgoht
 
 		// update asset hover and selection status
 		is_asset_hovered |= hover_state.is_hovered = ImGui::IsItemHovered();
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || ImGui::IsItemClicked(ImGuiMouseButton_Right))
-		{
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 			m_selected_file = filename;
 		}
 
 		// set drag source
-		if (g_engine.fileSystem()->isFile(filename))
-		{
+		if (g_engine.fileSystem()->isFile(filename)) {
 			EAssetType asset_type = g_engine.assetManager()->getAssetType(filename);
 			if ((asset_type == EAssetType::StaticMesh || asset_type == EAssetType::SkeletalMesh) &&
 				ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID | ImGuiDragDropFlags_SourceNoPreviewTooltip))
@@ -319,25 +281,20 @@ namespace Yurrgoht
 		onAssetRightClick(filename);
 	}
 
-	void AssetUI::constructImportPopups()
-	{
-		if (m_imported_files.empty())
-		{
+	void AssetUI::constructImportPopups() {
+		if (m_imported_files.empty()) {
 			return;
 		}
 
 		const auto& as = g_engine.assetManager();
 		std::string import_folder = g_engine.fileSystem()->relative(m_selected_folder);
-		for (auto iter = m_imported_files.begin(); iter != m_imported_files.end(); )
-		{
+		for (auto iter = m_imported_files.begin(); iter != m_imported_files.end(); ) {
 			// check import file type
 			const std::string& import_file = *iter;
-			if (as->isGltfFile(import_file))
-			{
+			if (as->isGltfFile(import_file)) {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 				ImGui::OpenPopup("Import Asset");
-				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
-				{
+				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 					ImGui::Text("Importing gltf: %s", import_file.c_str());
 					ImGui::Separator();
 
@@ -352,8 +309,7 @@ namespace Yurrgoht
 					static bool contains_occlusion_channel = true;
 					ImGui::Checkbox("contain occlusion channel", &contains_occlusion_channel);
 
-					if (ImGui::Button("OK", ImVec2(120, 0)))
-					{
+					if (ImGui::Button("OK", ImVec2(120, 0))) {
 						ImGui::CloseCurrentPopup();
 
 						StopWatch stop_watch;
@@ -366,79 +322,62 @@ namespace Yurrgoht
 
 					ImGui::SameLine();
 
-					if (ImGui::Button("Cancel", ImVec2(120, 0)))
-					{
+					if (ImGui::Button("Cancel", ImVec2(120, 0))) {
 						ImGui::CloseCurrentPopup();
 						iter = m_imported_files.erase(iter);
 					}
 					ImGui::EndPopup();
 				}
 				break;
-			}
-			else if (as->isTexture2DFile(import_file))
-			{
+			} else if (as->isTexture2DFile(import_file)) {
 				StopWatch stop_watch;
 				stop_watch.start();
 
 				as->importTexture2D(import_file, import_folder);
 				LOG_INFO("import texture 2d {} to {}, elapsed time: {}ms", import_file, import_folder, stop_watch.stopMs());
 				iter = m_imported_files.erase(iter);
-			}
-			else if (as->isTextureCubeFile(import_file))
-			{
+			} else if (as->isTextureCubeFile(import_file)) {
 				StopWatch stop_watch;
 				stop_watch.start();
 
 				as->importTextureCube(import_file, import_folder);
 				LOG_INFO("import texture cube {} to {}, elapsed time: {}ms", import_file, import_folder, stop_watch.stopMs());
 				iter = m_imported_files.erase(iter);
-			}
-			else
-			{
+			} else {
 				LOG_WARNING("unknown asset format: {}", import_file);
 				iter = m_imported_files.erase(iter);
 			}
 		}
 	}
 
-	void AssetUI::constructAssetFilePopups()
-	{
+	void AssetUI::constructAssetFilePopups() {
 		// right click option
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {2.0f, 8.0f});
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f, 0.2f, 1.0f });
 		ImGui::PushFont(defaultFont());
-		if (ImGui::BeginPopup("AssetPopups"))
-		{
+		if (ImGui::BeginPopup("AssetPopups")) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 8.0f,8.0f });
 			createCustomSeperatorText("COMMON");
-			if (ImGui::MenuItem("  Edit"))
-			{
+			if (ImGui::MenuItem("  Edit")) {
 				LOG_INFO("Edit");
-			}
-			if (ImGui::MenuItem("  Delete"))
-			{
+			} if (ImGui::MenuItem("  Delete")) {
 				LOG_INFO("Delete");
-			}
-			if (ImGui::MenuItem("  Export"))
-			{
+			} if (ImGui::MenuItem("  Export")) {
 				LOG_INFO("Export");
 			}
 			ImGui::Separator();
 
 			createCustomSeperatorText("EXPLORE");
-			if (ImGui::MenuItem("  Show in Explorer"))
-			{
+			if (ImGui::MenuItem("  Show in Explorer")) {
 				LOG_INFO("Show in Explorer");
 			}
 			ImGui::Separator();
 
 			createCustomSeperatorText("REFERENCES");
-			if (ImGui::MenuItem("  Copy URL"))
-			{
+			if (ImGui::MenuItem("  Copy URL")) {
 				LOG_INFO("Copy URL");
 			}
-			if (ImGui::MenuItem("  Copy File Path"))
-			{
+			if (ImGui::MenuItem("  Copy File Path")) {
 				LOG_INFO("Copy file path");
 			}
 			ImGui::PopStyleVar();
@@ -449,31 +388,24 @@ namespace Yurrgoht
 		ImGui::PopStyleVar();
 	}
 
-	void AssetUI::constructFolderOpPopups(const std::string& str_id, bool is_background_not_hoverd)
-	{
+	void AssetUI::constructFolderOpPopups(const std::string& str_id, bool is_background_not_hoverd) {
 		bool is_delete_folder = false;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 2.0f, 8.0f });
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f, 0.2f, 1.0f });
-		if (ImGui::BeginPopup(str_id.c_str()))
-		{
+		if (ImGui::BeginPopup(str_id.c_str())) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 8.0f, 8.0f });
 			createCustomSeperatorText("FOLDER");
-			if (ImGui::MenuItem("  New Folder"))
-			{
+			if (ImGui::MenuItem("  New Folder")) {
 				std::string new_folder = createFolder();
 				is_renaming = true;
 				m_selected_file = new_folder;
 			}
 
-			if (is_background_not_hoverd)
-			{
-				if (ImGui::MenuItem("  Delete"))
-				{
+			if (is_background_not_hoverd) {
+				if (ImGui::MenuItem("  Delete")) {
 					is_delete_folder = true;
-				}
-				if (ImGui::MenuItem("  Rename"))
-				{
+				} if (ImGui::MenuItem("  Rename")) {
 					is_renaming = true;
 				}
 			}
@@ -484,17 +416,14 @@ namespace Yurrgoht
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
-		if (is_delete_folder)
-		{
+		if (is_delete_folder) {
 			ImGui::OpenPopup("Delete?");
 		}
 	}
 
-	void AssetUI::constructFolderOpPopupModal(const std::string& path)
-	{
+	void AssetUI::constructFolderOpPopupModal(const std::string& path) {
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
-		{
+		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 			std::string text = " Do you really want to delete " + g_engine.fileSystem()->relative(path) + "? ";
 			ImGui::Text("%s", text.c_str());
 			ImGui::Separator();
@@ -502,66 +431,55 @@ namespace Yurrgoht
 			float current_width = ImGui::GetWindowWidth();
 			ImVec2 button_size{ current_width / 2 - 3.5f, 0.0f };
 
-			if (ImGui::Button("Yes", button_size))
-			{
+			if (ImGui::Button("Yes", button_size)) {
 				deleteFolder(path);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SetItemDefaultFocus();
 			ImGui::SameLine(current_width / 2 + 2.0f);
 			
-			if (ImGui::Button("No", button_size))
-			{
+			if (ImGui::Button("No", button_size)) {
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
-		if (ImGui::BeginPopupModal("Create?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-		{
+		if (ImGui::BeginPopupModal("Create?", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::EndPopup();
 		}
 	}
 
-	void AssetUI::openFolder(std::string folder)
-	{
-		if (!g_engine.fileSystem()->exists(m_selected_folder))
-		{
+	void AssetUI::openFolder(std::string folder) {
+		if (!g_engine.fileSystem()->exists(m_selected_folder)) {
 			folder = g_engine.fileSystem()->getAssetDir();
 		}
 
-		if (!folder.empty() && m_selected_folder != folder)
-		{
+		if (!folder.empty() && m_selected_folder != folder) {
 			m_selected_folder = folder;
 
 			m_formatted_selected_folder = g_engine.fileSystem()->relative(m_selected_folder);
 			StringUtil::replace_all(m_formatted_selected_folder, "/", std::string(" ") + ICON_FA_ANGLE_RIGHT + " ");
 		}
 
-		if (!m_selected_folder.empty())
-		{
+		if (!m_selected_folder.empty()) {
 			m_selected_files.clear();
 			const auto& iter = std::find_if(m_folder_nodes.begin(), m_folder_nodes.end(), 
 				[this](const FolderNode& folder_node) {
 					return folder_node.dir == m_selected_folder;
 				});
-			for (uint32_t child_folder : iter->child_folders)
-			{
+			for (uint32_t child_folder : iter->child_folders) {
 				m_selected_files.push_back(m_folder_nodes[child_folder].dir);
 			}
 			m_selected_files.insert(m_selected_files.end(), iter->child_files.begin(), iter->child_files.end());
-			for (const std::string& selected_file : m_selected_files)
-			{
-				if (m_selected_file_hover_states.find(selected_file) == m_selected_file_hover_states.end())
-				{
+			for (const std::string& selected_file : m_selected_files) {
+				if (m_selected_file_hover_states.find(selected_file) == m_selected_file_hover_states.end()) {
 					m_selected_file_hover_states[selected_file] = { false };
 				}
 			}
 		}
 	}
 
-	void AssetUI::onDropFiles(const std::shared_ptr<class Event>& event)
-	{
+	void AssetUI::onDropFiles(const std::shared_ptr<class Event>& event) {
 		const WindowDropEvent* drop_event = static_cast<const WindowDropEvent*>(event.get());
 		if (drop_event->xpos < m_folder_rect.x ||
 			drop_event->xpos > m_folder_rect.y ||
@@ -574,39 +492,27 @@ namespace Yurrgoht
 		m_imported_files = drop_event->filenames;
 	}
 
-	void AssetUI::onAssetRightClick(const std::string& filename)
-	{
-		if (ImGui::IsItemHovered())
-		{
-			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (g_engine.fileSystem()->isDir(filename))
-				{
+	void AssetUI::onAssetRightClick(const std::string& filename) {
+		if (ImGui::IsItemHovered()) {
+			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+				if (g_engine.fileSystem()->isDir(filename)) {
 					openFolder(filename);
-				}
-				else
-				{
+				} else {
 					std::string basename = g_engine.fileSystem()->basename(filename);
 					LOG_INFO("open asset {}", basename);
 				}
 			}
-			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-			{
-				if (g_engine.fileSystem()->isDir(filename))
-				{
-					// Dir right-click event
-					ImGui::OpenPopup("folder_op_dir_hovered_popups");
-				}
-				else
-				{
+			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+				if (g_engine.fileSystem()->isDir(filename)) {
+					ImGui::OpenPopup("folder_op_dir_hovered_popups");	// Dir right-click event
+				} else {
 					ImGui::OpenPopup("AssetPopups");
 				}
 			}
 		}
 	}
 
-	void AssetUI::createCustomSeperatorText(const std::string& text)
-	{
+	void AssetUI::createCustomSeperatorText(const std::string& text) {
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_SeparatorTextPadding, ImVec2(0.0f, 0.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_SeparatorTextBorderSize, 0.0f);

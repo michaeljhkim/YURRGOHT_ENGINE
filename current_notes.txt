@@ -3,13 +3,14 @@ Written down thoughts to remember stuff:
 - test build with c++17 again now that dependencies are properly made
 - THEN change to use c++20
 - added assets from bamboo release file for testing - must make it seperate download in the future
-- must convert glfw code to sdl2
+
 - must figure out how to create editor executable seperate from user developer code
 - must figure out how to update models in editor, through another program 
 - must figure out how to contain an ENTIRE scene inside of a container of some kind (like zip or something)
 - For example, show what the model looks like in-game with the editor, but then change it with blender, and once the file changes, the editor updates the model
 - use blender to create very simple test assets
 - samples from here as well: https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/Models/Models.md
+
 
 - editor/simulation/simulation_ui is where we call the sky texture
 - asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
@@ -30,8 +31,7 @@ Written down thoughts to remember stuff:
     - Component 1
     - Component 2
 
-- It is time to finally convert glfw to sdl2
-- After, add more functionality to editor GUI 
+- Add more functionality to editor GUI 
 - Must create a variable for assets to store original file names (like *.gltf, *.glb, *.png, e.t.c) 
 - Then create an export function that packages together assets from the original file type
 - Test and then finally package together 0.1.0

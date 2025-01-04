@@ -106,9 +106,13 @@ namespace Yurrgoht {
 	}
 
 	void VulkanRHI::createSurface() {
-		GLFWwindow* window = g_engine.windowSystem()->getWindow();
-		VkResult result = glfwCreateWindowSurface(m_instance, window, nullptr, &m_surface);
-		CHECK_VULKAN_RESULT(result, "create window surface");
+		SDL_Window* window = g_engine.windowSystem()->getWindow();
+		SDL_bool result = SDL_Vulkan_CreateSurface(window, m_instance, &m_surface);
+		if (result == SDL_FALSE) {
+			const char* error = SDL_GetError();		// Convert SDL error to Vulkan error
+			LOG_FATAL("failed to create window surface, SDL error: {}", error);
+			CHECK_VULKAN_RESULT(VK_ERROR_INITIALIZATION_FAILED, "create window surface");	// Return Vulkan error code
+		}
 	}
 
 	void VulkanRHI::pickPhysicalDevice() {
@@ -270,18 +274,16 @@ namespace Yurrgoht {
 		g_engine.eventSystem()->syncDispatch(std::make_shared<RenderDestroySwapchainObjectsEvent>());
 	}
 
-	void VulkanRHI::recreateSwapchain()
-	{
+	void VulkanRHI::recreateSwapchain() {
 		// handle the window minimization corner case
 		int width = 0;
 		int height = 0;
-		GLFWwindow* window = g_engine.windowSystem()->getWindow();
-		glfwGetFramebufferSize(window, &width, &height);
+		SDL_Window* window = g_engine.windowSystem()->getWindow();
+		SDL_GL_GetDrawableSize(window, &width, &height);	// Get the framebuffer size using SDL2
 		while (width == 0 || height == 0) {
-			glfwGetFramebufferSize(window, &width, &height);
-			glfwWaitEvents();
+			SDL_WaitEvent(nullptr);		// Wait for events
+			SDL_GL_GetDrawableSize(window, &width, &height);	// Get the framebuffer size again in case it changes after an event
 		}
-
 		// ensure all device operations have done
 		vkDeviceWaitIdle(m_device);
 
@@ -400,8 +402,7 @@ namespace Yurrgoht {
 		VkResult result = vkQueuePresentKHR(m_graphics_queue, &present_info);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
 			recreateSwapchain();
-		}
-		else {
+		} else {
 			CHECK_VULKAN_RESULT(result, "present swapchain image");
 		}
 
@@ -419,10 +420,14 @@ namespace Yurrgoht {
 			supported_instance_extensions.push_back(extension_properties.extensionName);
 		}
 
-		// find glfw instance extensions
-		uint32_t glfw_instance_extension_count = 0;
-		const char** glfw_instance_extensions = glfwGetRequiredInstanceExtensions(&glfw_instance_extension_count);
-		std::vector<const char*> required_instance_extensions(glfw_instance_extensions, glfw_instance_extensions + glfw_instance_extension_count);
+		// Find SDL instance extensions
+		uint32_t sdl_instance_extension_count = 0;
+		const char** sdl_instance_extensions = nullptr;
+		if (SDL_Vulkan_GetInstanceExtensions(g_engine.windowSystem()->getWindow(), &sdl_instance_extension_count, nullptr)) {
+			sdl_instance_extensions = new const char*[sdl_instance_extension_count];
+			SDL_Vulkan_GetInstanceExtensions(g_engine.windowSystem()->getWindow(), &sdl_instance_extension_count, sdl_instance_extensions);
+		} 
+		std::vector<const char*> required_instance_extensions(sdl_instance_extensions, sdl_instance_extensions + sdl_instance_extension_count);
 
 		// if enable validation layer, add some extra debug extension
 #if ENABLE_VALIDATION_LAYER
@@ -637,8 +642,8 @@ namespace Yurrgoht {
 			return details.capabilities.currentExtent;
 
 		int width, height;
-		GLFWwindow* window = g_engine.windowSystem()->getWindow();
-		glfwGetFramebufferSize(window, &width, &height);
+		SDL_Window* window = g_engine.windowSystem()->getWindow();
+		SDL_GL_GetDrawableSize(window, &width, &height);	// Get the framebuffer size using SDL2
 
 		VkExtent2D actual_extent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 		actual_extent.width = std::clamp(actual_extent.width, details.capabilities.minImageExtent.width, details.capabilities.maxImageExtent.width);

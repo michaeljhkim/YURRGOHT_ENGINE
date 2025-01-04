@@ -4,10 +4,9 @@
 #include <vector>
 #include <array>
 
-namespace Yurrgoht
-{
-    class EditorContext
-    {
+namespace Yurrgoht {
+    
+    class EditorContext {
         public:
             void init();
             void destroy();

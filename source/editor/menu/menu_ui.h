@@ -3,10 +3,9 @@
 #include "editor/base/editor_ui.h"
 #include "editor/base/folder_tree_ui.h"
 
-namespace Yurrgoht
-{
-	class MenuUI : public EditorUI, public IFolderTreeUI
-	{
+namespace Yurrgoht {
+	
+	class MenuUI : public EditorUI, public IFolderTreeUI {
 	public:
 		virtual void init() override;
 		virtual void construct() override;
@@ -47,8 +46,7 @@ namespace Yurrgoht
 		bool showing_save_as_scene_popup = false;
 
 		// new scene
-		struct TemplateScene
-		{
+		struct TemplateScene {
 			std::string name;
 			std::string url;
 			std::shared_ptr<ImGuiImage> icon;

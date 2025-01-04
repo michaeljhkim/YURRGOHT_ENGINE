@@ -37,15 +37,13 @@ namespace Yurrgoht
 		VkCommandBuffer getCommandBuffer() { return m_command_buffers[m_flight_index]; }
 		PFN_vkCmdPushDescriptorSetKHR getVkCmdPushDescriptorSetKHR() { return m_vk_cmd_push_desc_set_func; }
 
-		static VulkanRHI& get()
-		{
+		static VulkanRHI& get() {
 			static VulkanRHI vulkan_rhi;
 			return vulkan_rhi;
 		}
 
 	private:
-		struct QueueFamilyIndices
-		{
+		struct QueueFamilyIndices {
 			uint32_t graphics_family;
 			uint32_t compute_family;
 			uint32_t transfer_family;
@@ -54,8 +52,7 @@ namespace Yurrgoht
 			bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
 		};
 
-		struct SwapchainSupportDetails
-		{
+		struct SwapchainSupportDetails {
 			VkSurfaceCapabilitiesKHR capabilities;
 			std::vector<VkSurfaceFormatKHR> formats;
 			std::vector<VkPresentModeKHR> present_modes;

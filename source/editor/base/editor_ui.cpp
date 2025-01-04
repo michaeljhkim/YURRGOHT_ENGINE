@@ -6,11 +6,11 @@
 #include <imgui/imgui_internal.h>
 
 namespace Yurrgoht {
+
 	void ImGuiImage::destroy() {
 		if (is_owned) {
 			image_view_sampler.destroy();
 		}
-		
 		ImGui_ImplVulkan_RemoveTexture(tex_id);
 	}
 
@@ -20,22 +20,18 @@ namespace Yurrgoht {
 		LOG_INFO("SUCCESS");
 	}
 
-	void EditorUI::destroy()
-	{
-		for (auto& iter : m_imgui_images)
-		{
+	void EditorUI::destroy() {
+		for (auto& iter : m_imgui_images) {
 			iter.second->destroy();
 		}
 		m_imgui_images.clear();
 		vkDestroySampler(VulkanRHI::get().getDevice(), m_texture_2d_sampler, nullptr);
 	}
 
-	void EditorUI::updateWindowRegion()
-	{
+	void EditorUI::updateWindowRegion() {
 		uint32_t new_pos_x = ImGui::GetCursorScreenPos().x;
 		uint32_t new_pos_y = ImGui::GetCursorScreenPos().y;
-		if (m_content_region.x != new_pos_x || m_content_region.y != new_pos_y)
-		{
+		if (m_content_region.x != new_pos_x || m_content_region.y != new_pos_y) {
 			m_content_region.x = new_pos_x;
 			m_content_region.y = new_pos_y;
 
@@ -45,8 +41,7 @@ namespace Yurrgoht {
 		ImVec2 m_new_size = ImGui::GetContentRegionAvail();
 		uint32_t new_width = static_cast<uint32_t>(m_new_size.x);
 		uint32_t new_height = static_cast<uint32_t>(m_new_size.y);
-		if (m_content_region.z != new_width || m_content_region.w != new_height)
-		{
+		if (m_content_region.z != new_width || m_content_region.w != new_height) {
 			m_content_region.z = new_width;
 			m_content_region.w = new_height;
 
@@ -54,10 +49,8 @@ namespace Yurrgoht {
 		}
 	}
 
-	std::shared_ptr<ImGuiImage> EditorUI::loadImGuiImageFromFile(const std::string& filename)
-	{
-		if (m_imgui_images.find(filename) != m_imgui_images.end())
-		{
+	std::shared_ptr<ImGuiImage> EditorUI::loadImGuiImageFromFile(const std::string& filename) {
+		if (m_imgui_images.find(filename) != m_imgui_images.end()) {
 			return m_imgui_images[filename];
 		}
 
@@ -70,8 +63,7 @@ namespace Yurrgoht {
 		return image;
 	}
 
-	std::shared_ptr<ImGuiImage> EditorUI::loadImGuiImageFromTexture2D(std::shared_ptr<class Texture2D>& texture)
-	{
+	std::shared_ptr<ImGuiImage> EditorUI::loadImGuiImageFromTexture2D(std::shared_ptr<class Texture2D>& texture) {
 		std::shared_ptr<ImGuiImage> image = std::make_shared<ImGuiImage>();
 		image->image_view_sampler = texture->m_image_view_sampler;
 		image->tex_id = ImGui_ImplVulkan_AddTexture(m_texture_2d_sampler, image->image_view_sampler.view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -81,8 +73,7 @@ namespace Yurrgoht {
 		return image;
 	}
 
-	std::shared_ptr<Yurrgoht::ImGuiImage> EditorUI::loadImGuiImageFromImageViewSampler(const VmaImageViewSampler& image_view_sampler)
-	{
+	std::shared_ptr<Yurrgoht::ImGuiImage> EditorUI::loadImGuiImageFromImageViewSampler(const VmaImageViewSampler& image_view_sampler) {
 		std::shared_ptr<ImGuiImage> image = std::make_shared<ImGuiImage>();
 		image->image_view_sampler = image_view_sampler;
 		image->tex_id = ImGui_ImplVulkan_AddTexture(image->image_view_sampler.sampler, image->image_view_sampler.view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -95,44 +86,30 @@ namespace Yurrgoht {
 		return image;
 	}
 
-	std::shared_ptr<Yurrgoht::ImGuiImage> EditorUI::getImGuiImageFromCache(const URL& url)
-	{
+	std::shared_ptr<Yurrgoht::ImGuiImage> EditorUI::getImGuiImageFromCache(const URL& url) {
 		return m_imgui_images[url];
 	}
 
-	ImFont* EditorUI::defaultFont()
-	{
+	ImFont* EditorUI::defaultFont() {
 		return ImGui::GetIO().Fonts->Fonts[0];
 	}
-
-	ImFont* EditorUI::smallFont()
-	{
+	ImFont* EditorUI::smallFont() {
 		return ImGui::GetIO().Fonts->Fonts[1];
 	}
-
-	ImFont* EditorUI::bigIconFont()
-	{
+	ImFont* EditorUI::bigIconFont() {
 		return ImGui::GetIO().Fonts->Fonts[2];
-	}
-
-	bool EditorUI::isFocused()
-	{
+	} 
+	bool EditorUI::isFocused() {
 		return !isPoppingUp() && isMouseFocused();
 	}
-
-	bool EditorUI::isPoppingUp()
-	{
+	bool EditorUI::isPoppingUp() {
 		ImGuiContext& g = *GImGui;
 		return !g.OpenPopupStack.empty();
 	}
-
-	bool EditorUI::isImGuiImageLoaded(const URL& url)
-	{
+	bool EditorUI::isImGuiImageLoaded(const URL& url) {
 		return m_imgui_images.find(url) != m_imgui_images.end();
 	}
-
-	bool EditorUI::isMouseFocused()
-	{
+	bool EditorUI::isMouseFocused() {
 		int xpos, ypos;
 		g_engine.windowSystem()->getMousePos(xpos, ypos);
 		return xpos > m_content_region.x && xpos < m_content_region.x + m_content_region.z &&

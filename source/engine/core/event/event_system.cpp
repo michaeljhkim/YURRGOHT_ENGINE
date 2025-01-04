@@ -1,8 +1,8 @@
 #include <iostream>
 #include "event_system.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
+
 	void EventSystem::tick() {
 		m_event_queue.process();
 	}
@@ -14,8 +14,7 @@ namespace Yurrgoht
 		return event_handle;
 	}
 
-	void EventSystem::removeListener(void* handle)
-	{	
+	void EventSystem::removeListener(void* handle) {	
 		/*
 		EventHandle* event_handle = (EventHandle*)handle;
 		m_event_queue.removeListener(event_handle->type, event_handle->handle);
@@ -26,13 +25,11 @@ namespace Yurrgoht
 		delete event_handle;  // Delete the correct type
 	}
 
-	void EventSystem::asyncDispatch(const EventPointer& event_pointer)
-	{
+	void EventSystem::asyncDispatch(const EventPointer& event_pointer) {
 		m_event_queue.enqueue(event_pointer);
 	}
 
-	void EventSystem::syncDispatch(const EventPointer& event_pointer)
-	{
+	void EventSystem::syncDispatch(const EventPointer& event_pointer) {
 		m_event_queue.dispatch(event_pointer);
 	}
 

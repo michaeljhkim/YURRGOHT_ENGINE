@@ -82,23 +82,19 @@ namespace Yurrgoht {
         m_timer_manager->destroy();
 	}
 
-	bool EngineContext::isEditor()
-	{
+	bool EngineContext::isEditor() {
         return m_config_manager->isEditor();
 	}
 
-	bool EngineContext::isEditing()
-	{
+	bool EngineContext::isEditing() {
         return m_scene_manager->getSceneMode() == ESceneMode::Edit;
 	}
 
-	bool EngineContext::isPlaying()
-	{
+	bool EngineContext::isPlaying() {
         return m_scene_manager->getSceneMode() == ESceneMode::Play;
 	}
 
-	bool EngineContext::isPausing()
-	{
+	bool EngineContext::isPausing() {
         return m_scene_manager->getSceneMode() == ESceneMode::Pause;
 	}
 

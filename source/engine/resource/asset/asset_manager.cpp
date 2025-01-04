@@ -84,12 +84,10 @@ namespace Yurrgoht {
 		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_1.ktx", "asset/engine/mesh/shader_ball/");
 		importTexture2D_KTX("asset/engine/mesh/shader_ball/shader_ball_2.ktx", "asset/engine/mesh/shader_ball/");
 		*/
-		/*
 		bool force_static_mesh = false;
 		bool combine_meshes = true;
 		bool contains_occlusion_channel = false;
 		importGltf("asset/engine/mesh/primitive/cube.glb", "asset/engine/mesh/primitive/", { combine_meshes, force_static_mesh, contains_occlusion_channel });
-		*/
 	}
 
 	void AssetManager::destroy() {

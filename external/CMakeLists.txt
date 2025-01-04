@@ -17,17 +17,19 @@ if(NOT TARGET imgui)
     set(IMGUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
     file(GLOB imgui_sources CONFIGURE_DEPENDS  "${IMGUI_SOURCE_DIR}/*.cpp")
     file(GLOB imgui_impl CONFIGURE_DEPENDS
-    "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp" 
-    "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h"
-    #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp" 
-    #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h"
+    "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp" 
+    "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h"
+    #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp" 
+    #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.h"
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp" 
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h")
  
     add_library(imgui ${imgui_sources} ${imgui_impl})
     target_include_directories(imgui PUBLIC ${IMGUI_SOURCE_DIR})
     target_include_directories(imgui PUBLIC ${Vulkan_INCLUDE_DIR})
-    target_link_libraries(imgui PUBLIC glfw ${Vulkan_LIBRARY})
+    find_package(SDL2 REQUIRED)
+    target_include_directories(imgui PUBLIC ${SDL2_INCLUDE_DIR})
+    target_link_libraries(imgui PUBLIC SDL2 ${Vulkan_LIBRARY})
     set_target_properties(imgui PROPERTIES FOLDER ${external_folder}/imgui)
 endif()
 

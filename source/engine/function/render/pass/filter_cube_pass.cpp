@@ -28,15 +28,13 @@ namespace Yurrgoht
 		uint32_t samples;
 	};
 
-	FilterCubePass::FilterCubePass(std::shared_ptr<class TextureCube>& skybox_texture_cube)
-	{
+	FilterCubePass::FilterCubePass(std::shared_ptr<class TextureCube>& skybox_texture_cube) {
 		m_formats[0] = VK_FORMAT_R32G32B32A32_SFLOAT;
 		m_formats[1] = VK_FORMAT_R16G16B16A16_SFLOAT;
 
 		m_sizes[0] = 64;
 		m_sizes[1] = 512;
-		for (int i = 0; i < 2; ++i)
-		{
+		for (int i = 0; i < 2; ++i) {
 			m_mip_levels[i] = VulkanUtil::calcMipLevel(m_sizes[i]);
 		}
 

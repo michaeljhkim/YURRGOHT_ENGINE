@@ -6,10 +6,9 @@
 #include "engine/function/render/render_system.h"
 #include "engine/function/framework/scene/scene_manager.h"
 
-namespace Yurrgoht
-{
-    void Engine::init()
-    {
+namespace Yurrgoht {
+
+    void Engine::init() {
 		m_fps = 0;
 		m_frame_count = 0;
 		m_average_duration = 0.0f;

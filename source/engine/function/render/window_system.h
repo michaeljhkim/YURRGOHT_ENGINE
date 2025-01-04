@@ -1,16 +1,17 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
+#include <imgui/backends/imgui_impl_sdl2.h>
 
 #include <string>
 #include <functional>
 #include <vector>
+#include <memory>
 
-namespace Yurrgoht
-{
-	class WindowSystem
-	{
+
+namespace Yurrgoht {
+	class WindowSystem {
 	public:
 		void init();
 		void destroy();
@@ -18,7 +19,7 @@ namespace Yurrgoht
 		void pollEvents();
 		bool shouldClose();
 		void setTitle(const std::string& title);
-		GLFWwindow* getWindow() { return m_window; }
+		SDL_Window* getWindow() { return m_window; }
 		void getWindowSize(int& width, int& height);
 		void getScreenSize(int& width, int& height);
 		void getMousePos(int& x, int& y);
@@ -30,22 +31,12 @@ namespace Yurrgoht
 		void toggleFullscreen();
 
 	private:
-		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void charCallback(GLFWwindow* window, unsigned int codepoint);
-		static void charModsCallback(GLFWwindow* window, unsigned int codepoint, int mods);
-		static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
-		static void cursorEnterCallback(GLFWwindow* window, int entered);
-		static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-		static void dropCallback(GLFWwindow* window, int count, const char** paths);
-		static void windowSizeCallback(GLFWwindow* window, int width, int height);
-		static void windowCloseCallback(GLFWwindow* window);
-
-		GLFWwindow* m_window;
+		SDL_Window* m_window;
 		int m_mouse_pos_x;
 		int m_mouse_pos_y;
 		bool m_focus;
 		bool m_fullscreen;
+		bool m_should_close = false;
 
 		int m_windowed_width, m_windowed_height;
 		int m_windowed_pos_x, m_windowed_pos_y;

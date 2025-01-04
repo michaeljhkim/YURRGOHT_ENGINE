@@ -6,8 +6,8 @@
 
 #define MAX_FRAMES_IN_FLIGHT 2
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
+	
 	// get VkResult error code string
 	const char* vkErrorString(VkResult result);
 
@@ -16,8 +16,7 @@ namespace Yurrgoht
 
 	// assert VkResult and log error code
 #define CHECK_VULKAN_RESULT(result, msg) \
-    if (result != 0) \
-    { \
+    if (result != 0) { \
         LOG_FATAL("failed to {}, error: {}", msg, vkErrorString(result)); \
     }
 

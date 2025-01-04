@@ -7,7 +7,7 @@ WORKDIR /workspaces
 RUN dnf install -y \
     mesa-vulkan-drivers vulkan-tools vulkan-loader-devel vulkan-validation-layers glslang glslc spirv-tools \
     assimp-devel glm-devel cereal-devel SDL2-devel glfw-devel spdlog-devel yaml-cpp-devel librttr-devel \
-    git wget clang cmake ninja-build doxygen \
+    git wget clang cmake ninja-build doxygen gdb\
 # for ktx software
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
     graphviz xinput libXinerama

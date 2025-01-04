@@ -51,8 +51,7 @@ namespace Yurrgoht {
 			m_postprocess_pass,
 			m_ui_pass
 		};
-		for (auto& render_pass : m_render_passes)
-		{
+		for (auto& render_pass : m_render_passes) {
 			render_pass->init();
 		}
 

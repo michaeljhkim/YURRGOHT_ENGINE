@@ -45,8 +45,9 @@ namespace Yurrgoht {
 		VulkanRHI::get().waitDeviceIdle();
 
 		// destroy all editor uis
-		for (auto& editor_ui : m_editor_uis)
+		for (auto& editor_ui : m_editor_uis) {
 			editor_ui->destroy();
+        }
 
         // destroy engine
         m_engine->destroy();

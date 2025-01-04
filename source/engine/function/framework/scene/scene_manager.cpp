@@ -101,8 +101,7 @@ namespace Yurrgoht {
 			case ESceneMode::Edit: {
 				// load scene from cache
 				openScene(m_pie_scene_url);
-				break;
-			}
+			} break;
 			case ESceneMode::Play: {
 				if (m_scene_mode == ESceneMode::Edit) {
 					// save scene to cache
@@ -110,8 +109,7 @@ namespace Yurrgoht {
 
 					// call beginPlay of all entities
 					m_current_scene->beginPlay();
-				}
-				break;
+				} break;
 			}
 			default:
 				break;
@@ -121,7 +119,6 @@ namespace Yurrgoht {
 
 	bool SceneManager::loadScene(const URL& url) {
 		LOG_INFO("LOADING: {}", url.str());
-		
 		if (m_current_scene) {
 			m_current_scene.reset();
 		}
@@ -129,7 +126,6 @@ namespace Yurrgoht {
 		if (url != m_pie_scene_url) {
 			m_current_scene_url = url;
 		}
-
 		LOG_INFO("SUCCESS");
 		return true;
 	}
