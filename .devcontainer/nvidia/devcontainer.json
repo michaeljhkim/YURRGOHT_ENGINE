@@ -1,15 +1,14 @@
 {
 	"name": "Yurrgoht Engine",
-	"build": { 
-		"context": "..",
-		"dockerfile": "Dockerfile" 
-	},
-	"mounts": [
-	  "source=${localWorkspaceFolder},target=/workspace,type=bind"
-	],
+	"dockerComposeFile": ["docker-compose.yaml"],
+	"service": "devcontainer",
 	"workspaceFolder": "/workspace",
+	//"image": "yurrgoht/testapp:1.0",
+
 	"customizations": {
+		// Configure properties specific to VS Code.
 		"vscode": {
+			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": ["ms-vscode.cpptools",
 			"ms-vscode.cpptools-extension-pack",
 			"twxs.cmake",
@@ -29,5 +28,6 @@
 				"overrideCommand": false
 			}
 		}
-	}
+	},
+	"initializeCommand": "xhost +local:"
 }

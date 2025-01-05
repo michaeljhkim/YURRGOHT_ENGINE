@@ -6,7 +6,7 @@ WORKDIR /workspaces
 # Install necessary build tools and libraries
 RUN dnf install -y \
     mesa-vulkan-drivers vulkan-tools vulkan-loader-devel vulkan-validation-layers glslang glslc spirv-tools \
-    assimp-devel glm-devel cereal-devel SDL2-devel \
+    assimp-devel glm-devel cereal-devel SDL2-devel spdlog-devel yaml-cpp-devel librttr-devel \
     git wget clang cmake ninja-build doxygen gdb\
 # for ktx software
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
@@ -38,16 +38,6 @@ RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
     cmake .. -G Ninja -B . -DBUILD_SHARED_LIBS=OFF && \
     cmake --install .
     
-# rttr dependency - static - manually had to set install location and then copy header files b/c rttr does not do so for static for some reason
-RUN git clone https://github.com/rttrorg/rttr.git && \
-    cd rttr && mkdir build && cd build && \
-    cmake .. -G Ninja -B . -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_STANDARD=17 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON \
-    -DBUILD_WITH_STATIC_RUNTIME_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_INSTALLER=ON -DBUILD_PACKAGE=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    cmake --build . && \
-    cmake --install . && \
-    cd ../src/rttr && \
-    find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
     
     
 # Download and extract the LunarG Vulkan SDK
@@ -64,6 +54,22 @@ ENV PATH="${VULKAN_SDK}/bin:$PATH"
 ENV LD_LIBRARY_PATH="${VULKAN_SDK}/lib:$LD_LIBRARY_PATH"
 ENV VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
 ENV GFXRECON_LOG_LEVEL=WARN
+
+# Set environment variables for NVIDIA and Vulkan
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
+#ENV VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json
+ENV VK_ICD_FILENAMES=/vulkan-icd/nvidia_icd.json
+RUN ICD_NVIDIA="/vulkan-icd/nvidia_icd.json" && \
+    mkdir -p /vulkan-icd && \
+    touch /vulkan-icd/nvidia_icd.json \
+    && echo '{' >> $ICD_NVIDIA \
+    && echo '    "file_format_version" : "1.0.0",' >> $ICD_NVIDIA \
+    && echo '    "ICD": {' >> $ICD_NVIDIA \
+    && echo '        "library_path": "libGLX_nvidia.so.0",' >> $ICD_NVIDIA \
+    && echo '        "api_version" : "${VULKAN_SDK_VERSION}"' >> $ICD_NVIDIA \
+    && echo '    }' >> $ICD_NVIDIA \
+    && echo '}' >> /$ICD_NVIDIA
 
     
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg

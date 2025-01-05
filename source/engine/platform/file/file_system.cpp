@@ -6,13 +6,12 @@
 namespace Yurrgoht {
 
 	void FileSystem::init() {
+        std::cout << "FileSystem::init - INIT (Info displayed without LOG_INFO)" << std::endl;
 		if (std::filesystem::exists(std::filesystem::path("asset"))) {
 			m_header = std::filesystem::path(".");
-		}
-		else if (std::filesystem::exists(std::filesystem::path("../asset"))) {
+		} else if (std::filesystem::exists(std::filesystem::path("../asset"))) {
 			m_header = std::filesystem::path("../");
-		}
-		else {
+		} else {
 			LOG_FATAL("failed to find engine asset");
 		}
 
@@ -21,11 +20,11 @@ namespace Yurrgoht {
 		if (!exists(log_dir)) {
 			createDir(log_dir);
 		}
-
 		std::string cache_dir = getCacheDir();
 		if (!exists(cache_dir)) {
 			createDir(cache_dir);
 		}
+		//LOG_INFO("SUCCESS");
 	}
 
 	void FileSystem::destroy() {

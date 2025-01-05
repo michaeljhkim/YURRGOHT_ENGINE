@@ -3,15 +3,12 @@
 #include "engine/platform/string/string_util.h"
 #include <filesystem>
 
-namespace Yurrgoht
-{
-	enum class EFileOrderType
-	{
+namespace Yurrgoht {
+	enum class EFileOrderType {
 		Name, Time, Size
 	};
 
-	class FileSystem
-	{
+	class FileSystem {
 	public:
 		void init();
 		void destroy();
