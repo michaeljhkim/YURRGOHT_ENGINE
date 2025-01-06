@@ -114,8 +114,7 @@ namespace Yurrgoht {
 					}
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("cancel", ImVec2(button_width, 0)))
-				{
+				if (ImGui::Button("cancel", ImVec2(button_width, 0))) {
 					showing_new_scene_popup = false;
 				}
 				ImGui::EndChild();
@@ -124,8 +123,7 @@ namespace Yurrgoht {
 			}
 		}
 
-		if (showing_open_scene_popup)
-		{
+		if (showing_open_scene_popup) {
 			ImGui::SetNextWindowSize(ImVec2(300, 500));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
@@ -197,11 +195,9 @@ namespace Yurrgoht {
 				float button_offset_x = (ImGui::GetContentRegionAvail().x - button_width * 2 - k_spacing) / 2.0f;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + button_offset_x);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
-				if (ImGui::Button("save", ImVec2(button_width, 0)))
-				{
+				if (ImGui::Button("save", ImVec2(button_width, 0))) {
 					std::string scene_name_str = scene_name;
-					if (!m_selected_folder.empty() && !scene_name_str.empty())
-					{
+					if (!m_selected_folder.empty() && !scene_name_str.empty()) {
 						std::string url = m_selected_folder + "/" + scene_name_str + ".scene";
 						g_engine.sceneManager()->saveAsScene(url);
 
@@ -210,8 +206,7 @@ namespace Yurrgoht {
 				}
 
 				ImGui::SameLine();
-				if (ImGui::Button("cancel", ImVec2(button_width, 0)))
-				{
+				if (ImGui::Button("cancel", ImVec2(button_width, 0))) {
 					showing_save_as_scene_popup = false;
 				}
 				ImGui::EndChild();
@@ -267,53 +262,27 @@ namespace Yurrgoht {
 	}
 
 	void MenuUI::constructEditMenu() {
-		if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
-			undo();
-		}
-
-		if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) {
-			redo();
-		}
-
+		if (ImGui::MenuItem("Undo", "Ctrl+Z")) { undo(); }
+		if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) { redo(); }
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Cut", "Ctrl+X")) {
-			cut();
-		}
-
-		if (ImGui::MenuItem("Copy", "Ctrl+C")) {
-			copy();
-		}
-
-		if (ImGui::MenuItem("Paste", "Ctrl+V")) {
-			paste();
-		}
-
+		if (ImGui::MenuItem("Cut", "Ctrl+X")) { cut(); }
+		if (ImGui::MenuItem("Copy", "Ctrl+C")) { copy(); }
+		if (ImGui::MenuItem("Paste", "Ctrl+V")) { paste(); }
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Editor Settings", "Ctrl+E")) {
-			editorSettings();
-		}
-
-		if (ImGui::MenuItem("Project Settings", "Ctrl+P")) {
-			projectSettings();
-		}
+		if (ImGui::MenuItem("Editor Settings", "Ctrl+E")) { editorSettings(); }
+		if (ImGui::MenuItem("Project Settings", "Ctrl+P")) { projectSettings(); }
 	}
 
 	void MenuUI::constructViewMenu() {
-		if (ImGui::MenuItem("Load Layout")) {
-		}
-
-		if (ImGui::MenuItem("Save Layout")) {
-		}
+		if (ImGui::MenuItem("Load Layout")) { }
+		if (ImGui::MenuItem("Save Layout")) { }
 	}
 
 	void MenuUI::constructHelpMenu() {
-		if (ImGui::MenuItem("Documents")) {
-		}
-
-		if (ImGui::MenuItem("About")) {
-		}
+		if (ImGui::MenuItem("Documents")) { }
+		if (ImGui::MenuItem("About")) { }
 	}
 
 	void MenuUI::pollShortcuts() {
@@ -403,25 +372,18 @@ namespace Yurrgoht {
 
 	void MenuUI::quit() {
 	}
-
 	void MenuUI::undo() {
 	}
-
 	void MenuUI::redo() { 
 	}
-
 	void MenuUI::cut() {
 	}
-
 	void MenuUI::copy() {
 	}
-
 	void MenuUI::paste() {
 	}
-
 	void MenuUI::editorSettings() {
 	}
-
 	void MenuUI::projectSettings() {
 	}
 
@@ -469,8 +431,7 @@ namespace Yurrgoht {
 				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + icon_size.x);
 				ImGui::Text("%s", template_scene_name.c_str());
 				ImGui::PopTextWrapPos();
-			}
-			else {
+			} else {
 				ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (icon_size.x - text_width) * 0.5f);
 				ImGui::Text("%s", template_scene_name.c_str());
 			}
@@ -479,8 +440,7 @@ namespace Yurrgoht {
 
 			// update asset hover and selection status
 			hover_state.is_hovered = ImGui::IsItemHovered();
-			if (ImGui::IsItemClicked())
-			{
+			if (ImGui::IsItemClicked()) {
 				m_selected_template_scene_index = i;
 			}
 			hover_state.rect_min = ImGui::GetItemRectMin();
@@ -488,21 +448,17 @@ namespace Yurrgoht {
 
 			float current_pos_x = ImGui::GetItemRectMax().x;
 			float next_pos_x = current_pos_x + style.ItemSpacing.x + icon_size.x;
-			if (i < m_template_scenes.size() - 1 && next_pos_x < max_pos_x)
-			{
+			if (i < m_template_scenes.size() - 1 && next_pos_x < max_pos_x) {
 				ImGui::SameLine();
 			}
 		}
 		ImGui::PopStyleVar();
 	}
 
-	void MenuUI::constructSceneURLPanel()
-	{
-
+	void MenuUI::constructSceneURLPanel() {
 	}
 
-	void MenuUI::clearEntitySelection()
-	{
+	void MenuUI::clearEntitySelection() {
 		g_engine.eventSystem()->syncDispatch(std::make_shared<SelectEntityEvent>(UINT_MAX));
 	}
 

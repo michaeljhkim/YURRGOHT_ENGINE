@@ -18,6 +18,12 @@ namespace Yurrgoht {
 		m_fullscreen = g_engine.configManager()->isFullscreen();
 		SDL_DisplayMode* mode;
 		SDL_GetDisplayMode(0, 0, mode);
+		// If the height of the desktop resolution (monitor) is greater than 1080p, we scale up
+		// Very simple solution for now, will make more flexible in the future
+		// Remember to get 4k fonts in the future
+		if (mode->h > 1080) {
+			m_scale = mode->h/1080; 
+		}
 
 		// create sdl2 window
 		bool is_packaged_fullscreen = m_fullscreen && g_engine.isApplication();
@@ -63,16 +69,13 @@ namespace Yurrgoht {
 		*/
 
 		// set window icon
-		/*
-		SDL_Surface* iconSurface; 
-		iconSurface->pixels = stbi_load(TO_ABSOLUTE("asset/engine/texture/icon/yurrgoht_small.png").c_str(), &iconSurface->w, &iconSurface->h, 0, 4);
+		SDL_Surface* iconSurface = IMG_Load(TO_ABSOLUTE("asset/engine/texture/icon/yurrgoht_small.png").c_str());
 		if (iconSurface != nullptr) {
 			SDL_SetWindowIcon(m_window, iconSurface);
-			SDL_FreeSurface(iconSurface); 
+			SDL_FreeSurface(iconSurface);
 		} else { 
 			SDL_Log("Failed to load icon: %s", SDL_GetError()); 
 		}
-		*/
 	}
 
 	void WindowSystem::destroy() {

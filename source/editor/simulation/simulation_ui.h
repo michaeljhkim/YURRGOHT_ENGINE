@@ -3,15 +3,13 @@
 #include "editor/base/editor_ui.h"
 #include "engine/core/vulkan/vulkan_util.h"
 
-namespace Yurrgoht
-{
-	enum class EOperationMode
-	{
+namespace Yurrgoht {
+	
+	enum class EOperationMode {
 		Pick, Translate, Rotate, Scale
 	};
 
-	enum class ECoordinateMode
-	{
+	enum class ECoordinateMode {
 		Local, Scene
 	};
 

@@ -16,16 +16,6 @@
 			"ms-vscode.cmake-tools" ], 
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "bash", 
-				"task.allowAutomaticTasks": "on",
-				"tasks": {
-					"tasks": [
-						{ "label": "bash-init",
-							"type": "shell",
-							"command": "cd build/source && exec bash",
-							"runOptions": { "runOn": "folderOpen" }
-						}
-					]
-				},
 				"overrideCommand": false
 			}
 		}

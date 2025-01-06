@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
+#include <SDL2/SDL_image.h>
 #include <imgui/backends/imgui_impl_sdl2.h>
 
 #include <string>
@@ -23,6 +24,7 @@ namespace Yurrgoht {
 		void getWindowSize(int& width, int& height);
 		void getScreenSize(int& width, int& height);
 		void getMousePos(int& x, int& y);
+		float getResolutionScale() { return m_scale; };
 
 		bool isMouseButtonDown(int button);
 		bool getFocus() const { return m_focus; }
@@ -37,6 +39,7 @@ namespace Yurrgoht {
 		bool m_focus;
 		bool m_fullscreen;
 		bool m_should_close = false;
+		float m_scale = 1.0f;
 
 		int m_windowed_width, m_windowed_height;
 		int m_windowed_pos_x, m_windowed_pos_y;

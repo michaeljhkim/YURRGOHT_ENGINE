@@ -1,11 +1,14 @@
+
+#include <map>
+
 #include "tool_ui.h"
 #include "engine/core/base/macro.h"
 #include "engine/function/framework/scene/scene_manager.h"
 #include "engine/function/physics/physics_system.h"
-#include <map>
+#include <imgui/imgui_internal.h>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
+
 	void ToolUI::init() {
 		m_title = "Tool";
 
@@ -20,14 +23,12 @@ namespace Yurrgoht
 			{ std::string(ICON_FA_SUN) + " Directional Light",
 			  std::string(ICON_FA_CLOUD_MEATBALL) + " Sky Light",
 			  std::string(ICON_FA_LIGHTBULB) + " Point Light",
-			  std::string(ICON_FA_FLASH_LIGHT) + " Spot Light"},
-			{
-				std::string(ICON_FA_STAR) + " Cube",
-				std::string(ICON_FA_STAR) + " Sphere",
-				std::string(ICON_FA_STAR) + " Cylinder",
-				std::string(ICON_FA_STAR) + " Cone",
-				std::string(ICON_FA_STAR) + " Plane",
-			}
+			  std::string(ICON_FA_FLASH_LIGHT) + " Spot Light" },
+			{ std::string(ICON_FA_STAR) + " Cube",
+			  std::string(ICON_FA_STAR) + " Sphere",
+			  std::string(ICON_FA_STAR) + " Cylinder",
+			  std::string(ICON_FA_STAR) + " Cone",
+			  std::string(ICON_FA_STAR) + " Plane" }
 		};
 
 		const auto& entity_class_names = g_engine.sceneManager()->getCurrentScene()->getEntityClassNames();
@@ -39,34 +40,45 @@ namespace Yurrgoht
 		LOG_INFO("SUCCESS");
 	}
 
-	void ToolUI::construct()
-	{
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize;
+	void ToolUI::construct() {
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar;
 		sprintf(m_title_buf, "%s %s###%s", ICON_FA_TOOLS, m_title.c_str(), m_title.c_str());
-		if (!ImGui::Begin(m_title_buf, nullptr, window_flags))
-		{
+		if (!ImGui::Begin(m_title_buf, nullptr, window_flags)) {
 			ImGui::End();
 			return;
 		}
+
+		// Retrieve the dock node for the current window
+		ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;
+		ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 47 * g_engine.windowSystem()->getResolutionScale()));
+		//dock_node->SetLocalFlags(ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar);
 
 		float region_w = ImGui::GetContentRegionAvail().x;
 		ImVec2 spacing = ImGui::GetStyle().ItemSpacing;
 		const auto& wm = g_engine.sceneManager();
 
-		// save
-		const float kButtonHeight = 30.0f;
+		// save button 
+		const float kButtonHeight = 30.0f * g_engine.windowSystem()->getResolutionScale();
 		const ImVec2 kButtonSize = ImVec2(kButtonHeight, kButtonHeight);
+
+		// center save button (have to center it manually since font is off center)
+		//ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.85f, 0.5f));
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		ImGui::SetCursorPosY((windowSize.y - kButtonHeight) * 0.5f);
+
 		ImGui::PushFont(bigIconFont());
 		if (ImGui::Button(ICON_FA_SAVE, kButtonSize)) {
 			wm->saveScene();
 		}
 		ImGui::PopFont();
+		//ImGui::PopStyleVar(2);	// restore button style
 
 		// create entities
 		ImGui::SameLine();
 		sprintf(m_title_buf, "Create %s", ICON_FA_CHEVRON_DOWN);
-		if (ImGui::Button(m_title_buf, ImVec2(80, kButtonHeight)))
-		{
+		const float kButtonWidth = 80.0f * g_engine.windowSystem()->getResolutionScale();
+		if (ImGui::Button(m_title_buf, ImVec2(kButtonWidth, kButtonHeight))) {
 			ImGui::OpenPopup("create_entity");
 		}
 		constructCreateEntityPopup();
@@ -78,10 +90,8 @@ namespace Yurrgoht
 		ESceneMode current_scene_mode = wm->getSceneMode();
 		const char* play_icon_text = current_scene_mode == ESceneMode::Edit ? ICON_FA_PLAY :
 			(current_scene_mode == ESceneMode::Play ? ICON_FA_PAUSE : ICON_FA_FORWARD);
-		if (ImGui::Button(play_icon_text, kButtonSize))
-		{
-			switch (current_scene_mode)
-			{
+		if (ImGui::Button(play_icon_text, kButtonSize)) {
+			switch (current_scene_mode) {
 			case ESceneMode::Edit:
 				wm->setSceneMode(ESceneMode::Play);
 				break;
@@ -112,41 +122,32 @@ namespace Yurrgoht
 		if (current_scene_mode == ESceneMode::Edit) {
 			ImGui::BeginDisabled(true);
 		}
-		if (ImGui::Button(ICON_FA_STOP, kButtonSize))
-		{
+		if (ImGui::Button(ICON_FA_STOP, kButtonSize)) {
 			wm->setSceneMode(ESceneMode::Edit);
 		}
-		if (current_scene_mode == ESceneMode::Edit)
-		{
+		if (current_scene_mode == ESceneMode::Edit) {
 			ImGui::EndDisabled();
 		}
 
 		ImGui::End();
 	}
 
-	void ToolUI::constructCreateEntityPopup()
-	{
+	void ToolUI::constructCreateEntityPopup() {
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMax().y));
-		if (ImGui::BeginPopup("create_entity"))
-		{
-			for (size_t i = 0; i < entity_categories.size(); ++i)
-			{
-				if (ImGui::BeginMenu(entity_categories[i].c_str()))
-				{
-					for (size_t j = 0; j < entity_typess[i].size(); ++j)
-					{
+		if (ImGui::BeginPopup("create_entity")) {
+			for ( size_t i = 0; i < entity_categories.size(); ++i ) {
+				if ( ImGui::BeginMenu(entity_categories[i].c_str()) ) {
+					for (size_t j = 0; j < entity_typess[i].size(); ++j) {
 						const std::string& entity_type = entity_typess[i][j];
 						ImGui::Text("%s", entity_type.c_str());
-						if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID | ImGuiDragDropFlags_SourceNoPreviewTooltip))
-						{
+						if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID | ImGuiDragDropFlags_SourceNoPreviewTooltip)) {
 							std::string playload_str = std::string(entity_categories[i].begin() + 4, entity_categories[i].end()) + "-" +
 								std::string(entity_type.begin() + 4, entity_type.end());
 							ImGui::SetDragDropPayload("create_entity", playload_str.data(), playload_str.size());
 							ImGui::EndDragDropSource();
 						}
 
-						if (j != entity_typess[i].size() - 1)
-						{
+						if (j != entity_typess[i].size() - 1) {
 							ImGui::Separator();
 						}
 					}

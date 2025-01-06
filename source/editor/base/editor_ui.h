@@ -6,11 +6,11 @@
 #include <glm/glm.hpp>
 
 #include "engine/resource/asset/texture_2d.h"
+#include "engine/function/render/window_system.h"
 
-namespace Yurrgoht
-{
-	struct ImGuiImage
-	{
+namespace Yurrgoht {
+
+	struct ImGuiImage {
 		VmaImageViewSampler image_view_sampler;
 		VkDescriptorSet tex_id;
 
@@ -19,8 +19,7 @@ namespace Yurrgoht
 		void destroy();
 	};
 
-	class EditorUI
-	{
+	class EditorUI {
 	public:
 		virtual void init();
 		virtual void construct() = 0;

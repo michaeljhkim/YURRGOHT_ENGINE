@@ -31,36 +31,29 @@ namespace Yurrgoht
 		LOG_INFO("SUCCESS");
 	}
 
-	void PropertyUI::construct()
-	{
+	void PropertyUI::construct() {
 		auto selected_entity = m_selected_entity.lock();
 		std::string entity_name = selected_entity ? selected_entity->getName() : "";
 		sprintf(m_title_buf, "%s %s###%s", ICON_FA_STREAM, (entity_name.empty() ? m_title : entity_name).c_str(), m_title.c_str());
-		if (!ImGui::Begin(m_title_buf))
-		{
+		if (!ImGui::Begin(m_title_buf)) {
 			ImGui::End();
 			return;
 		}
 
-		if (selected_entity)
-		{
+		if (selected_entity) {
 			ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable;
-			if (ImGui::BeginTable("components", 2, table_flags))
-			{
+			if (ImGui::BeginTable("components", 2, table_flags)) {
 				ImGui::TableSetupColumn("column_0", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 				ImGui::TableSetupColumn("column_1", ImGuiTableColumnFlags_WidthStretch);
 
 				constructEntity(*selected_entity.get());
-				for (const auto& component : selected_entity->getComponents())
-				{
+				for (const auto& component : selected_entity->getComponents()) {
 					constructEntity(*component.get());
 				}
 				ImGui::EndTable();
 			}
-		}
-		else
-		{
-			const char* hint_text = "select any entity to display properties";
+		} else {
+			const char* hint_text = "select any entity to \ndisplay properties";
 			float window_width = ImGui::GetWindowSize().x;
 			float window_height = ImGui::GetWindowSize().y;
 			float text_width = ImGui::CalcTextSize(hint_text).x;
@@ -73,22 +66,19 @@ namespace Yurrgoht
 		ImGui::End();
 	}
 
-	void PropertyUI::onSelectEntity(const std::shared_ptr<class Event>& event)
-	{
+	void PropertyUI::onSelectEntity(const std::shared_ptr<class Event>& event) {
 		const SelectEntityEvent* p_event = static_cast<const SelectEntityEvent*>(event.get());
 
 		const auto& current_scene = g_engine.sceneManager()->getCurrentScene();
 		m_selected_entity = current_scene->getEntity(p_event->entity_id);
 	}
 
-	void PropertyUI::constructEntity(const rttr::instance& instance)
-	{
+	void PropertyUI::constructEntity(const rttr::instance& instance) {
 		const auto p_entity = instance.try_convert<Entity>();
 		const auto p_component = instance.try_convert<Component>();
 		auto properties = instance.get_derived_type().get_properties();
 		
-		if (p_entity != nullptr && properties.empty())
-		{
+		if (p_entity != nullptr && properties.empty()) {
 			return;
 		}
 

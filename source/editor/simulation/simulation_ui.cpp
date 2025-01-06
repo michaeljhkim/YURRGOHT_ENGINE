@@ -93,7 +93,9 @@ namespace Yurrgoht {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.26f, 0.59f, 0.98f, 0.8f));
 		ImGui::SetCursorPos(ImVec2(10, 30));
 		sprintf(m_title_buf, "%s view", ICON_FA_DICE_D6);
-		if (ImGui::Button(m_title_buf, ImVec2(64, 24))) {
+		const float view_width = 64.0f * g_engine.windowSystem()->getResolutionScale();
+		const float view_height = 24.0f * g_engine.windowSystem()->getResolutionScale();
+		if (ImGui::Button(m_title_buf, ImVec2(view_width, view_height))) {
 			ImGui::OpenPopup("view");
 		}
 
@@ -127,7 +129,9 @@ namespace Yurrgoht {
 
 		ImGui::SameLine();
 		sprintf(m_title_buf, "%s shader", ICON_FA_BOWLING_BALL);
-		if (ImGui::Button(m_title_buf, ImVec2(75, 24))) {
+		const float shader_width = 75.0f * g_engine.windowSystem()->getResolutionScale();
+		const float shader_height = 24.0f * g_engine.windowSystem()->getResolutionScale();
+		if (ImGui::Button(m_title_buf, ImVec2(shader_width, shader_height))) {
 			ImGui::OpenPopup("shader");
 		}
 
@@ -142,7 +146,9 @@ namespace Yurrgoht {
 
 		ImGui::SameLine();
 		sprintf(m_title_buf, "%s show", ICON_FA_EYE);
-		if (ImGui::Button(m_title_buf, ImVec2(64, 24))) {
+		const float show_width = 64.0f * g_engine.windowSystem()->getResolutionScale();
+		const float show_height = 24.0f * g_engine.windowSystem()->getResolutionScale();
+		if (ImGui::Button(m_title_buf, ImVec2(show_width, show_height))) {
 			ImGui::OpenPopup("show");
 		}
 

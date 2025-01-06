@@ -2,16 +2,15 @@
 #include "engine/core/base/macro.h"
 #include <map>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
+
 	//LOG_INFO Does not work here for some reason 
 	void LogUI::init() {
         std::cout << "LogUI::init - INIT (Info displayed without LOG_INFO)" << std::endl;
 		m_title = "Log";
 	}
 
-	void LogUI::construct()
-	{
+	void LogUI::construct() {
 		std::vector<std::string> lastest_logs = g_engine.logSystem()->getLastestLogs();
 
 		ImGuiWindowFlags window_flags = 0;

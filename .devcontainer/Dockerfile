@@ -6,7 +6,7 @@ WORKDIR /workspaces
 # Install necessary build tools and libraries
 RUN dnf install -y \
     mesa-vulkan-drivers vulkan-tools vulkan-loader-devel vulkan-validation-layers glslang glslc spirv-tools \
-    assimp-devel glm-devel cereal-devel SDL2-devel \
+    assimp-devel glm-devel cereal-devel SDL2-devel SDL2_image-devel \
     git wget clang cmake ninja-build doxygen gdb\
 # for ktx software
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
