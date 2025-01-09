@@ -1,0 +1,364 @@
+{
+    "world": {
+        "polymorphic_id": 2147483649,
+        "polymorphic_name": "Yurrgoht::World",
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "entities": [
+                    {
+                        "key": 0,
+                        "value": {
+                            "polymorphic_id": 1073741824,
+                            "ptr_wrapper": {
+                                "id": 2147483650,
+                                "data": {
+                                    "tickable": {
+                                        "tick_enabled": true,
+                                        "tick_interval": 0.0
+                                    },
+                                    "name": "camera",
+                                    "id": 0,
+                                    "parent_id": 4294967295,
+                                    "child_ids": [],
+                                    "components": [
+                                        {
+                                            "polymorphic_id": 2147483650,
+                                            "polymorphic_name": "Yurrgoht::TransformComponent",
+                                            "ptr_wrapper": {
+                                                "id": 2147483651,
+                                                "data": {
+                                                    "component": {
+                                                        "tickable": {
+                                                            "tick_enabled": false,
+                                                            "tick_interval": 0.0
+                                                        }
+                                                    },
+                                                    "position": {
+                                                        "x": 50.0,
+                                                        "y": 16.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "rotation": {
+                                                        "x": 0.0,
+                                                        "y": 180.0,
+                                                        "z": -10.0
+                                                    },
+                                                    "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "polymorphic_id": 2147483651,
+                                            "polymorphic_name": "Yurrgoht::CameraComponent",
+                                            "ptr_wrapper": {
+                                                "id": 2147483652,
+                                                "data": {
+                                                    "component": {
+                                                        "tickable": {
+                                                            "tick_enabled": true,
+                                                            "tick_interval": 0.0
+                                                        }
+                                                    },
+                                                    "fovy": 60.0,
+                                                    "near": 0.10000000149011612,
+                                                    "far": 1000.0,
+                                                    "move_speed": 40.0,
+                                                    "turn_speed": 0.10000000149011612,
+                                                    "zoom_speed": 2.0,
+                                                    "exposure": 1.0
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": 1,
+                        "value": {
+                            "polymorphic_id": 1073741824,
+                            "ptr_wrapper": {
+                                "id": 2147483653,
+                                "data": {
+                                    "tickable": {
+                                        "tick_enabled": false,
+                                        "tick_interval": 0.0
+                                    },
+                                    "name": "Directional Light",
+                                    "id": 1,
+                                    "parent_id": 4294967295,
+                                    "child_ids": [],
+                                    "components": [
+                                        {
+                                            "polymorphic_id": 2,
+                                            "ptr_wrapper": {
+                                                "id": 2147483654,
+                                                "data": {
+                                                    "component": {
+                                                        "tickable": {
+                                                            "tick_enabled": false,
+                                                            "tick_interval": 0.0
+                                                        }
+                                                    },
+                                                    "position": {
+                                                        "x": 0.0,
+                                                        "y": 50.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "rotation": {
+                                                        "x": 0.0,
+                                                        "y": 135.0,
+                                                        "z": -35.20000076293945
+                                                    },
+                                                    "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "polymorphic_id": 2147483652,
+                                            "polymorphic_name": "Yurrgoht::DirectionalLightComponent",
+                                            "ptr_wrapper": {
+                                                "id": 2147483655,
+                                                "data": {
+                                                    "light": {
+                                                        "component": {
+                                                            "tickable": {
+                                                                "tick_enabled": false,
+                                                                "tick_interval": 0.0
+                                                            }
+                                                        },
+                                                        "intensity": 4.0,
+                                                        "color": {
+                                                            "r": 1.0,
+                                                            "g": 1.0,
+                                                            "b": 1.0
+                                                        },
+                                                        "cast_shadow": true
+                                                    },
+                                                    "cascade_frustum_near": 0.0
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": 2,
+                        "value": {
+                            "polymorphic_id": 1073741824,
+                            "ptr_wrapper": {
+                                "id": 2147483656,
+                                "data": {
+                                    "tickable": {
+                                        "tick_enabled": false,
+                                        "tick_interval": 0.0
+                                    },
+                                    "name": "Sky Light",
+                                    "id": 2,
+                                    "parent_id": 4294967295,
+                                    "child_ids": [],
+                                    "components": [
+                                        {
+                                            "polymorphic_id": 2,
+                                            "ptr_wrapper": {
+                                                "id": 2147483657,
+                                                "data": {
+                                                    "component": {
+                                                        "tickable": {
+                                                            "tick_enabled": false,
+                                                            "tick_interval": 0.0
+                                                        }
+                                                    },
+                                                    "position": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "rotation": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "scale": {
+                                                        "x": 1.0,
+                                                        "y": 1.0,
+                                                        "z": 1.0
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "polymorphic_id": 2147483653,
+                                            "polymorphic_name": "Yurrgoht::SkyLightComponent",
+                                            "ptr_wrapper": {
+                                                "id": 2147483658,
+                                                "data": {
+                                                    "light": {
+                                                        "component": {
+                                                            "tickable": {
+                                                                "tick_enabled": false,
+                                                                "tick_interval": 0.0
+                                                            }
+                                                        },
+                                                        "intensity": 1.0,
+                                                        "color": {
+                                                            "r": 1.0,
+                                                            "g": 1.0,
+                                                            "b": 1.0
+                                                        },
+                                                        "cast_shadow": true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": 3,
+                        "value": {
+                            "polymorphic_id": 1073741824,
+                            "ptr_wrapper": {
+                                "id": 2147483659,
+                                "data": {
+                                    "tickable": {
+                                        "tick_enabled": false,
+                                        "tick_interval": 0.0
+                                    },
+                                    "name": "sm_floor",
+                                    "id": 3,
+                                    "parent_id": 4294967295,
+                                    "child_ids": [],
+                                    "components": [
+                                        {
+                                            "polymorphic_id": 2,
+                                            "ptr_wrapper": {
+                                                "id": 2147483660,
+                                                "data": {
+                                                    "component": {
+                                                        "tickable": {
+                                                            "tick_enabled": false,
+                                                            "tick_interval": 0.0
+                                                        }
+                                                    },
+                                                    "position": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": -5.960464477539063e-8
+                                                    },
+                                                    "rotation": {
+                                                        "x": 0.0,
+                                                        "y": 0.0,
+                                                        "z": 0.0
+                                                    },
+                                                    "scale": {
+                                                        "x": 10.0,
+                                                        "y": 10.0,
+                                                        "z": 10.0
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "polymorphic_id": 2147483654,
+                                            "polymorphic_name": "Yurrgoht::StaticMeshComponent",
+                                            "ptr_wrapper": {
+                                                "id": 2147483661,
+                                                "data": {
+                                                    "component": {
+                                                        "tickable": {
+                                                            "tick_enabled": false,
+                                                            "tick_interval": 0.0
+                                                        }
+                                                    },
+                                                    "asset_ref": {
+                                                        "ref_urls": [
+                                                            {
+                                                                "key": "m_static_mesh",
+                                                                "value": {
+                                                                    "url": "asset/engine/mesh/floor/sm_floor.sm"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "key": 4,
+                        "value": {
+                            "polymorphic_id": 2147483655,
+                            "polymorphic_name": "Yurrgoht::ApplicationEntity",
+                            "ptr_wrapper": {
+                                "id": 2147483662,
+                                "data": {
+                                    "entity": {
+                                        "tickable": {
+                                            "tick_enabled": true,
+                                            "tick_interval": 0.0
+                                        },
+                                        "name": "ApplicationEntity",
+                                        "id": 4,
+                                        "parent_id": 4294967295,
+                                        "child_ids": [],
+                                        "components": [
+                                            {
+                                                "polymorphic_id": 2,
+                                                "ptr_wrapper": {
+                                                    "id": 2147483663,
+                                                    "data": {
+                                                        "component": {
+                                                            "tickable": {
+                                                                "tick_enabled": false,
+                                                                "tick_interval": 0.0
+                                                            }
+                                                        },
+                                                        "position": {
+                                                            "x": 0.0,
+                                                            "y": 0.0,
+                                                            "z": 0.0
+                                                        },
+                                                        "rotation": {
+                                                            "x": 0.0,
+                                                            "y": 0.0,
+                                                            "z": 0.0
+                                                        },
+                                                        "scale": {
+                                                            "x": 1.0,
+                                                            "y": 1.0,
+                                                            "z": 1.0
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "spawn_num": 100.0
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
