@@ -21,35 +21,27 @@ namespace Yurrgoht
 		m_components.clear();
 	}
 
-	void Entity::beginPlay()
-	{
-		for (auto& component : m_components)
-		{
+	void Entity::beginPlay() {
+		for (auto& component : m_components) {
 			component->beginPlay();
 		}
 	}
 
-	void Entity::tick(float delta_time)
-	{
+	void Entity::tick(float delta_time) {
 		// tick components
-		for (auto& component : m_components)
-		{
+		for (auto& component : m_components) {
 			component->tickable(delta_time);
 		}
 	}
 
-	void Entity::endPlay()
-	{
-		for (auto& component : m_components)
-		{
+	void Entity::endPlay() {
+		for (auto& component : m_components) {
 			component->endPlay();
 		}
 	}
 
-	void Entity::inflate()
-	{
-		for (auto& component : m_components)
-		{
+	void Entity::inflate() {
+		for (auto& component : m_components) {
 			// set component type name
 			component->setTypeName(rttr::type::get(*component.get()).get_name().to_string());
 
@@ -60,14 +52,12 @@ namespace Yurrgoht
 		}
 
 		m_parent = m_scene.lock()->getEntity(m_pid);
-		for (uint32_t cid : m_cids)
-		{
+		for (uint32_t cid : m_cids) {
 			m_children.push_back(m_scene.lock()->getEntity(cid));
 		}
 	}
 
-	void Entity::attach(std::weak_ptr<Entity>& parent)
-	{
+	void Entity::attach(std::weak_ptr<Entity>& parent) {
 		m_parent = parent;
 		m_parent.lock()->m_children.push_back(weak_from_this());
 	}

@@ -15,6 +15,7 @@
 namespace Yurrgoht {
 
 	void SceneManager::init() {
+		LOG_INFO("LOADING DEFAULT: {}", g_engine.configManager()->getDefaultSceneUrl());
 		URL default_scene_url = g_engine.configManager()->getDefaultSceneUrl();
 		const auto& fs = g_engine.fileSystem();
 		std::string cache_dir = fs->getCacheDir();
@@ -22,18 +23,7 @@ namespace Yurrgoht {
 		m_scene_mode = g_engine.isEditor() ? ESceneMode::Edit : ESceneMode::Play;
 
 		loadScene(default_scene_url);
-		LOG_INFO("SUCCESS");
 	}
-
-	/*
-	void SceneManager::CreateNewDefaultScene() {
-		URL new_default_scene_url = "asset/scene/default.scene";
-		createScene(new_default_scene_url, new_default_scene_url);
-		m_current_scene = std::make_unique<Scene>();
-		m_current_scene_url = new_default_scene_url;
-		saveAsScene(new_default_scene_url);
-	}
-	*/
 
 	void SceneManager::destroy() {
 		m_current_scene.reset();
@@ -126,7 +116,6 @@ namespace Yurrgoht {
 		if (url != m_pie_scene_url) {
 			m_current_scene_url = url;
 		}
-		LOG_INFO("SUCCESS");
 		return true;
 	}
 

@@ -6,7 +6,7 @@
 namespace Yurrgoht {
 
 	void FileSystem::init() {
-        std::cout << "FileSystem::init - INIT (Info displayed without LOG_INFO)" << std::endl;
+        std::cout << "FileSystem::init (no LOG_INFO)" << std::endl;
 		if (std::filesystem::exists(std::filesystem::path("asset"))) {
 			m_header = std::filesystem::path(".");
 		} else if (std::filesystem::exists(std::filesystem::path("../asset"))) {

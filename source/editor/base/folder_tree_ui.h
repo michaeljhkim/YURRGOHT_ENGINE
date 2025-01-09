@@ -41,7 +41,7 @@ namespace Yurrgoht
 
 		std::string m_selected_folder;
 		std::vector<FolderNode> m_folder_nodes;
-		bool show_engine_assets = false;
+		bool show_engine_assets = true;
 		bool is_folder_tree_hovered = false;
 		bool is_renaming = false;
 

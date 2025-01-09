@@ -6,7 +6,7 @@ namespace Yurrgoht {
 
 	//LOG_INFO Does not work here for some reason 
 	void LogUI::init() {
-        std::cout << "LogUI::init - INIT (Info displayed without LOG_INFO)" << std::endl;
+        std::cout << "LogUI::init (no LOG_INFO)" << std::endl;
 		m_title = "Log";
 	}
 

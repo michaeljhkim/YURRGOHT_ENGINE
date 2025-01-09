@@ -30,7 +30,7 @@ namespace Yurrgoht {
 	void Scene::inflate() {
 		for (const auto& iter : m_entities) {
 			const auto& entity = iter.second;
-			LOG_INFO("LOADING ENTITY: {}" , entity->getName());
+			LOG_INFO("LOADING: {}" , entity->getName());
 			entity->m_scene = weak_from_this();
 			entity->inflate();
 			if (g_engine.isSimulating()) {
@@ -45,7 +45,6 @@ namespace Yurrgoht {
 			// update next entity id
 			m_next_entity_id = std::max(m_next_entity_id, entity->getID() + 1);
 		}
-		LOG_INFO("SUCCESS");
 	}
 
 	void Scene::beginPlay() {

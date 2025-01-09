@@ -5,7 +5,7 @@
 namespace Yurrgoht {
 
 	void TimerManager::init() {
-        std::cout << "TimerManager::init - INIT (Info displayed without LOG_INFO)" << std::endl;
+        std::cout << "TimerManager::init (no LOG_INFO)" << std::endl;
 		m_time = 0.0f;
 	}
 

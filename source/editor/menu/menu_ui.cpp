@@ -11,6 +11,7 @@ namespace Yurrgoht {
 
 	void MenuUI::init() {
 		m_title = "Menu";
+		m_res_scale = g_engine.windowSystem()->getResolutionScale();
 
 		// load editor layout
 		std::string layout_name = g_engine.configManager()->getEditorLayout();
@@ -61,32 +62,29 @@ namespace Yurrgoht {
 		static char scene_name[128];
 		const float k_spacing = 4;
 		if (showing_new_scene_popup) {
-			ImGui::SetNextWindowSize(ImVec2(420, 500));
+			ImGui::SetNextWindowSize(ImVec2(420*m_res_scale, 500*m_res_scale));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
 			ImGui::OpenPopup("New Scene");
 			if (ImGui::BeginPopupModal("New Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 				const float k_middle_height = 55.0f;
 				const float k_bottom_height = 30.0f;
-				
 				ImVec2 content_size = ImGui::GetContentRegionAvail();
-
-				float top_height = content_size.y - k_middle_height - k_bottom_height - k_spacing * 2;
+				float top_height = (content_size.y - (k_middle_height + k_bottom_height + k_spacing) * 2);
 				ImGui::BeginChild("new_scene_top", ImVec2(content_size.x, top_height));
 
 				const float k_folder_tree_width_scale = 0.5f;
-				ImGui::BeginChild("template_scene", ImVec2(content_size.x * k_folder_tree_width_scale - k_spacing, top_height), true);
+				ImGui::BeginChild("template_scene", ImVec2( (content_size.x * k_folder_tree_width_scale - k_spacing), top_height), true);
 				constructTemplateScenePanel();
 				ImGui::EndChild();
 
 				ImGui::SameLine();
-
-				ImGui::BeginChild("folder_tree", ImVec2(content_size.x * (1.0 - k_folder_tree_width_scale) - k_spacing, top_height), true);
+				ImGui::BeginChild("folder_tree", ImVec2( (content_size.x * (1.0 - k_folder_tree_width_scale) - k_spacing), top_height), true);
 				constructFolderTree();
 				ImGui::EndChild();
 				ImGui::EndChild();
 
-				ImGui::BeginChild("new_scene_middle", ImVec2(content_size.x, k_middle_height), true);
+				ImGui::BeginChild("new_scene_middle", ImVec2(content_size.x, k_middle_height*m_res_scale), true);
 				ImGui::Text("path:");
 				ImGui::SameLine();
 				ImGui::Text("%s", m_selected_folder.c_str());
@@ -96,8 +94,8 @@ namespace Yurrgoht {
 				ImGui::InputText("##scene_name", scene_name, IM_ARRAYSIZE(scene_name));
 				ImGui::EndChild();
 				
-				ImGui::BeginChild("new_scene_bottom", ImVec2(content_size.x, k_bottom_height), false);
-				float button_width = 60.0f;
+				ImGui::BeginChild("new_scene_bottom", ImVec2(content_size.x, k_bottom_height*m_res_scale), false);
+				float button_width = 60.0f*m_res_scale;
 				float button_offset_x = (ImGui::GetContentRegionAvail().x - button_width * 2 - k_spacing) / 2.0f;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + button_offset_x);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
@@ -114,7 +112,7 @@ namespace Yurrgoht {
 					}
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("cancel", ImVec2(button_width, 0))) {
+				if ( ImGui::Button("cancel", ImVec2(button_width, 0)) ) {
 					showing_new_scene_popup = false;
 				}
 				ImGui::EndChild();
@@ -124,7 +122,7 @@ namespace Yurrgoht {
 		}
 
 		if (showing_open_scene_popup) {
-			ImGui::SetNextWindowSize(ImVec2(300, 500));
+			ImGui::SetNextWindowSize(ImVec2(300.0f*m_res_scale, 500.0f*m_res_scale));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
 			ImGui::OpenPopup("Open Scene");
@@ -135,17 +133,15 @@ namespace Yurrgoht {
 					if (current_scene_url == m_selected_scene_url) {
 						tree_node_flags |= ImGuiTreeNodeFlags_Selected;
 					}
-
 					if (ImGui::TreeNodeEx(current_scene_url.c_str(), tree_node_flags)) {
 						ImGui::TreePop();
 					}
-
 					if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
 						m_selected_scene_url = current_scene_url;
 					}
 				}
 
-				float button_width = 60.0f;
+				float button_width = 60.0f*m_res_scale;
 				float button_offset_x = (ImGui::GetContentRegionAvail().x - button_width * 2 - k_spacing) / 2.0f;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + button_offset_x);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - 30);
@@ -224,13 +220,8 @@ namespace Yurrgoht {
 	}
 
 	void MenuUI::constructFileMenu() {
-		if (ImGui::MenuItem("New", "Ctrl+N")) {
-			newScene();
-		}
-
-		if (ImGui::MenuItem("Open", "Ctrl+O")) {
-			openScene();
-		}
+		if (ImGui::MenuItem("New", "Ctrl+N")) { newScene(); }
+		if (ImGui::MenuItem("Open", "Ctrl+O")) { openScene(); }
 
 		if (ImGui::BeginMenu("Open Recent")) {
 			ImGui::MenuItem("a.scene");
@@ -248,17 +239,11 @@ namespace Yurrgoht {
 		}
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Save", "Ctrl+S")) {
-			saveScene();
-		}
-		if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) {
-			saveAsScene();
-		}
+		if (ImGui::MenuItem("Save", "Ctrl+S")) { saveScene(); }
+		if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) { saveAsScene(); }
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Quit", "Alt+F4")) {
-			quit();
-		}
+		if (ImGui::MenuItem("Quit", "Alt+F4")) { quit(); }
 	}
 
 	void MenuUI::constructEditMenu() {
@@ -388,7 +373,7 @@ namespace Yurrgoht {
 	}
 
 	void MenuUI::constructTemplateScenePanel() {
-		ImVec2 icon_size(80, 80);
+		ImVec2 icon_size(80*m_res_scale, 80*m_res_scale);	// will come back to in case icon sizes are not ideal
 		ImGuiStyle& style = ImGui::GetStyle();
 		float max_pos_x = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 
@@ -409,8 +394,7 @@ namespace Yurrgoht {
 				ImVec4 color = ImVec4(50, 50, 50, 255);
 				if (!is_hovered && is_selected) {
 					color = ImVec4(0, 112, 224, 255);
-				}
-				else if (is_hovered && is_selected) {
+				} else if (is_hovered && is_selected) {
 					color = ImVec4(14, 134, 255, 255);
 				}
 

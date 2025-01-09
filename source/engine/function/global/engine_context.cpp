@@ -17,7 +17,7 @@ namespace Yurrgoht {
     EngineContext g_engine;
 
     void EngineContext::init() {
-        std::cout << "EngineContext::init - INIT (Info displayed without LOG_INFO)" << std::endl;
+        std::cout << "EngineContext::init (no LOG_INFO)" << std::endl;
 
 		m_timer_manager = std::make_shared<TimerManager>();
         m_timer_manager->init();
@@ -59,7 +59,8 @@ namespace Yurrgoht {
 
         //m_scene_manager->CreateNewDefaultScene();
 		//LOG_INFO("EngineContext::init {}", "TimerManager | FileSystem | LogSystem - INITIALIZED");
-		LOG_INFO("SUCCESS - {}", "NOTE: Logging cannot start before this point as LogSystem is not initialized");
+        // NOTE: Logging cannot start before this point as LogSystem is not initialized
+		LOG_INFO("SUCCESS");
     }   
 
     void EngineContext::destroy() {

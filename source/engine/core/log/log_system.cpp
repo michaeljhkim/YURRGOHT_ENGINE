@@ -11,7 +11,7 @@
 namespace Yurrgoht {
 
     void LogSystem::init() {
-        std::cout << "LogSystem::init - INIT (Info displayed without LOG_INFO)" << std::endl;
+        std::cout << "LogSystem::init (no LOG_INFO)" << std::endl;
         // Console sink for immediate terminal output (synchronous)
         auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         console_sink->set_level(spdlog::level::trace);

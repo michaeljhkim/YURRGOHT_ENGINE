@@ -219,8 +219,11 @@ namespace Yurrgoht {
 		std::vector<VkFormat> depth_format_candidates = { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT };
 		m_depth_format = getProperImageFormat(depth_format_candidates, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
-		uint32_t image_count = std::min(swapchain_support_details.capabilities.minImageCount + 1, 
-			swapchain_support_details.capabilities.maxImageCount);
+		uint32_t image_count = swapchain_support_details.capabilities.minImageCount + 1;
+		// If maxImageCount is not 0 (upper limit exists), clamp image_count to maxImageCount
+		if (swapchain_support_details.capabilities.maxImageCount > 0) {
+			image_count = std::min(image_count, swapchain_support_details.capabilities.maxImageCount);
+		}
 
 		VkSwapchainCreateInfoKHR swapchain_ci{};
 		swapchain_ci.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -242,8 +245,7 @@ namespace Yurrgoht {
 		CHECK_VULKAN_RESULT(result, "create swapchain");
 	}
 
-	void VulkanRHI::createSwapchainObjects()
-	{
+	void VulkanRHI::createSwapchainObjects() {
 		// 1.get swapchain images
 		uint32_t last_swapchain_image_count = m_swapchain_image_count;
 		vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_swapchain_image_count, nullptr);
@@ -684,11 +686,9 @@ namespace Yurrgoht {
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRHI::debugUtilsMessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, 
 		VkDebugUtilsMessageTypeFlagsEXT message_type, const VkDebugUtilsMessengerCallbackDataEXT* p_callback_data, void* p_user_data) {
-
 		if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
 			LOG_WARNING("vulkan validation layer: {}", p_callback_data->pMessage);
-		}
-
+		} 
 		else if (message_severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
 			LOG_ERROR("vulkan validation layer: {}", p_callback_data->pMessage);
 		}

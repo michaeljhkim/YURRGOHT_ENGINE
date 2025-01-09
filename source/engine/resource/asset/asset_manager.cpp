@@ -224,11 +224,10 @@ namespace Yurrgoht {
 		if (asset_type != EAssetType::Scene) {
 			m_assets[url] = asset;
 		}
-		LOG_INFO("SUCCESS: {}", url.getAbsolute());
 	}
 
 	std::shared_ptr<Asset> AssetManager::deserializeAsset(const URL& url) {
-		LOG_INFO("ASSET DESERIALIZING: {}", url.getAbsolute());
+		//LOG_INFO("ASSET DESERIALIZING: {}", url.getAbsolute());
 		// check if the asset url exists
 		if (!g_engine.fileSystem()->exists(url.str())) {
 			return nullptr;
@@ -243,15 +242,14 @@ namespace Yurrgoht {
 		const std::string& asset_ext = m_asset_type_exts[asset_type];
 		std::string filename = url.getAbsolute();
 		std::shared_ptr<Asset> asset = nullptr;
-		if (archive_type == EArchiveType::Json) { LOG_INFO("ASSET TYPE: Json"); }
-		else { LOG_INFO("ASSET TYPE: Binary"); }
+		if (archive_type == EArchiveType::Json) { LOG_INFO("Json - {}", url.getAbsolute()); }
+		else { LOG_INFO("Binary - {}", url.getAbsolute()); }
 
 		switch (archive_type) {
 			case EArchiveType::Json: {
 				std::ifstream ifs(filename);
 				cereal::JSONInputArchive archive(ifs);
 				archive(asset);
-				LOG_INFO("This is the issue?");
 				break;
 			}
 			case EArchiveType::Binary: {
@@ -271,8 +269,6 @@ namespace Yurrgoht {
 		if (asset_type != EAssetType::Scene) {
 			m_assets[url] = asset;
 		}
-
-		LOG_INFO("SUCCESS: {}", url.getAbsolute());
 		return asset;
 	}
 

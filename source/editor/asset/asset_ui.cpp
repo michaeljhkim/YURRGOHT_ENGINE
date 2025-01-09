@@ -52,7 +52,7 @@ namespace Yurrgoht {
 		content_size.x -= k_spacing;
 
 		// folder tree
-		ImGui::BeginChild("folder_tree", ImVec2(content_size.x * k_folder_tree_width_scale, content_size.y), true);
+		ImGui::BeginChild("folder_tree", ImVec2(content_size.x*k_folder_tree_width_scale, content_size.y), true);
 		ImGui::Spacing();
 		constructFolderTree();
 		ImGui::EndChild();
@@ -69,16 +69,14 @@ namespace Yurrgoht {
 		constructFolderOpPopups("folder_op_tree_hovered_popups", true);
 		constructFolderOpPopupModal(m_selected_folder);
 		ImGui::EndChild();
-
 		ImGui::SameLine();
 
 		// folder files
 		ImGui::BeginChild("folder_files", ImVec2(content_size.x * (1 - k_folder_tree_width_scale), content_size.y), true);
-
 		ImGui::Spacing();
 		ImGui::Indent(k_spacing);
 
-		ImGui::BeginChild("asset_navigator", ImVec2(content_size.x * (1 - k_folder_tree_width_scale) - k_spacing * 3, 24), true);
+		ImGui::BeginChild("asset_navigator", ImVec2( (content_size.x * (1 - k_folder_tree_width_scale) - k_spacing * 3), 24*m_res_scale), true);
 		constructAssetNavigator();
 		ImGui::EndChild();
 
@@ -90,8 +88,7 @@ namespace Yurrgoht {
 		ImGui::EndChild();
 
 		ImGui::BeginChild("folder_files");
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right) && !is_asset_hovered)
-		{
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right) && !is_asset_hovered) {
 			ImGui::OpenPopup("folder_op_background_hovered_popups");
 		}
 		constructFolderOpPopups("folder_op_background_hovered_popups");
@@ -121,12 +118,11 @@ namespace Yurrgoht {
 
 	void AssetUI::destroy() {
 		EditorUI::destroy();
-
 		g_engine.timerManager()->removeTimer(m_poll_folder_timer_handle);
 	}
 
 	void AssetUI::constructAssetNavigator() {
-		ImVec2 button_size(20, 20);
+		ImVec2 button_size(20.0f*m_res_scale, 20.0f*m_res_scale);
 		ImGui::Button(ICON_FA_ARROW_LEFT, button_size);
 
 		ImGui::SameLine();
@@ -134,15 +130,15 @@ namespace Yurrgoht {
 
 		ImGui::SameLine();
 		static char str1[128] = "";
-		ImGui::PushItemWidth(200.0f);
+		ImGui::PushItemWidth(200.0f*m_res_scale);
 		ImGui::InputTextWithHint("##search_asset", (std::string(ICON_FA_SEARCH) + " Search...").c_str(), str1, IM_ARRAYSIZE(str1));
 		ImGui::PopItemWidth();
 
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.0f*m_res_scale);
 		ImGui::Text("%s", m_formatted_selected_folder.c_str());
 
-		ImGui::SameLine(ImGui::GetWindowWidth() - 22);
+		ImGui::SameLine(ImGui::GetWindowWidth() - 22*m_res_scale);
 		if (ImGui::Button(ICON_FA_COG, button_size)) {
 			ImGui::OpenPopup("asset settings");
 		}
@@ -156,9 +152,9 @@ namespace Yurrgoht {
 	}
 
 	void AssetUI::constructFolderFiles() {
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f*m_res_scale);
 
-		ImVec2 icon_size(80, 80);
+		ImVec2 icon_size(65.0f*m_res_scale, 65.0f*m_res_scale);
 		ImGuiStyle& style = ImGui::GetStyle();
 		float max_pos_x = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 
@@ -167,20 +163,18 @@ namespace Yurrgoht {
 
 		constructAssetFilePopups();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(15.0f, 24.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(15.0f*m_res_scale, 24.0f*m_res_scale));
 		for (size_t i = 0; i < m_selected_files.size(); ++i) {
 			bool is_clipping = false;
 			HoverState& hover_state = m_selected_file_hover_states[m_selected_files[i]];
-			if (hover_state.rect_min.y != 0.0f && hover_state.rect_max.y != 0.0f) {
-				if (hover_state.rect_max.y < clip_rect_min_y || hover_state.rect_min.y > clip_rect_max_y) {
-					is_clipping = true;
-				}
+			if ((hover_state.rect_min.y != 0.0f && hover_state.rect_max.y != 0.0f) && 
+				(hover_state.rect_max.y < clip_rect_min_y || hover_state.rect_min.y > clip_rect_max_y)) {
+				is_clipping = true;
 			}
 
 			if (!is_clipping) {
 				constructAsset(m_selected_files[i], icon_size);
-			}
-			else {
+			} else {
 				ImGui::Dummy(icon_size);
 			}
 			hover_state.rect_min = ImGui::GetItemRectMin();
@@ -198,7 +192,6 @@ namespace Yurrgoht {
 	void AssetUI::constructAsset(const std::string& filename, const ImVec2& size) {
 		ImTextureID tex_id = nullptr;
 		std::string basename = g_engine.fileSystem()->basename(filename);
-
 		const auto& asset_manager = g_engine.assetManager();
 
 		if (g_engine.fileSystem()->isFile(filename)) {
@@ -213,8 +206,7 @@ namespace Yurrgoht {
 					tex_id = imgui_tex->tex_id;
 				}
 			}
-		}
-		else if (g_engine.fileSystem()->isDir(filename)) {
+		} else if (g_engine.fileSystem()->isDir(filename)) {
 			bool is_empty = g_engine.fileSystem()->isEmptyDir(filename);
 			tex_id = is_empty ? m_empty_folder_image->tex_id : m_non_empty_folder_image->tex_id;
 		} else {
@@ -310,7 +302,7 @@ namespace Yurrgoht {
 					static bool contains_occlusion_channel = true;
 					ImGui::Checkbox("contain occlusion channel", &contains_occlusion_channel);
 
-					if (ImGui::Button("OK", ImVec2(120, 0))) {
+					if (ImGui::Button("OK", ImVec2(120.0f*m_res_scale, 0))) {
 						ImGui::CloseCurrentPopup();
 
 						StopWatch stop_watch;
@@ -320,10 +312,9 @@ namespace Yurrgoht {
 						LOG_INFO("import gltf {} to {}, elapsed time: {}ms", import_file, import_folder, stop_watch.stopMs());
 						iter = m_imported_files.erase(iter);
 					}
-
 					ImGui::SameLine();
 
-					if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+					if (ImGui::Button("Cancel", ImVec2(120.0f*m_res_scale, 0))) {
 						ImGui::CloseCurrentPopup();
 						iter = m_imported_files.erase(iter);
 					}
