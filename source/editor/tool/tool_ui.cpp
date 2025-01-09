@@ -5,12 +5,12 @@
 #include "engine/core/base/macro.h"
 #include "engine/function/framework/scene/scene_manager.h"
 #include "engine/function/physics/physics_system.h"
-#include <imgui/imgui_internal.h>
 
 namespace Yurrgoht {
 
 	void ToolUI::init() {
 		m_title = "Tool";
+		m_res_scale = g_engine.windowSystem()->getResolutionScale();
 
 		entity_categories = {
 			std::string(ICON_FA_CUBE) + " Entities",
@@ -48,9 +48,8 @@ namespace Yurrgoht {
 			return;
 		}
 
-		// Retrieve the dock node for the current window
-		ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;
-		ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 47 * g_engine.windowSystem()->getResolutionScale()));
+		ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;	// Retrieve the dock node for the current window
+		ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 38 * m_res_scale));
 		//dock_node->SetLocalFlags(ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar);
 
 		float region_w = ImGui::GetContentRegionAvail().x;
@@ -58,12 +57,14 @@ namespace Yurrgoht {
 		const auto& wm = g_engine.sceneManager();
 
 		// save button 
-		const float kButtonHeight = 30.0f * g_engine.windowSystem()->getResolutionScale();
+		const float kButtonHeight = 30.0f * m_res_scale;
 		const ImVec2 kButtonSize = ImVec2(kButtonHeight, kButtonHeight);
 
 		// center save button (have to center it manually since font is off center)
 		//ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.85f, 0.5f));
 		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		//ImGui::PopStyleVar(2);	// restore button style
+		// center all buttons on y-axis
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImGui::SetCursorPosY((windowSize.y - kButtonHeight) * 0.5f);
 
@@ -72,12 +73,11 @@ namespace Yurrgoht {
 			wm->saveScene();
 		}
 		ImGui::PopFont();
-		//ImGui::PopStyleVar(2);	// restore button style
 
 		// create entities
 		ImGui::SameLine();
 		sprintf(m_title_buf, "Create %s", ICON_FA_CHEVRON_DOWN);
-		const float kButtonWidth = 80.0f * g_engine.windowSystem()->getResolutionScale();
+		const float kButtonWidth = 80.0f * m_res_scale;
 		if (ImGui::Button(m_title_buf, ImVec2(kButtonWidth, kButtonHeight))) {
 			ImGui::OpenPopup("create_entity");
 		}
@@ -153,7 +153,7 @@ namespace Yurrgoht {
 					}
 					ImGui::EndMenu();
 				}
-			}
+			} 
 			ImGui::EndPopup();
 		}
 	}

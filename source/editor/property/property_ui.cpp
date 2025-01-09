@@ -11,6 +11,7 @@ namespace Yurrgoht
 
 	void PropertyUI::init() {
 		m_title = "Property";
+		m_res_scale = g_engine.windowSystem()->getResolutionScale();
 		m_property_constructors = {
 			{ EPropertyValueType::Bool, std::bind(&PropertyUI::constructPropertyBool, this, std::placeholders::_1, std::placeholders::_2) },
 			{ EPropertyValueType::Integar, std::bind(&PropertyUI::constructPropertyIntegar, this, std::placeholders::_1, std::placeholders::_2) },
@@ -43,7 +44,7 @@ namespace Yurrgoht
 		if (selected_entity) {
 			ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable;
 			if (ImGui::BeginTable("components", 2, table_flags)) {
-				ImGui::TableSetupColumn("column_0", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+				ImGui::TableSetupColumn("column_0", ImGuiTableColumnFlags_WidthFixed, 100.0f*m_res_scale);
 				ImGui::TableSetupColumn("column_1", ImGuiTableColumnFlags_WidthStretch);
 
 				constructEntity(*selected_entity.get());
@@ -53,14 +54,16 @@ namespace Yurrgoht
 				ImGui::EndTable();
 			}
 		} else {
-			const char* hint_text = "select any entity to \ndisplay properties";
+			const char* hint_text = "select any entity to display properties";
 			float window_width = ImGui::GetWindowSize().x;
 			float window_height = ImGui::GetWindowSize().y;
-			float text_width = ImGui::CalcTextSize(hint_text).x;
 
-			ImGui::SetCursorPosX((window_width - text_width) * 0.5f);
+			//ImGui::SetCursorPosX((window_width - (ImGui::CalcTextSize(hint_text).x)) * 0.5f);
 			ImGui::SetCursorPosY(window_height * 0.2f);
+			// Enable word wrapping
+			ImGui::PushTextWrapPos(window_width * 0.9f);  // Wrap at 90% of the window width
 			ImGui::Text("%s", hint_text);
+			ImGui::PopTextWrapPos();  // Restore the previous wrap position
 		}
 
 		ImGui::End();

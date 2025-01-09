@@ -2,8 +2,7 @@
 #include "engine/core/event/event_system.h"
 #include "engine/function/framework/scene/scene_manager.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
 	void SceneUI::init() {
 		m_title = "Scene";

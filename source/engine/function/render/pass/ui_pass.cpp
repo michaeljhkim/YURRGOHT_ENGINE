@@ -6,6 +6,7 @@
 #include "engine/platform/timer/timer.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <imgui/backends/imgui_impl_sdl2.h>
 #include <imgui/font/IconsFontAwesome5.h>
@@ -22,9 +23,9 @@ namespace Yurrgoht {
 
 		// setup Dear ImGui context
 		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
+		ImGuiContext* current_context = ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
-		io.FontGlobalScale = 2.0f;
+		io.FontGlobalScale = g_engine.windowSystem()->getResolutionScale();	// If 1080p, the font is just 1.0
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -34,6 +35,7 @@ namespace Yurrgoht {
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();
 		ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_None;
+		ImGui::GetStyle().ScaleAllSizes( g_engine.windowSystem()->getResolutionScale() );
 
 		// create descriptor pool
 		createDescriptorPool();
@@ -79,7 +81,7 @@ namespace Yurrgoht {
 		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/consola.ttf").c_str(), k_small_font_size);
 
 		// add big icon font
-		const float k_big_icon_font_size = 15.0f;
+		const float k_big_icon_font_size = 18.0f;
 		icons_config.MergeMode = false;
 		icons_config.GlyphMinAdvanceX = k_big_icon_font_size;
 		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/fa-solid-900.ttf").c_str(), k_big_icon_font_size, &icons_config, icons_ranges);

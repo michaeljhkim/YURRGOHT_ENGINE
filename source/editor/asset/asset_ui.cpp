@@ -9,6 +9,7 @@ namespace Yurrgoht {
 	void AssetUI::init() {
 		EditorUI::init();
 		m_title = "Asset";
+		m_res_scale = g_engine.windowSystem()->getResolutionScale();
 
 		// set poll folder timer
 		const float k_poll_folder_time = 1.0f;

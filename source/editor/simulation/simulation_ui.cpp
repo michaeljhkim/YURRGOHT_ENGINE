@@ -34,6 +34,7 @@ namespace Yurrgoht {
 		m_coordinate_mode = ECoordinateMode::Local;
 		m_operation_mode = EOperationMode::Translate;
 		m_mouse_right_button_pressed = false;
+		m_res_scale = g_engine.windowSystem()->getResolutionScale();
 
 		g_engine.eventSystem()->addListener(EEventType::WindowKey, std::bind(&SimulationUI::onKey, this, std::placeholders::_1));
 		g_engine.eventSystem()->addListener(EEventType::SelectEntity, std::bind(&SimulationUI::onSelectEntity, this, std::placeholders::_1));
@@ -91,11 +92,9 @@ namespace Yurrgoht {
 		handleDragDropTarget(glm::vec2(mouse_x, mouse_y), glm::vec2(content_size.x, content_size.y));
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.26f, 0.59f, 0.98f, 0.8f));
-		ImGui::SetCursorPos(ImVec2(10, 30));
+		ImGui::SetCursorPos( ImVec2(10.0f*m_res_scale, 30.0f*m_res_scale) );
 		sprintf(m_title_buf, "%s view", ICON_FA_DICE_D6);
-		const float view_width = 64.0f * g_engine.windowSystem()->getResolutionScale();
-		const float view_height = 24.0f * g_engine.windowSystem()->getResolutionScale();
-		if (ImGui::Button(m_title_buf, ImVec2(view_width, view_height))) {
+		if ( ImGui::Button(m_title_buf, ImVec2(64.0f*m_res_scale, 24.0f*m_res_scale)) ) {
 			ImGui::OpenPopup("view");
 		}
 
@@ -129,9 +128,7 @@ namespace Yurrgoht {
 
 		ImGui::SameLine();
 		sprintf(m_title_buf, "%s shader", ICON_FA_BOWLING_BALL);
-		const float shader_width = 75.0f * g_engine.windowSystem()->getResolutionScale();
-		const float shader_height = 24.0f * g_engine.windowSystem()->getResolutionScale();
-		if (ImGui::Button(m_title_buf, ImVec2(shader_width, shader_height))) {
+		if (ImGui::Button(m_title_buf, ImVec2(75.0f*m_res_scale, 24.0f*m_res_scale))) {
 			ImGui::OpenPopup("shader");
 		}
 
@@ -146,9 +143,7 @@ namespace Yurrgoht {
 
 		ImGui::SameLine();
 		sprintf(m_title_buf, "%s show", ICON_FA_EYE);
-		const float show_width = 64.0f * g_engine.windowSystem()->getResolutionScale();
-		const float show_height = 24.0f * g_engine.windowSystem()->getResolutionScale();
-		if (ImGui::Button(m_title_buf, ImVec2(show_width, show_height))) {
+		if (ImGui::Button(m_title_buf, ImVec2(64.0f*m_res_scale, 24.0f*m_res_scale))) {
 			ImGui::OpenPopup("show");
 		}
 
@@ -257,8 +252,7 @@ namespace Yurrgoht {
 				if (ImGui::Checkbox(values[i].first.c_str(), &values[i].second)) {
 					if (values[i].second) {
 						show_debug_option |= (1 << i);
-					}
-					else {
+					} else {
 						show_debug_option &= ~(1 << i);
 					}
 
@@ -274,10 +268,11 @@ namespace Yurrgoht {
 
 	void SimulationUI::constructOperationModeButtons() {
 		std::vector<std::string> names = { ICON_FA_MOUSE_POINTER, ICON_FA_MOVE, ICON_FA_SYNC_ALT, ICON_FA_EXPAND };
+		// 24.0f - button size at 1080p
 		for (size_t i = 0; i < names.size(); ++i) {
-			ImGui::SameLine(i == 0 ? ImGui::GetContentRegionAvail().x - 130 : 0.0f);
+			ImGui::SameLine(i == 0 ? ImGui::GetContentRegionAvail().x - (130.0f*m_res_scale) : 0.0f);
 			ImGui::PushStyleColor(ImGuiCol_Button, i == (size_t)m_operation_mode ? ImVec4(0.26f, 0.59f, 0.98f, 0.8f) : ImVec4(0.4f, 0.4f, 0.4f, 0.8f));
-			if (ImGui::Button(names[i].c_str(), ImVec2(24, 24))) {
+			if ( ImGui::Button(names[i].c_str(), ImVec2(24.0f*m_res_scale, 24.0f*m_res_scale)) ) {
 				m_operation_mode = (EOperationMode)i;
 			}
 			ImGui::PopStyleColor();
@@ -304,8 +299,7 @@ namespace Yurrgoht {
 			ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
 			if (m_operation_mode == EOperationMode::Rotate) {
 				operation = ImGuizmo::ROTATE;
-			}
-			else if (m_operation_mode == EOperationMode::Scale) {
+			} else if (m_operation_mode == EOperationMode::Scale) {
 				operation = ImGuizmo::SCALE;
 			}
 
@@ -320,11 +314,9 @@ namespace Yurrgoht {
 
 				if (m_operation_mode == EOperationMode::Translate) {
 					transform_component->m_position = translation;
-				}
-				else if (m_operation_mode == EOperationMode::Rotate) {
+				} else if (m_operation_mode == EOperationMode::Rotate) {
 					transform_component->m_rotation = rotation;
-				}
-				else if (m_operation_mode == EOperationMode::Scale) {
+				} else if (m_operation_mode == EOperationMode::Scale) {
 					transform_component->m_scale = scale;
 				}
 			}
@@ -398,28 +390,24 @@ namespace Yurrgoht {
 		m_camera_component.lock()->m_aspect_ratio = (float)m_content_region.z / m_content_region.w;
 		if (g_engine.isSimulating()) {
 			m_mouse_right_button_pressed = ImGui::IsMouseDown(ImGuiMouseButton_Right);
-		}
-		else {
+		} else {
 			m_mouse_right_button_pressed = ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right);
 		}
 		
 		m_camera_component.lock()->setInput(m_mouse_right_button_pressed, isFocused());
 	}
 
-	void SimulationUI::handleDragDropTarget(const glm::vec2& mouse_pos, const glm::vec2& viewport_size)
-	{
-		if (ImGui::BeginDragDropTarget())
-		{
+	void SimulationUI::handleDragDropTarget(const glm::vec2& mouse_pos, const glm::vec2& viewport_size) {
+
+		if (ImGui::BeginDragDropTarget()) {
 			const ImGuiPayload* payload = nullptr;
 			ImGuiDragDropFlags flags = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoPreviewTooltip;
 			
 			// vscode issues warnings if value is assigned in an if conditional, so warning was disabled for this code block
 			#pragma clang diagnostic push
 			#pragma clang diagnostic ignored "-Wparentheses"	
-			if (payload = ImGui::AcceptDragDropPayload("load_asset", flags))
-			{
-				if (!m_created_entity)
-				{
+			if (payload = ImGui::AcceptDragDropPayload("load_asset", flags)) {
+				if (!m_created_entity) {
 					std::string url((const char*)payload->Data, payload->DataSize);
 					StopWatch stop_watch;
 					stop_watch.start();
@@ -427,49 +415,40 @@ namespace Yurrgoht {
 					LOG_INFO("load asset {}, elapsed time: {}ms", url, stop_watch.stopMs());
 				}
 			}
-			else if (payload = ImGui::AcceptDragDropPayload("create_entity", flags))
-			{
-				if (!m_created_entity)
-				{
+			else if (payload = ImGui::AcceptDragDropPayload("create_entity", flags)) {
+				if (!m_created_entity) {
 					const auto& scene = g_engine.sceneManager()->getCurrentScene();
 					std::string playload_str((const char*)payload->Data, payload->DataSize);
 					std::vector<std::string> splits = StringUtil::split(playload_str, "-");
 					const std::string& entity_category = splits[0];
 					const std::string& entity_type = splits[1];
 
-					if (entity_category == "Entities")
-					{
+					if (entity_category == "Entities") {
 						m_created_entity = scene->createEntity(entity_type);
 					}
-					else if (entity_category == "Lights")
-					{
+					else if (entity_category == "Lights") {
 						m_created_entity = scene->createEntity(entity_type);
 						auto transform_component = m_created_entity->getComponent(TransformComponent);
 
 						// add light component
-						if (entity_type.find("Directional") != std::string::npos)
-						{
+						if (entity_type.find("Directional") != std::string::npos) {
 							transform_component->setRotation(glm::vec3(0.0f, 135.0f, -35.2f));
 							m_created_entity->addComponent(std::make_shared<DirectionalLightComponent>());
 						}
-						else if (entity_type.find("Sky") != std::string::npos)
-						{
+						else if (entity_type.find("Sky") != std::string::npos) {
 							auto sky_light_component = std::make_shared<SkyLightComponent>();
 							auto sky_texture_cube = g_engine.assetManager()->loadAsset<TextureCube>(DEFAULT_TEXTURE_CUBE_URL);
 							sky_light_component->setTextureCube(sky_texture_cube);
 							m_created_entity->addComponent(sky_light_component);
 						}
-						else if (entity_type.find("Point") != std::string::npos)
-						{
+						else if (entity_type.find("Point") != std::string::npos) {
 							m_created_entity->addComponent(std::make_shared<PointLightComponent>());
 						}
-						else if (entity_type.find("Spot") != std::string::npos)
-						{
+						else if (entity_type.find("Spot") != std::string::npos) {
 							m_created_entity->addComponent(std::make_shared<SpotLightComponent>());
 						}
 					}
-					else if (entity_category == "Primitives")
-					{
+					else if (entity_category == "Primitives") {
 						std::string url = StringUtil::format("asset/engine/mesh/primitive/sm_%s.sm", entity_type.c_str());
 						loadAsset(url);
 					}

@@ -21,9 +21,9 @@ namespace Yurrgoht {
 		// If the height of the desktop resolution (monitor) is greater than 1080p, we scale up
 		// Very simple solution for now, will make more flexible in the future
 		// Remember to get 4k fonts in the future
-		if (mode->h > 1080) {
-			m_scale = mode->h/1080; 
-		}
+		if (mode->h > 1080.0f) {
+			m_scale = mode->h/1080.0f;
+		} 
 
 		// create sdl2 window
 		bool is_packaged_fullscreen = m_fullscreen && g_engine.isApplication();

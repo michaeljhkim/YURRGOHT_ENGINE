@@ -2,6 +2,7 @@
 
 #include <map>
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <imgui/font/IconsFontAwesome5.h>
 #include <glm/glm.hpp>
 
@@ -45,6 +46,7 @@ namespace Yurrgoht {
 		std::string m_title;
 		char m_title_buf[128];
 		glm::uvec4 m_content_region;
+		float m_res_scale = 1.0f;
 
 	private:
 		bool isMouseFocused();

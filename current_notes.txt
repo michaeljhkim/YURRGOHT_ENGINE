@@ -42,6 +42,19 @@ Written down thoughts to remember stuff:
     - when we need to export, we just open all of the assets and then make the appropriate file
 
 
+- NOTE: Adding scaling to editor UI, but not to all buttons - must take care of that tomorrow
+- Must scale menus as well
+- C# as a technically scripting language - need to compile, but compiles very fast
+
+  width: 3200
+  height: 1800
+
+  width: 2560
+  height: 1440
+
+
+
+
 
 
 
