@@ -161,22 +161,21 @@ namespace Yurrgoht {
 		}
 
 		if (showing_save_as_scene_popup) {
-			ImGui::SetNextWindowSize(ImVec2(300, 500));
+			ImGui::SetNextWindowSize(ImVec2(300*m_res_scale, 500*m_res_scale));
 			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
 			ImGui::OpenPopup("Save As Scene");
 			if (ImGui::BeginPopupModal("Save As Scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 				const float k_middle_height = 55.0f;
 				const float k_bottom_height = 30.0f;
-
 				ImVec2 content_size = ImGui::GetContentRegionAvail();
 
-				float top_height = content_size.y - k_middle_height - k_bottom_height - k_spacing * 2;
+				float top_height = content_size.y - (k_middle_height + k_bottom_height + k_spacing) * 2;
 				ImGui::BeginChild("new_scene_top", ImVec2(content_size.x, top_height), true);
 				constructFolderTree();
 				ImGui::EndChild();
 
-				ImGui::BeginChild("new_scene_middle", ImVec2(content_size.x, k_middle_height), true);
+				ImGui::BeginChild("new_scene_middle", ImVec2(content_size.x, k_middle_height*m_res_scale), true);
 				ImGui::Text("path:");
 				ImGui::SameLine();
 				ImGui::Text("%s", m_selected_folder.c_str());
@@ -186,8 +185,8 @@ namespace Yurrgoht {
 				ImGui::InputText("##scene_name", scene_name, IM_ARRAYSIZE(scene_name));
 				ImGui::EndChild();
 
-				ImGui::BeginChild("new_scene_bottom", ImVec2(content_size.x, k_bottom_height), false);
-				float button_width = 60.0f;
+				ImGui::BeginChild("new_scene_bottom", ImVec2(content_size.x, k_bottom_height*m_res_scale), false);
+				float button_width = 60.0f*m_res_scale;
 				float button_offset_x = (ImGui::GetContentRegionAvail().x - button_width * 2 - k_spacing) / 2.0f;
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + button_offset_x);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
@@ -202,7 +201,7 @@ namespace Yurrgoht {
 				}
 
 				ImGui::SameLine();
-				if (ImGui::Button("cancel", ImVec2(button_width, 0))) {
+				if (ImGui::Button("cancel", ImVec2(button_width*m_res_scale, 0))) {
 					showing_save_as_scene_popup = false;
 				}
 				ImGui::EndChild();

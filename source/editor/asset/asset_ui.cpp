@@ -42,7 +42,6 @@ namespace Yurrgoht {
 			ImGui::End();
 			return;
 		}
-
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(2.0f, 2.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.0f, 4.0f));
 
@@ -174,7 +173,8 @@ namespace Yurrgoht {
 
 			if (!is_clipping) {
 				constructAsset(m_selected_files[i], icon_size);
-			} else {
+			} 
+			else {
 				ImGui::Dummy(icon_size);
 			}
 			hover_state.rect_min = ImGui::GetItemRectMin();
