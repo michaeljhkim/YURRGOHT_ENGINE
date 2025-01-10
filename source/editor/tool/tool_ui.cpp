@@ -11,6 +11,7 @@ namespace Yurrgoht {
 	void ToolUI::init() {
 		m_title = "Tool";
 		m_res_scale = g_engine.windowSystem()->getResolutionScale();
+		m_first_init = true;
 
 		entity_categories = {
 			std::string(ICON_FA_CUBE) + " Entities",
@@ -47,10 +48,12 @@ namespace Yurrgoht {
 			ImGui::End();
 			return;
 		}
-
-		ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;	// Retrieve the dock node for the current window
-		ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 38 * m_res_scale));
-		//dock_node->SetLocalFlags(ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar);
+		if (m_first_init) {
+			ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;	// Retrieve the dock node for the current window
+			ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 38 * m_res_scale));
+			//dock_node->SetLocalFlags(ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar);
+			m_first_init = false;
+		}
 
 		float region_w = ImGui::GetContentRegionAvail().x;
 		ImVec2 spacing = ImGui::GetStyle().ItemSpacing;

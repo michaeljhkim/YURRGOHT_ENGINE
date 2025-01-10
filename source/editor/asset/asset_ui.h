@@ -1,13 +1,13 @@
 #pragma once
 
+#include <stack>
 #include "editor/base/editor_ui.h"
 #include "editor/base/folder_tree_ui.h"
 #include "engine/resource/asset/asset_manager.h"
 
-namespace Yurrgoht
-{
-	class AssetUI : public EditorUI, public IFolderTreeUI
-	{
+namespace Yurrgoht {
+
+	class AssetUI : public EditorUI, public IFolderTreeUI {
 	public:
 		AssetUI() = default;
 
@@ -24,7 +24,7 @@ namespace Yurrgoht
 		void constructFolderOpPopups(const std::string& str_id, bool is_background_not_hoverd = false);
 		void constructFolderOpPopupModal(const std::string& path);
 
-		virtual void openFolder(std::string folder) override;
+		virtual void openFolder(const std::string& folder) override;
 
 		void onDropFiles(const std::shared_ptr<class Event>& event);
 		void onAssetRightClick(const std::string& filename);
@@ -40,9 +40,11 @@ namespace Yurrgoht
 		uint32_t m_poll_folder_timer_handle;
 		std::string m_formatted_selected_folder;
 		std::string m_selected_file;
-		std::vector<std::string> m_selected_files;
-
+		std::vector<std::string> m_selected_files = {};
 		std::map<std::string, HoverState> m_selected_file_hover_states;
+
+    	std::unique_ptr<std::stack<std::string>> backHistory;
+		std::unique_ptr<std::stack<std::string>> forwardHistory;
 
 		// import files
 		glm::vec4 m_folder_rect;

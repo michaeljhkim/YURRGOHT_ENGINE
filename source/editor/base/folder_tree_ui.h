@@ -8,10 +8,9 @@
 #include <stdint.h>
 
 
-namespace Yurrgoht
-{
-	struct FolderNode
-	{
+namespace Yurrgoht {
+
+	struct FolderNode {
 		std::string name;
 		std::string dir;
 		std::vector<std::string> child_files;
@@ -21,20 +20,18 @@ namespace Yurrgoht
 		bool is_leaf;
 	};
 
-	struct HoverState
-	{
+	struct HoverState {
 		bool is_hovered;
 		ImVec2 rect_min;
 		ImVec2 rect_max;
 	};
 
-	class IFolderTreeUI
-	{
+	class IFolderTreeUI {
 	protected:
 		void pollFolders();
 		void constructFolderTree();
 
-		virtual void openFolder(std::string folder);
+		virtual void openFolder(const std::string& folder);
 		std::string createFolder();
 		bool deleteFolder(const std::string& folder_name);
 		bool rename(const std::string& filename, const ImVec2& size = { 0.0f, 0.0f });

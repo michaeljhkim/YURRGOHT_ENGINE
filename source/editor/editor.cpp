@@ -74,9 +74,7 @@ namespace Yurrgoht {
             m_simulation_ui->construct();
         }
         else {
-			for (auto& editor_ui : m_editor_uis) {
-				editor_ui->construct();
-            }
+			for (auto& editor_ui : m_editor_uis) { editor_ui->construct(); }
         }
 	}
 

@@ -29,7 +29,6 @@ namespace Yurrgoht {
 				showLogText(lastest_logs[row]);
 			}
 		}
-
 		if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
 			ImGui::SetScrollHereY(1.0f);
 		}

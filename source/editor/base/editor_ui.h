@@ -47,6 +47,7 @@ namespace Yurrgoht {
 		char m_title_buf[128];
 		glm::uvec4 m_content_region;
 		float m_res_scale = 1.0f;
+		bool m_first_init;
 
 	private:
 		bool isMouseFocused();

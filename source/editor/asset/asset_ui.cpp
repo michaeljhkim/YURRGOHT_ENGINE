@@ -10,11 +10,16 @@ namespace Yurrgoht {
 		EditorUI::init();
 		m_title = "Asset";
 		m_res_scale = g_engine.windowSystem()->getResolutionScale();
+		m_first_init = true;
 
 		// set poll folder timer
 		const float k_poll_folder_time = 1.0f;
 		m_poll_folder_timer_handle = g_engine.timerManager()->addTimer(k_poll_folder_time, [this](){ pollFolders(); }, true, true);
 		openFolder(g_engine.fileSystem()->getAssetDir());
+
+		backHistory = std::make_unique<std::stack<std::string>>();
+		forwardHistory = std::make_unique<std::stack<std::string>>();
+		backHistory->push(g_engine.fileSystem()->getAssetDir());
 
 		// load icon images
 		m_asset_images[EAssetType::Invalid] = loadImGuiImageFromFile("asset/engine/texture/ui/invalid.png");
@@ -42,6 +47,12 @@ namespace Yurrgoht {
 			ImGui::End();
 			return;
 		}
+		if (m_first_init) {
+			ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;	// Retrieve the dock node for the current window
+			ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 271.0f * m_res_scale));
+			m_first_init = false;
+		}
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(2.0f, 2.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.0f, 4.0f));
 
@@ -120,12 +131,32 @@ namespace Yurrgoht {
 		g_engine.timerManager()->removeTimer(m_poll_folder_timer_handle);
 	}
 
+	// ASSET SEARCH BAR
 	void AssetUI::constructAssetNavigator() {
 		ImVec2 button_size(20.0f*m_res_scale, 20.0f*m_res_scale);
-		ImGui::Button(ICON_FA_ARROW_LEFT, button_size);
-
+		// not sure why this system works - need to look into logic
+		if( ImGui::Button(ICON_FA_ARROW_LEFT, button_size) ) {
+			if (!backHistory->empty()) {
+				forwardHistory->push(backHistory->top());
+				backHistory->pop();
+				if (!backHistory->empty()) {
+					openFolder(backHistory->top());
+					std::cout << backHistory->top() << std::endl;
+				}
+			}
+		}
 		ImGui::SameLine();
-		ImGui::Button(ICON_FA_ARROW_RIGHT, button_size);
+		if( ImGui::Button(ICON_FA_ARROW_RIGHT, button_size) ) {
+			if (!forwardHistory->empty()) {
+				backHistory->push(forwardHistory->top());
+				forwardHistory->pop();
+				if (!forwardHistory->empty()) {
+					openFolder(forwardHistory->top());
+					std::cout << forwardHistory->top() << std::endl;
+				}
+			}
+		}
+
 
 		ImGui::SameLine();
 		static char str1[128] = "";
@@ -150,6 +181,7 @@ namespace Yurrgoht {
 		}
 	}
 
+	// Actual folders and file
 	void AssetUI::constructFolderFiles() {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0f*m_res_scale);
 
@@ -170,13 +202,8 @@ namespace Yurrgoht {
 				(hover_state.rect_max.y < clip_rect_min_y || hover_state.rect_min.y > clip_rect_max_y)) {
 				is_clipping = true;
 			}
-
-			if (!is_clipping) {
-				constructAsset(m_selected_files[i], icon_size);
-			} 
-			else {
-				ImGui::Dummy(icon_size);
-			}
+			!is_clipping ? constructAsset(m_selected_files[i], icon_size) : ImGui::Dummy(icon_size);
+			
 			hover_state.rect_min = ImGui::GetItemRectMin();
 			hover_state.rect_max = ImGui::GetItemRectMax();
 
@@ -189,6 +216,7 @@ namespace Yurrgoht {
 		ImGui::PopStyleVar();
 	}
 
+	// WHERE FILE TYPES GET CHECKED AND DISPLAYED
 	void AssetUI::constructAsset(const std::string& filename, const ImVec2& size) {
 		ImTextureID tex_id = nullptr;
 		std::string basename = g_engine.fileSystem()->basename(filename);
@@ -441,32 +469,31 @@ namespace Yurrgoht {
 		}
 	}
 
-	void AssetUI::openFolder(std::string folder) {
-		if (!g_engine.fileSystem()->exists(m_selected_folder)) {
-			folder = g_engine.fileSystem()->getAssetDir();
+	void AssetUI::openFolder(const std::string& folder) {
+		// Ensure folder exists; default to asset directory if it doesn't
+		std::string resolved_folder = g_engine.fileSystem()->exists(m_selected_folder) ? folder : g_engine.fileSystem()->getAssetDir();
+
+		// Update selected folder if it's valid and different
+		if (!resolved_folder.empty() && m_selected_folder != resolved_folder) {
+			m_selected_folder = resolved_folder;
+			m_formatted_selected_folder = g_engine.fileSystem()->relative(m_selected_folder);	// Format selected folder for UI
+			StringUtil::replace_all(m_formatted_selected_folder, "/", " " + std::string(ICON_FA_ANGLE_RIGHT) + " ");
 		}
-
-		if (!folder.empty() && m_selected_folder != folder) {
-			m_selected_folder = folder;
-
-			m_formatted_selected_folder = g_engine.fileSystem()->relative(m_selected_folder);
-			StringUtil::replace_all(m_formatted_selected_folder, "/", std::string(" ") + ICON_FA_ANGLE_RIGHT + " ");
-		}
-
 		if (!m_selected_folder.empty()) {
+			// Clear current selection and find the folder node
 			m_selected_files.clear();
-			const auto& iter = std::find_if(m_folder_nodes.begin(), m_folder_nodes.end(), 
-				[this](const FolderNode& folder_node) {
-					return folder_node.dir == m_selected_folder;
-				});
-			for (uint32_t child_folder : iter->child_folders) {
-				m_selected_files.push_back(m_folder_nodes[child_folder].dir);
-			}
-			m_selected_files.insert(m_selected_files.end(), iter->child_files.begin(), iter->child_files.end());
-			for (const std::string& selected_file : m_selected_files) {
-				if (m_selected_file_hover_states.find(selected_file) == m_selected_file_hover_states.end()) {
-					m_selected_file_hover_states[selected_file] = { false };
+			std::vector<Yurrgoht::FolderNode>::iterator iter = std::find_if(m_folder_nodes.begin(), m_folder_nodes.end(), 
+				[this](const FolderNode& folder_node) { return folder_node.dir == m_selected_folder; });
+			// If folder is found, collect its child folders and files
+			if (iter != m_folder_nodes.end()) {
+				for (uint32_t child_folder : iter->child_folders) {
+					m_selected_files.push_back(m_folder_nodes[child_folder].dir);
 				}
+				m_selected_files.insert(m_selected_files.end(), iter->child_files.begin(), iter->child_files.end());
+			}
+			// Ensure hover states exist for all selected files
+			for (const std::string& selected_file : m_selected_files) {
+				m_selected_file_hover_states[selected_file] = { false };
 			}
 		}
 	}
@@ -489,11 +516,14 @@ namespace Yurrgoht {
 			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				if (g_engine.fileSystem()->isDir(filename)) {
 					openFolder(filename);
+					backHistory->push(m_selected_folder);
+					forwardHistory.reset();
+					forwardHistory = std::make_unique<std::stack<std::string>>();
 				} else {
 					std::string basename = g_engine.fileSystem()->basename(filename);
 					LOG_INFO("open asset {}", basename);
 				}
-			}
+			} 
 			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 				if (g_engine.fileSystem()->isDir(filename)) {
 					ImGui::OpenPopup("folder_op_dir_hovered_popups");	// Dir right-click event

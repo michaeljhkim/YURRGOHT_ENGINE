@@ -205,7 +205,6 @@ namespace Yurrgoht {
 					showing_save_as_scene_popup = false;
 				}
 				ImGui::EndChild();
-
 				ImGui::EndPopup();
 			}
 		}
