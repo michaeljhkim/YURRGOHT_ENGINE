@@ -18,12 +18,11 @@ namespace Yurrgoht {
 		m_fullscreen = g_engine.configManager()->isFullscreen();
 		SDL_DisplayMode* mode;
 		SDL_GetDisplayMode(0, 0, mode);
-		// If the height of the desktop resolution (monitor) is greater than 1080p, we scale up
+		// If the height of monitor is greater than 1080p, we scale up
+		// If the hieght is less than 1080p, we scale down
 		// Very simple solution for now, will make more flexible in the future
 		// Remember to get 4k fonts in the future
-		if (mode->h > 1080.0f) {
-			m_scale = mode->h/1080.0f;
-		} 
+		m_scale = mode->h/1080.0f;
 
 		// create sdl2 window
 		bool is_packaged_fullscreen = m_fullscreen && g_engine.isApplication();
@@ -115,11 +114,16 @@ namespace Yurrgoht {
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowMouseButtonEvent>(event.button.button, action, SDL_GetModState()));
 				} break;
 				case SDL_MOUSEMOTION: {
-					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorPosEvent>(event.motion.x, event.motion.y));
+					m_mouse_pos_x = static_cast<double>(event.motion.x);
+					m_mouse_pos_y = static_cast<double>(event.motion.y);
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorPosEvent>(m_mouse_pos_x, m_mouse_pos_y));
 				} break;
 				case SDL_MOUSEWHEEL: {
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowScrollEvent>(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y)));
 				} break;
+				case SDL_DROPFILE: {
+                    dropped_file_paths.push_back(event.drop.file);
+                } break;
 				case SDL_WINDOWEVENT:
 					switch (event.window.event) {
 						case SDL_WINDOWEVENT_ENTER:
@@ -138,6 +142,11 @@ namespace Yurrgoht {
 				default:
 					break;
 			}
+		}
+
+		if (!dropped_file_paths.empty()) {
+			g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowDropEvent>(dropped_file_paths, m_mouse_pos_x, m_mouse_pos_y));
+			dropped_file_paths.clear();
 		}
 	}
 

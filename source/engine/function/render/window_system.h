@@ -34,12 +34,13 @@ namespace Yurrgoht {
 
 	private:
 		SDL_Window* m_window;
-		int m_mouse_pos_x;
-		int m_mouse_pos_y;
+		double m_mouse_pos_x;
+		double m_mouse_pos_y;
 		bool m_focus;
 		bool m_fullscreen;
 		bool m_should_close = false;
 		float m_scale = 1.0f;
+		std::vector<std::string> dropped_file_paths;
 
 		int m_windowed_width, m_windowed_height;
 		int m_windowed_pos_x, m_windowed_pos_y;

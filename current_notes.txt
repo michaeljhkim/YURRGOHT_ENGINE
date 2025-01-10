@@ -46,12 +46,8 @@ Written down thoughts to remember stuff:
 - Must scale menus as well
 - C# as a technically scripting language - need to compile, but compiles very fast
 
-  width: 3200
-  height: 1800
-
-  width: 2560
-  height: 1440
-
+- Allow importing or adding of assets/files into the engine without drag and drop (spawns item in default (0.0f, 0.0f, .0f))
+- unless there is already an item, in that case it will spawn on top of the existing item, with the highest vertex as a reference
 
 
 

@@ -141,7 +141,7 @@ namespace Yurrgoht {
 				backHistory->pop();
 				if (!backHistory->empty()) {
 					openFolder(backHistory->top());
-					std::cout << backHistory->top() << std::endl;
+					//std::cout << backHistory->top() << std::endl;
 				}
 			}
 		}
@@ -152,7 +152,7 @@ namespace Yurrgoht {
 				forwardHistory->pop();
 				if (!forwardHistory->empty()) {
 					openFolder(forwardHistory->top());
-					std::cout << forwardHistory->top() << std::endl;
+					//std::cout << forwardHistory->top() << std::endl;
 				}
 			}
 		}
@@ -216,11 +216,23 @@ namespace Yurrgoht {
 		ImGui::PopStyleVar();
 	}
 
-	// WHERE FILE TYPES GET CHECKED AND DISPLAYED
+	// WHERE FILE TYPES GET CHECKED AND DISPLAYED - MUST ADD SUPPORT FOR: PNG, JPG, EXR, GLB, GLTF, OBJ (and more)
+	// look at the AssetUI::constructImportPopups() function right below this one  
+	// Also include confirmation box that the user really does want to import the png or glb
 	void AssetUI::constructAsset(const std::string& filename, const ImVec2& size) {
 		ImTextureID tex_id = nullptr;
 		std::string basename = g_engine.fileSystem()->basename(filename);
 		const auto& asset_manager = g_engine.assetManager();
+
+		/*
+		std::string import_folder = g_engine.fileSystem()->relative(m_selected_folder);
+		for (auto iter = m_imported_files.begin(); iter != m_imported_files.end(); ) {
+			if (asset_manager->isGltfFile(import_file)) {
+			} else if (asset_manager->isTexture2DFile(import_file)) {
+			} else if (asset_manager->isTextureCubeFile(import_file)) {
+			} 
+		m_imported_files = filename;
+		*/
 
 		if (g_engine.fileSystem()->isFile(filename)) {
 			EAssetType asset_type = asset_manager->getAssetType(filename);
@@ -313,9 +325,10 @@ namespace Yurrgoht {
 			// check import file type
 			const std::string& import_file = *iter;
 			if (as->isGltfFile(import_file)) {
-				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 				ImGui::OpenPopup("Import Asset");
-				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+				//if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+				if (ImGui::BeginPopupModal("Import Asset", nullptr)) {
 					ImGui::Text("Importing gltf: %s", import_file.c_str());
 					ImGui::Separator();
 
@@ -500,10 +513,8 @@ namespace Yurrgoht {
 
 	void AssetUI::onDropFiles(const std::shared_ptr<class Event>& event) {
 		const WindowDropEvent* drop_event = static_cast<const WindowDropEvent*>(event.get());
-		if (drop_event->xpos < m_folder_rect.x ||
-			drop_event->xpos > m_folder_rect.y ||
-			drop_event->ypos < m_folder_rect.z ||
-			drop_event->ypos > m_folder_rect.w)
+		if (drop_event->xpos < m_folder_rect.x || drop_event->xpos > m_folder_rect.y ||
+			drop_event->ypos < m_folder_rect.z || drop_event->ypos > m_folder_rect.w)
 		{
 			return;
 		}
