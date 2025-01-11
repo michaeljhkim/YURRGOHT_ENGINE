@@ -5,11 +5,11 @@
 #include "engine/function/render/window_system.h"
 #include "engine/platform/timer/timer.h"
 
-#include <imgui/imgui.h>
-#include <imgui/imgui_internal.h>
-#include <imgui/backends/imgui_impl_vulkan.h>
-#include <imgui/backends/imgui_impl_sdl2.h>
-#include <imgui/font/IconsFontAwesome5.h>
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <backends/imgui_impl_vulkan.h>
+#include <backends/imgui_impl_sdl2.h>
+#include "fonts/IconsFontAwesome5.h"
 
 namespace Yurrgoht {
 
@@ -59,7 +59,7 @@ namespace Yurrgoht {
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator = nullptr;
 		init_info.CheckVkResultFn = &checkVkResult;
-		bool is_success = ImGui_ImplVulkan_Init(&init_info, m_render_pass);
+		bool is_success = ImGui_ImplVulkan_Init(&init_info);
 		ASSERT(is_success, "failed to init imgui");
 
 		// add consola font
@@ -86,11 +86,14 @@ namespace Yurrgoht {
 		icons_config.GlyphMinAdvanceX = k_big_icon_font_size;
 		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/fa-solid-900.ttf").c_str(), k_big_icon_font_size, &icons_config, icons_ranges);
 
+		/*
 		// upload fonts
 		VkCommandBuffer command_buffer = VulkanUtil::beginInstantCommands();
-		ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+		//ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+		ImGui_ImplVulkan_CreateFontsTexture();
 		VulkanUtil::endInstantCommands(command_buffer);
-		ImGui_ImplVulkan_DestroyFontUploadObjects();
+		ImGui_ImplVulkan_DestroyFontsTexture();
+		*/
 
 		// create swapchain related objects
 		const VkExtent2D& extent = VulkanRHI::get().getSwapchainImageSize();
@@ -107,7 +110,7 @@ namespace Yurrgoht {
 
 		// set docking over viewport
 		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), dockspace_flags);
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, ImGui::GetMainViewport(), dockspace_flags);
 
 		// construct imgui widgets
 		g_engine.eventSystem()->syncDispatch(std::make_shared<RenderConstructUIEvent>());

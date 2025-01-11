@@ -5,8 +5,6 @@
 #include "engine/resource/asset/asset_manager.h"
 #include "engine/function/framework/scene/scene_manager.h"
 
-#include <imgui/imgui_internal.h>
-
 namespace Yurrgoht {
 
 	void MenuUI::init() {
@@ -404,7 +402,7 @@ namespace Yurrgoht {
 			}
 
 			// draw image
-			ImGui::Image(m_template_scenes[i].icon->tex_id, icon_size);
+			ImGui::Image((ImTextureID)m_template_scenes[i].icon->tex_id, icon_size);
 
 			// draw asset name text
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);

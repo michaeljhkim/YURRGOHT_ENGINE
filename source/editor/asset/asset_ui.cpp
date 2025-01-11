@@ -220,7 +220,7 @@ namespace Yurrgoht {
 	// look at the AssetUI::constructImportPopups() function right below this one  
 	// Also include confirmation box that the user really does want to import the png or glb
 	void AssetUI::constructAsset(const std::string& filename, const ImVec2& size) {
-		ImTextureID tex_id = nullptr;
+		ImTextureID tex_id;
 		std::string basename = g_engine.fileSystem()->basename(filename);
 		const auto& asset_manager = g_engine.assetManager();
 
@@ -236,19 +236,19 @@ namespace Yurrgoht {
 
 		if (g_engine.fileSystem()->isFile(filename)) {
 			EAssetType asset_type = asset_manager->getAssetType(filename);
-			tex_id = m_asset_images[asset_type]->tex_id;
+			tex_id = (ImTextureID)m_asset_images[asset_type]->tex_id;
 			if (asset_type == EAssetType::Texture2D) {
 				if (isImGuiImageLoaded(filename)) {
-					tex_id = getImGuiImageFromCache(filename)->tex_id;
+					tex_id = (ImTextureID)getImGuiImageFromCache(filename)->tex_id;
 				} else {
 					std::shared_ptr<Texture2D> tex = asset_manager->loadAsset<Texture2D>(filename);
 					auto imgui_tex = loadImGuiImageFromTexture2D(tex);
-					tex_id = imgui_tex->tex_id;
+					tex_id = (ImTextureID)imgui_tex->tex_id;
 				}
 			}
 		} else if (g_engine.fileSystem()->isDir(filename)) {
 			bool is_empty = g_engine.fileSystem()->isEmptyDir(filename);
-			tex_id = is_empty ? m_empty_folder_image->tex_id : m_non_empty_folder_image->tex_id;
+			tex_id = is_empty ? (ImTextureID)m_empty_folder_image->tex_id : (ImTextureID)m_non_empty_folder_image->tex_id;
 		} else {
 			return;
 		}
@@ -332,11 +332,10 @@ namespace Yurrgoht {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 				ImGui::GetStyle().ScrollbarSize = 10.0f*m_res_scale;
 				import_text_size = ImGui::CalcTextSize(("Importing gltf: " + import_file).c_str());
-				if (import_text_size.x > (750.0f*m_res_scale)) {
-					window_width = 750.0f*m_res_scale;
-				} 
-				else {
-					window_width = import_text_size.x;
+				if (import_text_size.x > (750.0f*m_res_scale)) { 
+					window_width = 750.0f*m_res_scale; 
+				} else { 
+					window_width = import_text_size.x; 
 				}
 
 				window_height = (240.0f*m_res_scale) + import_text_size.y;

@@ -265,7 +265,7 @@ namespace Yurrgoht {
 
 		// asset preview image
 		const ImVec2 icon_size(60, 60);
-		ImGui::Image(m_dummy_image->tex_id, icon_size);
+		ImGui::Image((ImTextureID)m_dummy_image->tex_id, icon_size);
 
 		// asset find combo box
 		ImGui::SameLine();

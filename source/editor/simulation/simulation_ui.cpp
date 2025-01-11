@@ -20,9 +20,8 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
-#include <imgui/imgui_internal.h>
-#include <imgui/backends/imgui_impl_vulkan.h>
-#include <imgui/ImGuizmo.h>
+#include <backends/imgui_impl_vulkan.h>
+#include "ImGuizmo/ImGuizmo.h"
 
 namespace Yurrgoht {
 
@@ -71,7 +70,7 @@ namespace Yurrgoht {
 		uint32_t mouse_y = static_cast<uint32_t>(ImGui::GetMousePos().y - cursor_screen_pos.y);
 
 		ImVec2 content_size = ImGui::GetContentRegionAvail();
-		ImGui::Image(m_color_texture_desc_set, content_size);
+		ImGui::Image((ImTextureID)m_color_texture_desc_set, content_size);
 
 		if (g_engine.isSimulating()) {
 			updateCamera();
@@ -285,7 +284,7 @@ namespace Yurrgoht {
  		}
 
 		// set translation/rotation/scale gizmos
-		ImGuizmo::SetID(0);
+		ImGuizmo::PushID(0);
 		ImGuizmo::SetOrthographic(m_camera_component.lock()->m_projection_type == EProjectionType::Orthographic);
 		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 		ImGuizmo::SetDrawlist();
@@ -321,6 +320,7 @@ namespace Yurrgoht {
 				}
 			}
 		}
+		ImGuizmo::PopID();
 	}
 
 	void SimulationUI::onKey(const std::shared_ptr<class Event>& event) {
@@ -357,14 +357,21 @@ namespace Yurrgoht {
 			}
 
 			if (m_selected_entity.lock() || !m_mouse_right_button_pressed) {
-				if (key_event->key == SDL_SCANCODE_Q) {
+				switch (key_event->key) {
+				case SDL_SCANCODE_Q:
 					m_operation_mode = EOperationMode::Pick;
-				} else if (key_event->key == SDL_SCANCODE_W) {
+					break;
+				case SDL_SCANCODE_W:
 					m_operation_mode = EOperationMode::Translate;
-				} else if (key_event->key == SDL_SCANCODE_E) {
+					break;
+				case SDL_SCANCODE_E:
 					m_operation_mode = EOperationMode::Rotate;
-				} else if (key_event->key == SDL_SCANCODE_R) {
+					break;
+				case SDL_SCANCODE_R:
 					m_operation_mode = EOperationMode::Scale;
+					break;
+				default:
+					break;
 				}
 			}
 		}
