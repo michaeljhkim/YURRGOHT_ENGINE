@@ -318,6 +318,10 @@ namespace Yurrgoht {
 		if (m_imported_files.empty()) {
 			return;
 		}
+		float button_pos_y = 25.0f * m_res_scale;
+		float window_width = 0.0f;
+		float window_height = 0.0f;
+		ImVec2 import_text_size;
 
 		const auto& as = g_engine.assetManager();
 		std::string import_folder = g_engine.fileSystem()->relative(m_selected_folder);
@@ -326,12 +330,24 @@ namespace Yurrgoht {
 			const std::string& import_file = *iter;
 			if (as->isGltfFile(import_file)) {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+				ImGui::GetStyle().ScrollbarSize = 10.0f*m_res_scale;
+				import_text_size = ImGui::CalcTextSize(("Importing gltf: " + import_file).c_str());
+				if (import_text_size.x > (750.0f*m_res_scale)) {
+					window_width = 750.0f*m_res_scale;
+				} 
+				else {
+					window_width = import_text_size.x;
+				}
+
+				window_height = (240.0f*m_res_scale) + import_text_size.y;
+				ImGui::SetNextWindowSize(ImVec2(window_width, window_height), ImGuiCond_Appearing);
+				
 				ImGui::OpenPopup("Import Asset");
-				//if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
-				if (ImGui::BeginPopupModal("Import Asset", nullptr)) {
+				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+    				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), true, ImGuiWindowFlags_HorizontalScrollbar);
 					ImGui::Text("Importing gltf: %s", import_file.c_str());
 					ImGui::Separator();
-
+				
 					ImGui::SeparatorText("Mesh");
 					static bool force_static_mesh = false;
 					ImGui::Checkbox("force static mesh", &force_static_mesh);
@@ -343,9 +359,25 @@ namespace Yurrgoht {
 					static bool contains_occlusion_channel = true;
 					ImGui::Checkbox("contain occlusion channel", &contains_occlusion_channel);
 
+					// Detect mouse hover and manually handle horizontal scrolling
+					if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
+						// Get the horizontal scrollbar bounding box
+						ImRect scrollBarRect(ImGui::GetWindowPos().x,
+											ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetStyle().ScrollbarSize,
+											ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
+											ImGui::GetWindowPos().y + ImGui::GetWindowHeight());
+
+						ImGuiIO& io = ImGui::GetIO();
+						if (scrollBarRect.Contains(io.MousePos) && io.MouseWheel != 0.0f) { 	// If the mouse wheel is scrolled
+							ImGui::SetScrollY(0.0f);
+							ImGui::SetScrollX(ImGui::GetScrollX() + io.MouseWheel * 20.0f*m_res_scale);		// Update horizontal scrolling using MouseWheel
+						}
+					}
+    				ImGui::EndChild();
+
+				 	ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, (ImGui::GetWindowSize().y - (button_pos_y + 4.0f*m_res_scale)) ));
 					if (ImGui::Button("OK", ImVec2(120.0f*m_res_scale, 0))) {
 						ImGui::CloseCurrentPopup();
-
 						StopWatch stop_watch;
 						stop_watch.start();
 

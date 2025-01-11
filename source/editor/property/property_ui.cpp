@@ -6,8 +6,7 @@
 
 #define DRAG_SPEED 0.1f
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
 	void PropertyUI::init() {
 		m_title = "Property";

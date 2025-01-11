@@ -48,6 +48,9 @@ Written down thoughts to remember stuff:
 
 - Allow importing or adding of assets/files into the engine without drag and drop (spawns item in default (0.0f, 0.0f, .0f))
 - unless there is already an item, in that case it will spawn on top of the existing item, with the highest vertex as a reference
+- also fix the x axis scaling between scene_ui, simulation_ui, and property_ui
+
+- PRIORITY IS EXPORT OPTIONS
 
 
 
