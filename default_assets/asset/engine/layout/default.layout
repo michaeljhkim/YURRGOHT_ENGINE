@@ -50,13 +50,12 @@ Column 0  Width=100
 Column 1  Weight=1.0000
 
 [Docking][Data]
-DockSpace         ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,40 Size=3200,1760 Split=Y
-  DockNode        ID=0x00000007 Parent=0x8B93E3BD SizeRef=3200,76 NoResize=1 HiddenTabBar=1 Selected=0xCA9F6038
-  DockNode        ID=0x00000008 Parent=0x8B93E3BD SizeRef=2560,1300 Split=X
+DockSpace         ID=0x8BD597D Window=0x16723995 Pos=0,40 Size=3200,1760 Split=Y
+  DockNode        ID=0x00000007 Parent=0x8BD597D SizeRef=3200,76 NoResize=1 HiddenTabBar=1 Selected=0xCA9F6038
+  DockNode        ID=0x00000008 Parent=0x8BD597D SizeRef=2560,1300 Split=X
     DockNode      ID=0x00000005 Parent=0x00000008 SizeRef=2831,1349 Split=X
       DockNode    ID=0x00000001 Parent=0x00000005 SizeRef=322,1349 Selected=0xA8F56998
       DockNode    ID=0x00000002 Parent=0x00000005 SizeRef=2505,1349 Split=Y Selected=0x39C8E5AE
         DockNode  ID=0x00000003 Parent=0x00000002 SizeRef=2406,715 CentralNode=1 Selected=0x39C8E5AE
         DockNode  ID=0x00000004 Parent=0x00000002 SizeRef=2406,271 Selected=0x72FCDAED
     DockNode      ID=0x00000006 Parent=0x00000008 SizeRef=365,1349 Selected=0x94AF7ADE
-

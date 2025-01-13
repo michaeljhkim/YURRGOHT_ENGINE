@@ -34,17 +34,6 @@ namespace Yurrgoht {
 		// setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();
-
-		// gamma correction
-		ImGuiStyle& style = ImGui::GetStyle();
-		auto gammaCorrect = [](float c) { return pow(c, 2.0f); };	// Gamma correction helper
-		for (int i = 0; i < ImGuiCol_COUNT; i++) {
-			style.Colors[i] = ImVec4(gammaCorrect(style.Colors[i].x), 
-									gammaCorrect(style.Colors[i].y), 
-									gammaCorrect(style.Colors[i].z), 
-									style.Colors[i].w);
-		}
-
 		ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_None;
 		ImGui::GetStyle().ScaleAllSizes( g_engine.windowSystem()->getResolutionScale() );
 
@@ -98,15 +87,6 @@ namespace Yurrgoht {
 		icons_config.GlyphMinAdvanceX = k_big_icon_font_size;
 		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/fa-solid-900.ttf").c_str(), k_big_icon_font_size, &icons_config, icons_ranges);
 
-		/*
-		// upload fonts
-		VkCommandBuffer command_buffer = VulkanUtil::beginInstantCommands();
-		//ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
-		ImGui_ImplVulkan_CreateFontsTexture();
-		VulkanUtil::endInstantCommands(command_buffer);
-		ImGui_ImplVulkan_DestroyFontsTexture();
-		*/
-
 		// create swapchain related objects
 		const VkExtent2D& extent = VulkanRHI::get().getSwapchainImageSize();
 		createResizableObjects(extent.width, extent.height);
@@ -122,8 +102,9 @@ namespace Yurrgoht {
 
 		// set docking over viewport
 		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-		//ImGui::DockSpaceOverViewport(0, NULL, dockspace_flags);
-		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), dockspace_flags);
+		ImGuiID dockspace_id = ImGui::DockSpaceOverViewport(0, NULL, dockspace_flags);
+		//std::cout << dockspace_id << std::endl;
+		//std::cout << ImGui::GetCurrentWindow()->ID << std::endl;
 
 		// construct imgui widgets
 		g_engine.eventSystem()->syncDispatch(std::make_shared<RenderConstructUIEvent>());
