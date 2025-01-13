@@ -50,17 +50,18 @@ Written down thoughts to remember stuff:
 - unless there is already an item, in that case it will spawn on top of the existing item, with the highest vertex as a reference
 - also fix the x axis scaling between scene_ui, simulation_ui, and property_ui
 
-- PRIORITY IS EXPORT OPTIONS
-
 - IMGUI COLORS ARE TOO BRIGHT BECAUSE OF SHADERS
 - IMGUI VULKAN uses a differently labelled shader values (which I added instructions for in this project in case I forget)
 - Not sure if bamboo engine modified IMGUI with this shader or if IMGUI originally had this and changed it 
 - must check later (probably the former though)
 - compare IMGUI vulkan shadeer code to the one in bamboo to see if there were changes
+- due to imgui changes. Document code soon
 
 - figure out how to use that shader code without modifying IMGUI vulkan (if possible) 
 - also considering changing imguizmo to show the axis stuff all the time? I mean, current system is still theoretically better since less clutter
 
+- PRIORITY IS EXPORT OPTIONS
+- After that, ADD C#
 
 
 

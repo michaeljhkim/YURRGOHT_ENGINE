@@ -3,6 +3,7 @@
 #include "engine/platform/timer/timer.h"
 #include "engine/core/event/event_system.h"
 #include <queue>
+#include <iostream>
 
 namespace Yurrgoht {
 
@@ -330,21 +331,22 @@ namespace Yurrgoht {
 			const std::string& import_file = *iter;
 			if (as->isGltfFile(import_file)) {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-				ImGui::GetStyle().ScrollbarSize = 10.0f*m_res_scale;
-				import_text_size = ImGui::CalcTextSize(("Importing gltf: " + import_file).c_str());
-				if (import_text_size.x > (750.0f*m_res_scale)) { 
-					window_width = 750.0f*m_res_scale; 
-				} else { 
-					window_width = import_text_size.x; 
-				}
-
-				window_height = (240.0f*m_res_scale) + import_text_size.y;
-				ImGui::SetNextWindowSize(ImVec2(window_width, window_height), ImGuiCond_Appearing);
+				ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
+				ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
+				char str[import_file.length() + 1]; // Ensure enough space
+				std::strcpy(str, import_file.c_str());
+				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x ;
 				
 				ImGui::OpenPopup("Import Asset");
 				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-    				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), true, ImGuiWindowFlags_HorizontalScrollbar);
-					ImGui::Text("Importing gltf: %s", import_file.c_str());
+    				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), ImGuiChildFlags_AutoResizeY);
+					ImGui::Text("Importing gltf:");
+					//ImGui::SameLine();
+					(ImGui::GetWindowWidth() > file_path_length) ?
+						ImGui::PushItemWidth(file_path_length):
+						ImGui::PushItemWidth(ImGui::GetWindowWidth());
+					ImGui::InputText("##import_gltf", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_ElideLeft);
+					ImGui::PopItemWidth();
 					ImGui::Separator();
 				
 					ImGui::SeparatorText("Mesh");
