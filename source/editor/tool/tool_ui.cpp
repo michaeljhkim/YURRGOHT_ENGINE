@@ -51,7 +51,7 @@ namespace Yurrgoht {
 		if (m_first_init) {
 			ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;	// Retrieve the dock node for the current window
 			ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 38 * m_res_scale));
-			//dock_node->SetLocalFlags(ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar);
+			dock_node->SetLocalFlags(ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoTabBar);
 			m_first_init = false;
 		}
 

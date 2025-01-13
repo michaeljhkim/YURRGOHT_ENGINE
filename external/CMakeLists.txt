@@ -23,7 +23,9 @@ if(NOT TARGET imgui)
     #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp" 
     #"${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.h"
     "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp" 
-    "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h")
+    "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h"
+    "ImGuizmo/ImGuizmo.cpp"
+    "ImGuizmo/ImGuizmo.h")
  
     add_library(imgui ${imgui_sources} ${imgui_impl})
     target_include_directories(imgui PUBLIC ${IMGUI_SOURCE_DIR})

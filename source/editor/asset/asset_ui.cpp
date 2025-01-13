@@ -49,7 +49,7 @@ namespace Yurrgoht {
 		}
 		if (m_first_init) {
 			ImGuiDockNode* dock_node = ImGui::FindWindowByName(m_title_buf)->DockNode;	// Retrieve the dock node for the current window
-			ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 271.0f * m_res_scale));
+			ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 225.0f * m_res_scale));
 			m_first_init = false;
 		}
 

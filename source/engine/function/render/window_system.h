@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 #include <SDL2/SDL_image.h>
-#include <backends/imgui_impl_sdl2.h>
+#include <imgui/backends/imgui_impl_sdl2.h>
 
 #include <string>
 #include <functional>

@@ -2,9 +2,9 @@
 
 #include <map>
 #include <glm/glm.hpp>
-#include <backends/imgui_impl_vulkan.h>
-#include <imgui.h>
-#include <imgui_internal.h>
+#include <imgui/backends/imgui_impl_vulkan.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 #include "fonts/IconsFontAwesome5.h"
 #include "engine/resource/asset/texture_2d.h"

@@ -20,8 +20,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
-#include <backends/imgui_impl_vulkan.h>
-#include "ImGuizmo/ImGuizmo.h"
+#include <ImGuizmo/ImGuizmo.h>
 
 namespace Yurrgoht {
 
@@ -80,9 +79,14 @@ namespace Yurrgoht {
 			return;
 		}
 
-		ImGui::SetCursorScreenPos(cursor_screen_pos);
-		ImGui::SetNextItemAllowOverlap();
-		if (ImGui::InvisibleButton("image", content_size) &&  (!m_selected_entity.lock() || !ImGuizmo::IsOver())) {
+		// Manually detect if the mouse is within the image bounds
+		ImVec2 mouse_pos = ImGui::GetMousePos();
+		bool is_mouse_in_image = 
+			mouse_pos.x >= cursor_screen_pos.x && mouse_pos.x <= cursor_screen_pos.x + content_size.x &&
+			mouse_pos.y >= cursor_screen_pos.y && mouse_pos.y <= cursor_screen_pos.y + content_size.y;
+
+		// Check if the mouse is in the image and the left mouse button is clicked
+		if (is_mouse_in_image && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && (!m_selected_entity.lock() || !ImGuizmo::IsOver()) ) {
 			g_engine.eventSystem()->syncDispatch(std::make_shared<PickEntityEvent>(mouse_x, mouse_y));
 		}
 		updateCamera();
@@ -285,6 +289,7 @@ namespace Yurrgoht {
 
 		// set translation/rotation/scale gizmos
 		ImGuizmo::PushID(0);
+		ImGuizmo::BeginFrame();
 		ImGuizmo::SetOrthographic(m_camera_component.lock()->m_projection_type == EProjectionType::Orthographic);
 		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 		ImGuizmo::SetDrawlist();

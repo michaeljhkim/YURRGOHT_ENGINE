@@ -50,7 +50,11 @@ Written down thoughts to remember stuff:
 - unless there is already an item, in that case it will spawn on top of the existing item, with the highest vertex as a reference
 - also fix the x axis scaling between scene_ui, simulation_ui, and property_ui
 
+- If stable version required for imgui, latest tested as of janurary 2025 is v1.91.6-docking
+
 - PRIORITY IS EXPORT OPTIONS
+- Do tests later for color corrections
+- figure out why that older version of imgui had the correct coloring
 
 
 

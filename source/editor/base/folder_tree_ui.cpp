@@ -2,8 +2,6 @@
 #include "engine/core/base/macro.h"
 #include "engine/resource/asset/asset_manager.h"
 
-#include <backends/imgui_impl_vulkan.h>
-#include "fonts/IconsFontAwesome5.h"
 #include <queue>
 
 namespace Yurrgoht {

@@ -4,9 +4,11 @@
 #include <map>
 #include <string>
 #include <functional>
-#include <imgui.h>
 #include <stdint.h>
 
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_vulkan.h>
+#include "fonts/IconsFontAwesome5.h"
 
 namespace Yurrgoht {
 

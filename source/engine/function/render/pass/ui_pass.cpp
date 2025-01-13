@@ -5,10 +5,10 @@
 #include "engine/function/render/window_system.h"
 #include "engine/platform/timer/timer.h"
 
-#include <imgui.h>
-#include <imgui_internal.h>
-#include <backends/imgui_impl_vulkan.h>
-#include <backends/imgui_impl_sdl2.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+#include <imgui/backends/imgui_impl_vulkan.h>
+#include <imgui/backends/imgui_impl_sdl2.h>
 #include "fonts/IconsFontAwesome5.h"
 
 namespace Yurrgoht {
@@ -34,6 +34,17 @@ namespace Yurrgoht {
 		// setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();
+
+		// gamma correction
+		ImGuiStyle& style = ImGui::GetStyle();
+		auto gammaCorrect = [](float c) { return pow(c, 2.0f); };	// Gamma correction helper
+		for (int i = 0; i < ImGuiCol_COUNT; i++) {
+			style.Colors[i] = ImVec4(gammaCorrect(style.Colors[i].x), 
+									gammaCorrect(style.Colors[i].y), 
+									gammaCorrect(style.Colors[i].z), 
+									style.Colors[i].w);
+		}
+
 		ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_None;
 		ImGui::GetStyle().ScaleAllSizes( g_engine.windowSystem()->getResolutionScale() );
 
@@ -59,6 +70,7 @@ namespace Yurrgoht {
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator = nullptr;
 		init_info.CheckVkResultFn = &checkVkResult;
+		init_info.RenderPass = m_render_pass;
 		bool is_success = ImGui_ImplVulkan_Init(&init_info);
 		ASSERT(is_success, "failed to init imgui");
 
@@ -110,7 +122,8 @@ namespace Yurrgoht {
 
 		// set docking over viewport
 		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, ImGui::GetMainViewport(), dockspace_flags);
+		//ImGui::DockSpaceOverViewport(0, NULL, dockspace_flags);
+		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), dockspace_flags);
 
 		// construct imgui widgets
 		g_engine.eventSystem()->syncDispatch(std::make_shared<RenderConstructUIEvent>());

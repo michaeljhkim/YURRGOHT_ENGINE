@@ -1,9 +1,6 @@
 #include "editor_ui.h"
 #include "engine/core/vulkan/vulkan_rhi.h"
 
-#include <backends/imgui_impl_vulkan.h>
-#include <imgui_internal.h>
-
 namespace Yurrgoht {
 
 	void ImGuiImage::destroy() {
