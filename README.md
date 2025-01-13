@@ -108,6 +108,7 @@ All external libraries' source codes have been included in the dockerfile, so no
 - [glm](https://glm.g-truc.net/0.9.9/)(math)
 - [glfw](https://www.glfw.org/)(window and input)
 - [imgui](https://www.dearimgui.com/)(gui)
+- [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)(gizmos)
 - [spdlog](https://github.com/gabime/spdlog)(logging)
 - [yaml-cpp](https://github.com/jbeder/yaml-cpp)(config)
 - [tinygltf](https://github.com/syoyo/tinygltf)(model loading)
