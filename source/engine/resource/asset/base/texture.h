@@ -59,9 +59,9 @@ namespace Yurrgoht {
 }
 
 
-// Specialize fmt::formatter for EPixelType
+// Specialize std::formatter for EPixelType
 template <>
-struct fmt::formatter<EPixelType> : fmt::formatter<std::string> {
+struct std::formatter<EPixelType> : std::formatter<std::string> {
     // Format function to convert enum to string
     template <typename FormatContext>
     auto format(EPixelType pt, FormatContext& ctx) const {
@@ -75,6 +75,6 @@ struct fmt::formatter<EPixelType> : fmt::formatter<std::string> {
             case EPixelType::R32: str = "R32"; break;
             default: str = "Unknown"; break;
         }
-        return fmt::formatter<std::string>::format(std::string(str), ctx);
+        return std::formatter<std::string>::format(std::string(str), ctx);
     }
 };

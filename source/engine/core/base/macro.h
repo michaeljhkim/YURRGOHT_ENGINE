@@ -17,7 +17,7 @@
 // Define macros based on the build type
 #if DEBUG
     #define LOG_HELPER(LOG_LEVEL, ...) \
-        g_engine.logSystem()->log(LOG_LEVEL, "[" + std::string(__PRETTY_FUNCTION__) + "] " + __VA_ARGS__)
+        g_engine.logSystem()->log(LOG_LEVEL, "[" + std::string(__PRETTY_FUNCTION__) + "] " + std::format(__VA_ARGS__) ) 
 
     #define LOG_DEBUG(...) LOG_HELPER(ELogLevel::Debug, __VA_ARGS__)
     #define LOG_INFO(...) LOG_HELPER(ELogLevel::Info, __VA_ARGS__)

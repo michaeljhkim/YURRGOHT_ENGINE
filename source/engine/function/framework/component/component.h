@@ -11,24 +11,22 @@
 
 #include "engine/resource/serialization/serialization.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
+
 	class ITickable
 	{
 	public:
 		void setTickEnabled(bool tick_enabled) { m_tick_enabled = tick_enabled; }
 		void setTickInterval(float tick_interval) { m_tick_interval = tick_interval; }
-
 		void tickable(float delta_time);
-
+		
 	protected:
 		virtual void tick(float delta_time) {}
 
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("tick_enabled", m_tick_enabled));
 			ar(cereal::make_nvp("tick_interval", m_tick_interval));
 		}
@@ -66,8 +64,7 @@ namespace Yurrgoht
 		RTTR_ENABLE()
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("tickable", cereal::base_class<ITickable>(this)));
 		}
 	};

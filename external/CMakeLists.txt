@@ -47,21 +47,3 @@ if(NOT TARGET Jolt)
     add_subdirectory(jolt)
     #set_target_properties(Jolt PROPERTIES FOLDER ${external_folder}/jolt)
 endif()
-
-
-FetchContent_Declare(
-    yaml-cpp
-    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp
-    GIT_TAG "0.8.0"
-)
-FetchContent_Declare(
-    fmt
-    GIT_REPOSITORY https://github.com/fmtlib/fmt
-    GIT_TAG "11.1.1"
-)
-FetchContent_Declare(
-    spdlog
-    GIT_REPOSITORY https://github.com/gabime/spdlog
-    GIT_TAG "v1.15.0"
-)
-FetchContent_MakeAvailable(yaml-cpp fmt spdlog)

@@ -1,6 +1,6 @@
 #pragma once
 
-//#define SPDLOG_FMT_EXTERNAL
+#define SPDLOG_USE_STD_FORMAT
 #include <spdlog/async.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <memory>
 #include <iostream>
+#include <format>
 
 #include "engine/resource/asset/animation.h"
 
@@ -28,32 +29,31 @@ namespace Yurrgoht {
 		std::vector<std::string> getLastestLogs();
 
 		template<typename... TARGS>
-		void log(ELogLevel level, TARGS&&... args) {
+		void log(ELogLevel level, std::string args) {
 			switch (level)
 			{
 			case ELogLevel::Debug:
-				c_logger->info(std::forward<TARGS>(args)...);
-				m_logger->debug(std::forward<TARGS>(args)...);
+				c_logger->info(args);
+				m_logger->debug(args);
 				break;
 			case ELogLevel::Info:
-				c_logger->info(std::forward<TARGS>(args)...);
-				m_logger->info(std::forward<TARGS>(args)...);
+				c_logger->info(args);
+				m_logger->info(args);
 				break;
 			case ELogLevel::Warning:
-				c_logger->info(std::forward<TARGS>(args)...);
-				m_logger->warn(std::forward<TARGS>(args)...);
+				c_logger->info(args);
+				m_logger->warn(args);
 				break;
 			case ELogLevel::Error:
-				c_logger->info(std::forward<TARGS>(args)...);
-				m_logger->error(std::forward<TARGS>(args)...);
+				c_logger->info(args);
+				m_logger->error(args);
 				break;
 			case ELogLevel::Fatal: {
-				c_logger->info(std::forward<TARGS>(args)...);
-				m_logger->critical(args...);
+				c_logger->info(args);
+				m_logger->critical(args);
 
 				// throw application runtime error
-				std::string fatal_str = fmt::format(std::forward<TARGS>(args)...);
-				throw std::runtime_error(fatal_str);
+				throw std::runtime_error(args);
 			}
 				break;
 			default:
@@ -62,28 +62,27 @@ namespace Yurrgoht {
 		}
 
 		template<typename... TARGS>
-		void console_log(ELogLevel level, TARGS&&... args) {
+		void console_log(ELogLevel level, std::string args) {
 			switch (level)
 			{
 			case ELogLevel::Debug:
-				c_logger->debug(std::forward<TARGS>(args)...);
+				c_logger->debug(args);
 				break;
 			case ELogLevel::Info:
-				c_logger->info(std::forward<TARGS>(args)...);
+				c_logger->info(args);
 				//m_logger->flush();
 				break;
 			case ELogLevel::Warning:
-				c_logger->warn(std::forward<TARGS>(args)...);
+				c_logger->warn(args);
 				break;
 			case ELogLevel::Error:
-				c_logger->error(std::forward<TARGS>(args)...);
+				c_logger->error(args);
 				break;
 			case ELogLevel::Fatal: {
-				c_logger->critical(args...);
+				c_logger->critical(args);
 
 				// throw application runtime error
-				std::string fatal_str = fmt::format(std::forward<TARGS>(args)...);
-				throw std::runtime_error(fatal_str);
+				throw std::runtime_error(args);
 			}
 				break;
 			default:
@@ -100,8 +99,9 @@ namespace Yurrgoht {
 	};
 }
 
+
 template <>
-struct fmt::formatter<Yurrgoht::AnimationChannel::EPathType> {
+struct std::formatter<Yurrgoht::AnimationChannel::EPathType> {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
     template <typename FormatContext>
@@ -120,6 +120,6 @@ struct fmt::formatter<Yurrgoht::AnimationChannel::EPathType> {
             default:
                 name = "Unknown";
         }
-        return fmt::format_to(ctx.out(), "{}", name);
+        return std::format_to(ctx.out(), "{}", name);
     }
 };

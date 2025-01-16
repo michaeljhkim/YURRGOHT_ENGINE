@@ -41,7 +41,8 @@ namespace Yurrgoht {
 		}
 
 		if (selected_entity) {
-			ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable;
+			// FOR ImGuiTableFlags_ContextMenuInBody, MUST CHANGE CONTEXT MENU (look into it first)
+			ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_ContextMenuInBody;
 			if (ImGui::BeginTable("components", 2, table_flags)) {
 				ImGui::TableSetupColumn("column_0", ImGuiTableColumnFlags_WidthFixed, 100.0f*m_res_scale);
 				ImGui::TableSetupColumn("column_1", ImGuiTableColumnFlags_WidthStretch);
@@ -112,6 +113,7 @@ namespace Yurrgoht {
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 50);
 			if (ImGui::Button(ICON_FA_PLUS))
 			{
+				// THIS PART ACTUALLY NEEDS CODE!!!
 				LOG_INFO("add component");
 			}
 			ImGui::SameLine(0, 5);

@@ -15,6 +15,8 @@ namespace Yurrgoht {
 		m_last_tick_time_point = std::chrono::steady_clock::now();
 
         g_engine.init();
+
+        //constexpr const char* log_message = "start engine";
         LOG_INFO("start engine");
     }
 
