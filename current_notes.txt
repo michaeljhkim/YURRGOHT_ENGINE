@@ -68,6 +68,10 @@ Written down thoughts to remember stuff:
 - Editor mode will also keep track of the original assets
 
 
+- I AM TRYING TO REPLACE RTTR WITH meta.hpp
+- I think I converted just about everything required, need to clean up commented out old code
+
+
 
 
 

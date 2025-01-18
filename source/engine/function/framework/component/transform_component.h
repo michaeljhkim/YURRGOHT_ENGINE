@@ -3,10 +3,9 @@
 #include "component.h"
 #include "engine/core/math/transform.h"
 
-namespace Yurrgoht
-{
-	class TransformComponent : public Component, public Transform
-	{
+namespace Yurrgoht {
+	
+	class TransformComponent : public Component, public Transform {
 	public:
 		void setPosition(const glm::vec3& position);
 		void setRotation(const glm::vec3& rotation);
@@ -18,11 +17,10 @@ namespace Yurrgoht
 		glm::vec3 getForwardVector();
 
 	private:
-		REGISTER_REFLECTION(Component)
+		REGISTER_REFLECTION(Component, Transform)
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("component", cereal::base_class<Component>(this)));
 			ar(cereal::make_nvp("position", m_position));
 			ar(cereal::make_nvp("rotation", m_rotation));

@@ -4,31 +4,27 @@
 #include "engine/function/framework/entity/entity.h"
 #include "engine/function/framework/component/animation_component.h"
 
-RTTR_REGISTRATION
+
+REGISTER_AT_RUNTIME 
 {
-rttr::registration::class_<Yurrgoht::AnimatorComponent>("AnimatorComponent")
-	 .property("skeleton", &Yurrgoht::AnimatorComponent::m_skeleton);
+meta_hpp::class_<Yurrgoht::AnimatorComponent>()
+	.member_("skeleton", &Yurrgoht::AnimatorComponent::m_skeleton);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::AnimatorComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::AnimatorComponent)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	AnimatorComponent::AnimatorComponent()
-	{
+	AnimatorComponent::AnimatorComponent() {
 		m_bone_ubs.resize(MAX_FRAMES_IN_FLIGHT);
-		for (VmaBuffer& bone_ub : m_bone_ubs)
-		{
+		for (VmaBuffer& bone_ub : m_bone_ubs) {
 			VulkanUtil::createBuffer(sizeof(BoneUBO), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_AUTO_PREFER_HOST, bone_ub);
 		}
 	}
 
-	AnimatorComponent::~AnimatorComponent()
-	{
-		for (VmaBuffer& bone_ub : m_bone_ubs)
-		{
+	AnimatorComponent::~AnimatorComponent() {
+		for (VmaBuffer& bone_ub : m_bone_ubs) {
 			bone_ub.destroy();
 		}
 	}

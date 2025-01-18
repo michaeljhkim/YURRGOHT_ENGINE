@@ -44,6 +44,7 @@ namespace Yurrgoht {
 	};
 
 	class IAssetRef {
+		META_HPP_ENABLE_POLY_INFO()
 	public:
 		// store the reference map: property_name -> asset url
 		std::map<std::string, URL> m_ref_urls;
@@ -57,9 +58,9 @@ namespace Yurrgoht {
 		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("ref_urls", m_ref_urls));
 
-			if (!m_has_bound) {
+			if (!m_has_bound)
 				bindRefs();
-			}
+				
 			m_has_bound = true;
 		}
 

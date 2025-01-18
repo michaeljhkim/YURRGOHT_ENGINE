@@ -1,9 +1,9 @@
 #include "sphere_collider_component.h"
 
-RTTR_REGISTRATION
+REGISTER_AT_RUNTIME 
 {
-rttr::registration::class_<Yurrgoht::SphereColliderComponent>("SphereColliderComponent")
-	.property("radius", &Yurrgoht::SphereColliderComponent::m_radius);
+meta_hpp::class_<Yurrgoht::SphereColliderComponent>()
+	.member_("radius", &Yurrgoht::SphereColliderComponent::m_radius);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SphereColliderComponent)

@@ -1,10 +1,10 @@
 #include "spot_light_component.h"
 
-RTTR_REGISTRATION
+REGISTER_AT_RUNTIME 
 {
-rttr::registration::class_<Yurrgoht::SpotLightComponent>("SpotLightComponent")
-	 .property("inner_cone_angle", &Yurrgoht::SpotLightComponent::m_inner_cone_angle)
-	 .property("outer_cone_angle", &Yurrgoht::SpotLightComponent::m_outer_cone_angle);
+meta_hpp::class_<Yurrgoht::SpotLightComponent>()
+	 .member_("inner_cone_angle", &Yurrgoht::SpotLightComponent::m_inner_cone_angle)
+	 .member_("outer_cone_angle", &Yurrgoht::SpotLightComponent::m_outer_cone_angle);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SpotLightComponent)

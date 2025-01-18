@@ -2,10 +2,10 @@
 #include "engine/function/global/engine_context.h"
 #include "engine/resource/asset/asset_manager.h"
 
-RTTR_REGISTRATION
-{
-rttr::registration::class_<Yurrgoht::AnimationComponent>("AnimationComponent")
-	 .property("animations", &Yurrgoht::AnimationComponent::m_animations);
+
+REGISTER_AT_RUNTIME {
+	meta_hpp::class_<Yurrgoht::AnimationComponent>()
+		.member_("animations", &Yurrgoht::AnimationComponent::m_animations);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::AnimationComponent)

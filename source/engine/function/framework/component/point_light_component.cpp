@@ -1,11 +1,11 @@
 #include "point_light_component.h"
 
-RTTR_REGISTRATION
+REGISTER_AT_RUNTIME 
 {
-rttr::registration::class_<Yurrgoht::PointLightComponent>("PointLightComponent")
-	 .property("radius", &Yurrgoht::PointLightComponent::m_radius)
-	 .property("linear_attenuation", &Yurrgoht::PointLightComponent::m_linear_attenuation)
-	 .property("quadratic_attenuation", &Yurrgoht::PointLightComponent::m_quadratic_attenuation);
+meta_hpp::class_<Yurrgoht::PointLightComponent>()
+	.member_("radius", &Yurrgoht::PointLightComponent::m_radius)
+	.member_("linear_attenuation", &Yurrgoht::PointLightComponent::m_linear_attenuation)
+	.member_("quadratic_attenuation", &Yurrgoht::PointLightComponent::m_quadratic_attenuation);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::PointLightComponent)

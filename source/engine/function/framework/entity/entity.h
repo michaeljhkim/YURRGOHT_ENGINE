@@ -76,7 +76,8 @@ namespace Yurrgoht {
 		virtual void endPlay();
 
 	private:
-		RTTR_ENABLE()
+        META_HPP_ENABLE_POLY_INFO(ITickable)
+		//REGISTER_REFLECTION(ITickable)
 
 		friend Scene;
 		friend class cereal::access;

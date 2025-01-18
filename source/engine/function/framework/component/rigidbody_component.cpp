@@ -3,20 +3,18 @@
 
 RTTR_REGISTRATION
 {
-rttr::registration::enumeration<Yurrgoht::EMotionType>("EMotionType")
-(
-	rttr::value("Static", Yurrgoht::EMotionType::Static),
-	rttr::value("Kinematic", Yurrgoht::EMotionType::Kinematic),
-	rttr::value("Dynamic", Yurrgoht::EMotionType::Dynamic)
-);
+meta_hpp::enum_<Yurrgoht::EMotionType>()
+        .evalue_("Static", Yurrgoht::EMotionType::Static)
+        .evalue_("Kinematic", Yurrgoht::EMotionType::Kinematic)
+        .evalue_("Dynamic", Yurrgoht::EMotionType::Dynamic);
 
-rttr::registration::class_<Yurrgoht::RigidbodyComponent>("RigidbodyComponent")
-	.property("motion_type", &Yurrgoht::RigidbodyComponent::m_motion_type)
-	.property("friction", &Yurrgoht::RigidbodyComponent::m_friction)
-	.property("restitution", &Yurrgoht::RigidbodyComponent::m_restitution)
-	.property("linear_damping", &Yurrgoht::RigidbodyComponent::m_linear_damping)
-	.property("angular_damping", &Yurrgoht::RigidbodyComponent::m_angular_damping)
-	.property("gravity_factor", &Yurrgoht::RigidbodyComponent::m_gravity_factor);
+meta_hpp::class_<Yurrgoht::RigidbodyComponent>()
+	.member_("motion_type", &Yurrgoht::RigidbodyComponent::m_motion_type)
+	.member_("friction", &Yurrgoht::RigidbodyComponent::m_friction)
+	.member_("restitution", &Yurrgoht::RigidbodyComponent::m_restitution)
+	.member_("linear_damping", &Yurrgoht::RigidbodyComponent::m_linear_damping)
+	.member_("angular_damping", &Yurrgoht::RigidbodyComponent::m_angular_damping)
+	.member_("gravity_factor", &Yurrgoht::RigidbodyComponent::m_gravity_factor);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::RigidbodyComponent)

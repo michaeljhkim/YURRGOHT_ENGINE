@@ -2,15 +2,13 @@
 
 #include "component.h"
 
-namespace Yurrgoht
-{
-	enum class EColliderType
-	{
+namespace Yurrgoht {
+
+	enum class EColliderType {
 		Box, Sphere, Capsule, Cylinder, Mesh
 	};
 
-	class ColliderComponent : public Component
-	{
+	class ColliderComponent : public Component {
 	public:
 		EColliderType m_type;
 
@@ -22,8 +20,7 @@ namespace Yurrgoht
 		POLYMORPHIC_DECLARATION
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("component", cereal::base_class<Component>(this)));
 			ar(cereal::make_nvp("position", m_position));
 		}

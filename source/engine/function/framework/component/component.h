@@ -4,17 +4,14 @@
 #include <string>
 #include <chrono>
 
-#include <rttr/registration>
-#include <rttr/registration_friend.h>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
-
 #include "engine/resource/serialization/serialization.h"
 
 namespace Yurrgoht {
 
-	class ITickable
-	{
+	class ITickable {
+        META_HPP_ENABLE_POLY_INFO()
 	public:
 		void setTickEnabled(bool tick_enabled) { m_tick_enabled = tick_enabled; }
 		void setTickInterval(float tick_interval) { m_tick_interval = tick_interval; }
@@ -38,8 +35,8 @@ namespace Yurrgoht {
 	};
 
 	class Entity;
-	class Component : public ITickable
-	{
+	class Component : public ITickable {
+		META_HPP_ENABLE_POLY_INFO(ITickable)
 	public:
 		Component() = default;
 		virtual ~Component() = default;
@@ -47,7 +44,7 @@ namespace Yurrgoht {
 		void attach(std::weak_ptr<Entity>& parent);
 		void detach();
 		std::weak_ptr<Entity>& getParent() { return m_parent; }
-		const std::string& getTypeName() { return m_type_name; }
+		const std::string& getTypeName() const { return m_type_name; }
 		void setTypeName(const std::string& type_name) { m_type_name = type_name; }
 
 	protected:
@@ -61,7 +58,6 @@ namespace Yurrgoht {
 	private:
 		friend Entity;
 
-		RTTR_ENABLE()
 		friend class cereal::access;
 		template<class Archive>
 		void serialize(Archive& ar) {
@@ -70,9 +66,26 @@ namespace Yurrgoht {
 	};
 }
 
+
+/*
+#define REGISTER_REFLECTION(parent_class) \
+	META_HPP_ENABLE_POLY_INFO(Yurrgoht::parent_class) \
+	friend class cereal::access; \
+	RTTR_ENABLE()
 #define REGISTER_REFLECTION(parent_class) \
 	RTTR_REGISTRATION_FRIEND \
-	RTTR_ENABLE(Yurrgoht::parent_class) \
+	RTTR_ENABLE(Bamboo::##parent_class) \
+	friend class cereal::access;
+
+RTTR_REGISTRATION{}
+#define RTTR_REGISTRATION_FRIEND friend void ::rttr_auto_register_reflection_function_();                              \
+                                template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
+                                friend struct rttr::detail::constructor_invoker;
+*/
+
+#define REGISTER_REFLECTION(...) \
+	REGISTRATION_FRIEND \
+	META_HPP_ENABLE_POLY_INFO(__VA_ARGS__) \
 	friend class cereal::access;
 
 #define POLYMORPHIC_DECLARATION virtual void inflate() override;

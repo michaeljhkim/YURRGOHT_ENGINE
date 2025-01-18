@@ -76,10 +76,13 @@ namespace Yurrgoht {
 		m_selected_entity = current_scene->getEntity(p_event->entity_id);
 	}
 
-	void PropertyUI::constructEntity(const rttr::instance& instance) {
-		const auto p_entity = instance.try_convert<Entity>();
-		const auto p_component = instance.try_convert<Component>();
-		auto properties = instance.get_derived_type().get_properties();
+	void PropertyUI::constructEntity(const meta_hpp::uvalue& instance) {
+		//const meta_hpp::class_type p_entity = meta_hpp::resolve_type(*instance.try_as<Entity>());
+		//const meta_hpp::class_type p_component = meta_hpp::resolve_type(*instance.try_as<Component>());
+		//auto properties = instance.get_derived_type().get_properties();
+		const auto p_entity = instance.try_as<Entity>();
+		const auto p_component = instance.try_as<Component>();
+		auto properties = meta_hpp::resolve_type(instance.get_type()).get_members();
 		
 		if (p_entity != nullptr && properties.empty()) {
 			return;
@@ -92,7 +95,7 @@ namespace Yurrgoht {
 		ImGuiTreeNodeFlags tree_node_flags = 0;
 		tree_node_flags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick |
 			ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap;
-		const std::string& type_name = p_component != nullptr ? p_component->getTypeName() : "Entity";
+		const std::string& type_name = (p_component != nullptr) ? p_component->getTypeName() : "Entity";
 		std::string title = type_name.substr(0, type_name.length() - 9);
 		bool is_tree_open = ImGui::TreeNodeEx(title.c_str(), tree_node_flags);
 
@@ -100,59 +103,54 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImVec4 rect_color = ImGui::IsItemActive() ? ImGui::GetStyleColorVec4(ImGuiCol_HeaderActive) : (
 			ImGui::IsItemHovered() ? ImGui::GetStyleColorVec4(ImGuiCol_HeaderHovered) : ImGui::GetStyleColorVec4(ImGuiCol_Header)
-			);
+		);
 		ImVec2 p_min = ImGui::GetCursorScreenPos();
 		ImVec2 p_max = ImVec2(p_min.x + ImGui::GetContentRegionAvail().x, p_min.y + ImGui::GetItemRectSize().y);
 		ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, ImGui::GetColorU32(rect_color));
 
-		if (p_component != nullptr)
-		{
+		if (p_component != nullptr) {
 			ImVec4 button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
 			button_color.w = 0.0f;
 			ImGui::PushStyleColor(ImGuiCol_Button, button_color);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 50);
-			if (ImGui::Button(ICON_FA_PLUS))
-			{
+			if (ImGui::Button(ICON_FA_PLUS)) {
 				// THIS PART ACTUALLY NEEDS CODE!!!
 				LOG_INFO("add component");
 			}
 			ImGui::SameLine(0, 5);
-			if (ImGui::Button(ICON_FA_TRASH))
-			{
+			if (ImGui::Button(ICON_FA_TRASH)) {
 				LOG_INFO("remove component");
 			}
 			ImGui::PopStyleColor();
 		}
 
 		// add properties
-		if (is_tree_open)
-		{
+		if (is_tree_open) {
 			ImGui::PushFont(smallFont());
 			ImGui::TableNextRow();
 
-			for (auto& prop : properties)
-			{
-				std::string prop_name = prop.get_name().to_string();
-				EPropertyType property_type = getPropertyType(prop.get_type());
+			for (auto& prop : properties) {
+				std::string prop_name = prop.get_name();
+				//EPropertyType property_type = getPropertyType(meta_hpp::resolve_type(prop));
+				EPropertyType property_type = getPropertyType(prop);
 				ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type now");
 
-				rttr::variant variant = prop.get_value(instance);
-				if (property_type.second == EPropertyContainerType::Mono)
-				{
-					m_property_constructors[property_type.first](prop_name, variant);
-					prop.set_value(instance, variant);
+				meta_hpp::uvalue variant_instance = prop.get(instance);
+				if (property_type.second == EPropertyContainerType::Mono) {
+					m_property_constructors[property_type.first](prop_name, variant_instance);
+					prop.set(instance, variant_instance);
 				}
-				else if (property_type.second == EPropertyContainerType::Array)
-				{
-					auto view = variant.create_sequential_view();
-					for (size_t i = 0; i < view.get_size(); ++i)
-					{
-						rttr::variant sub_variant = view.get_value(i);
+				else if (property_type.second == EPropertyContainerType::Array && variant_instance.has_index_op()) {
+					//auto view = variant_instance.try_as<>();
+					//auto view = variant_instance.get_type().as_array().get_data_type();
+					auto view_size = variant_instance.get_type();
+					for (size_t i = 0; i < view_size; ++i) {
+						meta_hpp::uvalue sub_variant = variant_instance[i];
 						std::string sub_prop_name = prop_name + "_" + std::to_string(i);
 						m_property_constructors[property_type.first](sub_prop_name, sub_variant);
-						view.set_value(i, sub_variant);
+						view_size.set(i, sub_variant);
 					}
-					prop.set_value(instance, variant);
+					prop.set(instance, variant_instance);
 				}
 			}
 			ImGui::TreePop();
@@ -160,8 +158,7 @@ namespace Yurrgoht {
 		}
 	}
 
-	void PropertyUI::constructPropertyBool(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyBool(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -169,8 +166,7 @@ namespace Yurrgoht {
 		ImGui::Checkbox(label.c_str(), &variant.get_value<bool>());
 	}
 
-	void PropertyUI::constructPropertyIntegar(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyIntegar(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -178,8 +174,7 @@ namespace Yurrgoht {
 		ImGui::InputInt(label.c_str(), &variant.get_value<int>());
 	}
 
-	void PropertyUI::constructPropertyFloat(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyFloat(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -189,16 +184,14 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
-	void PropertyUI::constructPropertyString(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyString(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
 		ImGui::Text("%s", (*&variant.get_value<std::string>()).c_str());
 	}
 
-	void PropertyUI::constructPropertyVec2(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyVec2(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -209,8 +202,7 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
-	void PropertyUI::constructPropertyVec3(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyVec3(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -221,8 +213,7 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
-	void PropertyUI::constructPropertyVec4(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyVec4(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -233,8 +224,7 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
-	void PropertyUI::constructPropertyColor3(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyColor3(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -245,8 +235,7 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
-	void PropertyUI::constructPropertyColor4(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyColor4(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
@@ -257,8 +246,7 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
-	void PropertyUI::constructPropertyAsset(const std::string& name, rttr::variant& variant)
-	{
+	void PropertyUI::constructPropertyAsset(const std::string& name, meta_hpp::uvalue& instance) {
 		ImGui::TableNextColumn();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 		ImGui::Text("%s", name.c_str());
@@ -275,87 +263,55 @@ namespace Yurrgoht {
 		int selected_index = 0;
 		const char* preview_value = asset_names[selected_index];
 		ImGuiComboFlags combo_flags = 0;
-		if (ImGui::BeginCombo("##select_asset", preview_value, combo_flags))
-		{
-			for (int i = 0; i < IM_ARRAYSIZE(asset_names); ++i)
-			{
+		if (ImGui::BeginCombo("##select_asset", preview_value, combo_flags)) {
+			for (int i = 0; i < IM_ARRAYSIZE(asset_names); ++i) {
 				const bool is_selected = selected_index == i;
 				if (ImGui::Selectable(asset_names[i], is_selected))
-				{
 					selected_index = i;
-				}
 
 				if (is_selected)
-				{
 					ImGui::SetItemDefaultFocus();
-				}	
 			}
 			ImGui::EndCombo();
 		}
 	}
 
-	void PropertyUI::addPropertyNameText(const std::string& name)
-	{
+	void PropertyUI::addPropertyNameText(const std::string& name) {
 		ImGui::TableNextColumn();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 		ImGui::Text("%s", name.c_str());
 	}
 
-	EPropertyType PropertyUI::getPropertyType(const rttr::type& type)
-	{
-		const std::string& type_name = type.get_name().to_string();
+	EPropertyType PropertyUI::getPropertyType(const meta_hpp::member& type) {
+		const std::string& type_name = type.get_name();
 		EPropertyValueType value_type = EPropertyValueType::Bool;
 		EPropertyContainerType container_type = EPropertyContainerType::Mono;
 		if (type_name.find("std::vector") != std::string::npos)
-		{
 			container_type = EPropertyContainerType::Array;
-		}
 		else if (type_name.find("std::map") != std::string::npos)
-		{
 			container_type = EPropertyContainerType::Map;
-		}
 
 		if (type_name.find("glm::vec<2") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Vec2;
-		}
 		else if (type_name.find("glm::vec<3") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Vec3;
-		}
 		else if (type_name.find("glm::vec<4") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Vec4;
-		}
 		else if (type_name.find("Color3") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Color3;
-		}
 		else if (type_name.find("Color4") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Color4;
-		}
 		else if (type_name.find("std::shared_ptr") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Asset;
-		}
 		else if (type_name.find("bool") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Bool;
-		}
 		else if (type_name.find("int") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Integar;
-		}
 		else if (type_name.find("float") != std::string::npos)
-		{
 			value_type = EPropertyValueType::Float;
-		}
 		else if (type_name.find("std::string") != std::string::npos)
-		{
 			value_type = EPropertyValueType::String;
-		}
-
+		
 		return std::make_pair(value_type, container_type);
 	}
 

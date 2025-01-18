@@ -2,53 +2,49 @@
 
 #include "editor/base/editor_ui.h"
 
-namespace rttr
-{
+namespace rttr {
 	class type;
 	class variant;
 }
 
-namespace Yurrgoht
-{
-	enum class EPropertyValueType
-	{
+namespace Yurrgoht {
+
+	enum class EPropertyValueType {
 		Bool, Integar, Float, String, Vec2, Vec3, Vec4, Color3, Color4, Asset
 	};
 
-	enum class EPropertyContainerType
-	{
+	enum class EPropertyContainerType {
 		Mono, Array, Map
 	};
 
 	using EPropertyType = std::pair<EPropertyValueType, EPropertyContainerType>;
 
-	class PropertyUI : public EditorUI
-	{
+	class PropertyUI : public EditorUI {
 	public:
 		virtual void init() override;
 		virtual void construct() override;
 
 	private:
 		void onSelectEntity(const std::shared_ptr<class Event>& event);
-		void constructEntity(const rttr::instance& instance);
+		void constructEntity(const meta_hpp::uvalue& instance);
 
-		void constructPropertyBool(const std::string& name, rttr::variant& variant);
-		void constructPropertyIntegar(const std::string& name, rttr::variant& variant);
-		void constructPropertyFloat(const std::string& name, rttr::variant& variant);
-		void constructPropertyString(const std::string& name, rttr::variant& variant);
-		void constructPropertyVec2(const std::string& name, rttr::variant& variant);
-		void constructPropertyVec3(const std::string& name, rttr::variant& variant);
-		void constructPropertyVec4(const std::string& name, rttr::variant& variant);
-		void constructPropertyColor3(const std::string& name, rttr::variant& variant);
-		void constructPropertyColor4(const std::string& name, rttr::variant& variant);
-		void constructPropertyAsset(const std::string& name, rttr::variant& variant);
+		void constructPropertyBool(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyIntegar(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyFloat(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyString(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyVec2(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyVec3(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyVec4(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyColor3(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyColor4(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyAsset(const std::string& name, meta_hpp::uvalue& instance);
 
 		void addPropertyNameText(const std::string& name);
 
-		EPropertyType getPropertyType(const rttr::type& type);
+		EPropertyType getPropertyType(const meta_hpp::member& type);
 
 		std::weak_ptr<class Entity> m_selected_entity;
 		std::shared_ptr<ImGuiImage> m_dummy_image;
-		std::map<EPropertyValueType, std::function<void(const std::string&, rttr::variant&)>> m_property_constructors;
+		std::map<EPropertyValueType, std::function<void(const std::string&, meta_hpp::uvalue&)>> m_property_constructors;
 	};
 }

@@ -9,16 +9,16 @@
 #include <algorithm>
 #include <functional>
 
-RTTR_REGISTRATION
-{
-rttr::registration::class_<Yurrgoht::CameraComponent>("CameraComponent")
-	 .property("fovy", &Yurrgoht::CameraComponent::m_fovy)
-	 .property("near", &Yurrgoht::CameraComponent::m_near)
-	 .property("far", &Yurrgoht::CameraComponent::m_far)
-	 .property("move_speed", &Yurrgoht::CameraComponent::m_move_speed)
-	 .property("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed)
-	 .property("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed)
-	 .property("exposure", &Yurrgoht::CameraComponent::m_exposure);
+
+REGISTER_AT_RUNTIME {
+	meta_hpp::class_<Yurrgoht::CameraComponent>()
+		.member_("fovy", &Yurrgoht::CameraComponent::m_fovy)
+		.member_("near", &Yurrgoht::CameraComponent::m_near)
+		.member_("far", &Yurrgoht::CameraComponent::m_far)
+		.member_("move_speed", &Yurrgoht::CameraComponent::m_move_speed)
+		.member_("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed)
+		.member_("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed)
+		.member_("exposure", &Yurrgoht::CameraComponent::m_exposure);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::CameraComponent)

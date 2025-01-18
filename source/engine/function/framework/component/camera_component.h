@@ -3,15 +3,13 @@
 #include "component.h"
 #include "engine/core/math/transform.h"
 
-namespace Yurrgoht
-{
-	enum class EProjectionType
-	{
+namespace Yurrgoht {
+	
+	enum class EProjectionType {
 		Perspective, Orthographic
 	};
 
-	class CameraComponent : public Component
-	{
+	class CameraComponent : public Component {
 	public:
 		CameraComponent();
 		~CameraComponent();
@@ -52,8 +50,7 @@ namespace Yurrgoht
 		REGISTER_REFLECTION(Component)
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			// component
 			ar(cereal::make_nvp("component", cereal::base_class<Component>(this)));
 

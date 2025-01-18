@@ -1,11 +1,10 @@
 #include "light_component.h"
 
-RTTR_REGISTRATION
-{
-rttr::registration::class_<Yurrgoht::LightComponent>("LightComponent")
-	 .property("intensity", &Yurrgoht::LightComponent::m_intensity)
-	 .property("color", &Yurrgoht::LightComponent::m_color)
-	 .property("cast_shadow", &Yurrgoht::LightComponent::m_cast_shadow);
+REGISTER_AT_RUNTIME {
+	meta_hpp::class_<Yurrgoht::LightComponent>()
+		.member_("intensity", &Yurrgoht::LightComponent::m_intensity)
+		.member_("color", &Yurrgoht::LightComponent::m_color)
+		.member_("cast_shadow", &Yurrgoht::LightComponent::m_cast_shadow);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::LightComponent)

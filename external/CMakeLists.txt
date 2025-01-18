@@ -47,3 +47,5 @@ if(NOT TARGET Jolt)
     add_subdirectory(jolt)
     #set_target_properties(Jolt PROPERTIES FOLDER ${external_folder}/jolt)
 endif()
+
+add_subdirectory(meta.hpp)

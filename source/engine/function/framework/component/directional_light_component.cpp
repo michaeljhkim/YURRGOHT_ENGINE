@@ -1,10 +1,11 @@
 #include "directional_light_component.h"
 
-RTTR_REGISTRATION
-{
-rttr::registration::class_<Yurrgoht::DirectionalLightComponent>("DirectionalLightComponent")
-	.property("cascade_frustum_near", &Yurrgoht::DirectionalLightComponent::m_cascade_frustum_near);
+
+REGISTER_AT_RUNTIME {
+	meta_hpp::class_<Yurrgoht::DirectionalLightComponent>()
+		.member_("cascade_frustum_near", &Yurrgoht::DirectionalLightComponent::m_cascade_frustum_near);
 }
+
 
 CEREAL_REGISTER_TYPE(Yurrgoht::DirectionalLightComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::LightComponent, Yurrgoht::DirectionalLightComponent)

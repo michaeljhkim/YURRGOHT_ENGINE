@@ -31,6 +31,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC stdc++)
 #target_link_libraries(${TARGET_NAME} PUBLIC RTTR::Core)
 target_link_libraries(${TARGET_NAME} PUBLIC rttr_core)
 target_link_libraries(${TARGET_NAME} PUBLIC ktx)
+target_link_libraries(${TARGET_NAME} PUBLIC meta.hpp::meta.hpp)
 target_link_libraries(${TARGET_NAME} PRIVATE Jolt)
 target_link_directories(${TARGET_NAME} PUBLIC /usr/lib/x86_64-linux-gnu)
 

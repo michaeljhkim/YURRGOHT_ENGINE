@@ -4,10 +4,8 @@
 #include "engine/resource/asset/texture_cube.h"
 #include "engine/resource/asset/static_mesh.h"
 
-namespace Yurrgoht
-{
-	class SkyLightComponent : public LightComponent, public IAssetRef
-	{
+namespace Yurrgoht {
+	class SkyLightComponent : public LightComponent, public IAssetRef {
 	public:
 		SkyLightComponent();
 		virtual ~SkyLightComponent();
@@ -27,8 +25,7 @@ namespace Yurrgoht
 		REGISTER_REFLECTION(LightComponent)
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("light", cereal::base_class<LightComponent>(this)));
 			ar(cereal::make_nvp("asset_ref", cereal::base_class<IAssetRef>(this)));
 		}

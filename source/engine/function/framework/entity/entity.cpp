@@ -5,17 +5,15 @@
 
 #include <queue>
 
-namespace Yurrgoht
-{
-	RTTR_REGISTRATION
-	{
-	rttr::registration::class_<Yurrgoht::Entity>("Entity");
+namespace Yurrgoht {
+	REGISTER_AT_RUNTIME {
+	meta_hpp::class_<Yurrgoht::Entity>();
+		//.member_("children", &Yurrgoht::Entity::m_children)
+		//.member_("components", &Yurrgoht::Entity::m_components);
 	}
 
-	Entity::~Entity()
-	{
-		for (auto& component : m_components)
-		{
+	Entity::~Entity() {
+		for (auto& component : m_components) {
 			component.reset();
 		}
 		m_components.clear();

@@ -4,10 +4,10 @@
 #include "engine/function/render/pass/filter_cube_pass.h"
 #include "engine/resource/asset/texture_2d.h"
 
-RTTR_REGISTRATION
+REGISTER_AT_RUNTIME 
 {
-rttr::registration::class_<Yurrgoht::SkyLightComponent>("SkyLightComponent")
-	 .property("texture_cube", &Yurrgoht::SkyLightComponent::m_texture_cube);
+meta_hpp::class_<Yurrgoht::SkyLightComponent>()
+	.member_("texture_cube", &Yurrgoht::SkyLightComponent::m_texture_cube);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SkyLightComponent)
