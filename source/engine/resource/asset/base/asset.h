@@ -7,9 +7,6 @@
 #include <cereal/archives/binary.hpp>
 #include <cereal/cereal.hpp>
 
-#include <rttr/registration>
-#include <rttr/registration_friend.h>
-
 #include "engine/resource/serialization/serialization.h"
 #include "engine/resource/asset/base/url.h"
 

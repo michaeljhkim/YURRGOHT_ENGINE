@@ -38,17 +38,6 @@ RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
     cmake .. -G Ninja -B . -DBUILD_SHARED_LIBS=OFF && \
     cmake --install .
     
-# rttr dependency - static - manually had to set install location and then copy header files b/c rttr does not do so for static for some reason
-RUN git clone https://github.com/rttrorg/rttr.git && \
-    cd rttr && mkdir build && cd build && \
-    cmake .. -G Ninja -B . -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_STANDARD=20 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON \
-    -DBUILD_WITH_STATIC_RUNTIME_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_INSTALLER=ON -DBUILD_PACKAGE=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    cmake --build . && \
-    cmake --install . && \
-    cd ../src/rttr && \
-    find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
-    
     
 # Download and extract the LunarG Vulkan SDK
 ENV VULKAN_SDK_VERSION=1.3.296.0

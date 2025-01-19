@@ -4,8 +4,6 @@
 #include <string>
 #include <chrono>
 
-#include <rttr/registration>
-#include <rttr/registration_friend.h>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
 
