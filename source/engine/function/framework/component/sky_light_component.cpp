@@ -6,8 +6,10 @@
 
 REGISTER_AT_RUNTIME 
 {
-meta_hpp::class_<Yurrgoht::SkyLightComponent>()
+meta_hpp::class_<Yurrgoht::SkyLightComponent>(meta_hpp::metadata_()("name", "SkyLightComponent"s))
 	.member_("texture_cube", &Yurrgoht::SkyLightComponent::m_texture_cube);
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::Component>("SkyLightComponent");
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SkyLightComponent)

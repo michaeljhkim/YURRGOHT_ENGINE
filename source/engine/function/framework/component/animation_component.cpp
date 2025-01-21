@@ -4,8 +4,10 @@
 
 
 REGISTER_AT_RUNTIME {
-	meta_hpp::class_<Yurrgoht::AnimationComponent>()
-		.member_("animations", &Yurrgoht::AnimationComponent::m_animations);
+meta_hpp::class_<Yurrgoht::AnimationComponent>(meta_hpp::metadata_()("name", "AnimationComponent"s))
+	.member_("animations", &Yurrgoht::AnimationComponent::m_animations);
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::Component>("AnimationComponent");
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::AnimationComponent)

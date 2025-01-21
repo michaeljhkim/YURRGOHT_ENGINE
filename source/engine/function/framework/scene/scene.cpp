@@ -11,10 +11,12 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Scene)
 namespace Yurrgoht {
 
 	Scene::Scene() {
-		auto derived_entity_types = rttr::type::get_by_name("Entity").get_derived_classes();
-		for (const auto& derived_entity_type : derived_entity_types) {
-			m_entity_class_names.push_back(derived_entity_type.get_name().to_string());
+		//auto derived_entity_types = rttr::type::get_by_name("Entity").get_derived_classes();
+		auto derived_entity_types = global_reflection_scope.get_typedef("Entity").as_class().get_metadata().equal_range("derived_classes");
+		for (auto it = derived_entity_types.first; it != derived_entity_types.second; ++it) {
+			m_entity_class_names.push_back(it->second.as<std::string>());
 		}
+		
 		LOG_INFO("SUCCESS");
 	}
 
@@ -99,9 +101,9 @@ namespace Yurrgoht {
 			entity = std::make_shared<Entity>();
 		}
 		else {
-			rttr::type type = rttr::type::get_by_name(name);
-			rttr::variant variant = type.create();
-			entity = variant.get_value<std::shared_ptr<Entity>>();
+			const meta_hpp::class_type type = global_reflection_scope.get_typedef(name).as_class();
+			meta_hpp::uvalue variant = type.create();
+			entity = variant.as<std::shared_ptr<Entity>>();
 		}
 
 		entity->m_id = m_next_entity_id++;

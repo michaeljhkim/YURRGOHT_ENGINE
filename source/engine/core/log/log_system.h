@@ -1,6 +1,6 @@
 #pragma once
 
-#define SPDLOG_USE_STD_FORMAT
+//#define SPDLOG_USE_STD_FORMAT
 #include <spdlog/async.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

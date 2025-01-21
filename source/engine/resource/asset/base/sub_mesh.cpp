@@ -2,10 +2,10 @@
 #include "engine/function/global/engine_context.h"
 #include "engine/resource/asset/asset_manager.h"
 
-RTTR_REGISTRATION
+REGISTER_AT_RUNTIME
 {
-rttr::registration::class_<Yurrgoht::SubMesh>("SubMesh")
-	 .property("material", &Yurrgoht::SubMesh::m_material);
+meta_hpp::class_<Yurrgoht::SubMesh>()
+	.member_("material", &Yurrgoht::SubMesh::m_material);
 }
 
 namespace Yurrgoht

@@ -11,14 +11,16 @@
 
 
 REGISTER_AT_RUNTIME {
-	meta_hpp::class_<Yurrgoht::CameraComponent>()
-		.member_("fovy", &Yurrgoht::CameraComponent::m_fovy)
-		.member_("near", &Yurrgoht::CameraComponent::m_near)
-		.member_("far", &Yurrgoht::CameraComponent::m_far)
-		.member_("move_speed", &Yurrgoht::CameraComponent::m_move_speed)
-		.member_("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed)
-		.member_("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed)
-		.member_("exposure", &Yurrgoht::CameraComponent::m_exposure);
+meta_hpp::class_<Yurrgoht::CameraComponent>(meta_hpp::metadata_()("name", "CameraComponent"s))
+	.member_("fovy", &Yurrgoht::CameraComponent::m_fovy)
+	.member_("near", &Yurrgoht::CameraComponent::m_near)
+	.member_("far", &Yurrgoht::CameraComponent::m_far)
+	.member_("move_speed", &Yurrgoht::CameraComponent::m_move_speed)
+	.member_("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed)
+	.member_("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed)
+	.member_("exposure", &Yurrgoht::CameraComponent::m_exposure);
+
+meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "CameraComponent"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::CameraComponent)

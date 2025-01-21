@@ -185,6 +185,8 @@ namespace Yurrgoht {
 	}
 
 	void SimulationUI::loadAsset(const std::string& url) {
+		std::cout << "TEST " << url << std::endl;
+
 		const auto& as = g_engine.assetManager();
 		EAssetType asset_type = as->getAssetType(url);
 		std::string basename = g_engine.fileSystem()->basename(url);
@@ -417,7 +419,7 @@ namespace Yurrgoht {
 			
 			// vscode issues warnings if value is assigned in an if conditional, so warning was disabled for this code block
 			#pragma clang diagnostic push
-			#pragma clang diagnostic ignored "-Wparentheses"	
+			#pragma clang diagnostic ignored "-Wparentheses"
 			if (payload = ImGui::AcceptDragDropPayload("load_asset", flags)) {
 				if (!m_created_entity) {
 					std::string url((const char*)payload->Data, payload->DataSize);

@@ -1,7 +1,7 @@
 #include "box_collider_component.h"
 
 REGISTER_AT_RUNTIME {
-	meta_hpp::class_<Yurrgoht::BoxColliderComponent>()
+	meta_hpp::class_<Yurrgoht::BoxColliderComponent>(meta_hpp::metadata_()("name", "BoxColliderComponent"s))
 	.member_("size", &Yurrgoht::BoxColliderComponent::m_size);
 }
 

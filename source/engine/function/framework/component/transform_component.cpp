@@ -3,12 +3,14 @@
 
 REGISTER_AT_RUNTIME 
 {
-meta_hpp::class_<Yurrgoht::Transform>()
+meta_hpp::class_<Yurrgoht::Transform>(meta_hpp::metadata_()("name", "Transform"s))
 	.member_("position", &Yurrgoht::Transform::m_position)
 	.member_("rotation", &Yurrgoht::Transform::m_rotation)
 	.member_("scale", &Yurrgoht::Transform::m_scale);
 
-meta_hpp::class_<Yurrgoht::TransformComponent>();
+meta_hpp::class_<Yurrgoht::TransformComponent>(meta_hpp::metadata_()("name", "TransformComponent"s));
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::Component>("TransformComponent");
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::TransformComponent)

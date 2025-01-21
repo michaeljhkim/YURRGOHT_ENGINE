@@ -6,8 +6,8 @@ find_package(Vulkan REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(Ktx REQUIRED)
-find_package("yaml-cpp" REQUIRED)
-find_package(spdlog REQUIRED)
+#find_package("yaml-cpp" REQUIRED)
+#find_package(spdlog REQUIRED)
 #find_package(Jolt REQUIRED)
 
 
@@ -19,6 +19,10 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${HEADER_FILES} ${SOURCE_F
 # Create the target library
 add_library(${TARGET_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Yurrgoht")
+target_include_directories(${TARGET_NAME} PRIVATE 
+    "${yaml-cpp_SOURCE_DIR}/include"
+    ${spdlog_SOURCE_DIR}/include
+)
 
 # Link statically to Vulkan and other libraries
 target_link_libraries(${TARGET_NAME} PUBLIC ${Vulkan_LIBRARY})

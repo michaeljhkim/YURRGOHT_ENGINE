@@ -7,9 +7,9 @@
 
 namespace Yurrgoht {
 	REGISTER_AT_RUNTIME {
-	meta_hpp::class_<Yurrgoht::Entity>();
-		//.member_("children", &Yurrgoht::Entity::m_children)
-		//.member_("components", &Yurrgoht::Entity::m_components);
+	meta_hpp::class_<Yurrgoht::Entity>(meta_hpp::metadata_()("name", "Entity"s));
+	meta_hpp::extend_scope_(global_reflection_scope)
+			.typedef_<Yurrgoht::Entity>("Entity");
 	}
 
 	Entity::~Entity() {
@@ -41,7 +41,7 @@ namespace Yurrgoht {
 	void Entity::inflate() {
 		for (auto& component : m_components) {
 			// set component type name
-			component->setTypeName(rttr::type::get(*component.get()).get_name().to_string());
+			component->setTypeName(meta_hpp::resolve_type(*component).get_metadata().find("name")->second.as<std::string>());
 
 			// attach to current entity
 			std::weak_ptr<Yurrgoht::Entity> weakEntity = weak_from_this();
@@ -69,7 +69,7 @@ namespace Yurrgoht {
 
 	void Entity::addComponent(std::shared_ptr<Component> component) {
 		// set component type name
-		component->setTypeName(rttr::type::get(*component.get()).get_name().to_string());
+		component->setTypeName(meta_hpp::resolve_type(component).get_metadata().find("name")->second.as<std::string>());
 
 		// attach to current entity
 		std::weak_ptr<Yurrgoht::Entity> weakEntity = weak_from_this();

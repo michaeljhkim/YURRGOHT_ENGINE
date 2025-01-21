@@ -140,6 +140,8 @@ namespace Yurrgoht {
 					m_property_constructors[property_type.first](prop_name, variant_instance);
 					prop.set(instance, variant_instance);
 				}
+				//COMMENTED OUT FOR NOW BECAUSE ITS NOT POSSIBLE TO DO YET WITH meta.hpp
+				/*
 				else if (property_type.second == EPropertyContainerType::Array && variant_instance.has_index_op()) {
 					//auto view = variant_instance.try_as<>();
 					//auto view = variant_instance.get_type().as_array().get_data_type();
@@ -152,6 +154,7 @@ namespace Yurrgoht {
 					}
 					prop.set(instance, variant_instance);
 				}
+				*/
 			}
 			ImGui::TreePop();
 			ImGui::PopFont();
@@ -163,7 +166,7 @@ namespace Yurrgoht {
 
 		ImGui::TableNextColumn();
 		std::string label = "##" + name;
-		ImGui::Checkbox(label.c_str(), &variant.get_value<bool>());
+		ImGui::Checkbox(label.c_str(), &instance.as<bool>());
 	}
 
 	void PropertyUI::constructPropertyIntegar(const std::string& name, meta_hpp::uvalue& instance) {
@@ -171,7 +174,7 @@ namespace Yurrgoht {
 
 		ImGui::TableNextColumn();
 		std::string label = "##" + name;
-		ImGui::InputInt(label.c_str(), &variant.get_value<int>());
+		ImGui::InputInt(label.c_str(), &instance.as<int>());
 	}
 
 	void PropertyUI::constructPropertyFloat(const std::string& name, meta_hpp::uvalue& instance) {
@@ -180,7 +183,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		ImGui::InputFloat(label.c_str(), &variant.get_value<float>());
+		ImGui::InputFloat(label.c_str(), &instance.as<float>());
 		ImGui::PopItemWidth();
 	}
 
@@ -188,7 +191,7 @@ namespace Yurrgoht {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
-		ImGui::Text("%s", (*&variant.get_value<std::string>()).c_str());
+		ImGui::Text("%s", (*&instance.as<std::string>()).c_str());
 	}
 
 	void PropertyUI::constructPropertyVec2(const std::string& name, meta_hpp::uvalue& instance) {
@@ -197,7 +200,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		glm::vec2& vec2 = variant.get_value<glm::vec2>();
+		glm::vec2& vec2 = instance.as<glm::vec2>();
 		ImGui::DragFloat2(label.c_str(), glm::value_ptr(vec2), DRAG_SPEED);
 		ImGui::PopItemWidth();
 	}
@@ -208,7 +211,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		glm::vec3& vec3 = variant.get_value<glm::vec3>();
+		glm::vec3& vec3 = instance.as<glm::vec3>();
 		ImGui::DragFloat3(label.c_str(), glm::value_ptr(vec3), DRAG_SPEED);
 		ImGui::PopItemWidth();
 	}
@@ -219,7 +222,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		glm::vec4& vec4 = variant.get_value<glm::vec4>();
+		glm::vec4& vec4 = instance.as<glm::vec4>();
 		ImGui::DragFloat4(label.c_str(), glm::value_ptr(vec4), DRAG_SPEED);
 		ImGui::PopItemWidth();
 	}
@@ -230,7 +233,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		Color3& color3 = variant.get_value<Color3>();
+		Color3& color3 = instance.as<Color3>();
 		ImGui::ColorEdit3(label.c_str(), color3.data());
 		ImGui::PopItemWidth();
 	}
@@ -241,7 +244,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		Color4& color4 = variant.get_value<Color4>();
+		Color4& color4 = instance.as<Color4>();
 		ImGui::ColorEdit3(label.c_str(), color4.data());
 		ImGui::PopItemWidth();
 	}

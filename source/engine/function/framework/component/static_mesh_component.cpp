@@ -4,8 +4,10 @@
 
 REGISTER_AT_RUNTIME 
 {
-meta_hpp::class_<Yurrgoht::StaticMeshComponent>()
+meta_hpp::class_<Yurrgoht::StaticMeshComponent>(meta_hpp::metadata_()("name", "StaticMeshComponent"s))
 	.member_("static_mesh", &Yurrgoht::StaticMeshComponent::m_static_mesh);
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::Component>("StaticMeshComponent");
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::StaticMeshComponent)

@@ -2,10 +2,10 @@
 #include "engine/function/framework/entity/entity.h"
 
 namespace Yurrgoht {
-
 	REGISTER_AT_RUNTIME {
-		//rttr::registration::class_<Yurrgoht::Component>("Component");
-		meta_hpp::class_<Yurrgoht::Component>();
+	meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("name", "Component"s));
+	meta_hpp::extend_scope_(global_reflection_scope)
+		.typedef_<Yurrgoht::Component>("Component");
 	}
 
 	void ITickable::tickable(float delta_time) {

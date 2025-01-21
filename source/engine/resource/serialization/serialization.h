@@ -6,9 +6,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <meta.hpp/headers/meta.hpp/meta_all.hpp>
 
-#include <rttr/registration>
-#include <rttr/registration_friend.h>
+using namespace std::literals;
 
+// The global scope for getting all registered values
+static meta_hpp::scope global_reflection_scope = meta_hpp::static_scope_("global_reflection_scope");
 
 // FOR REFLECTION - When called, the developer defines auto_register_function_ to specify what should be reflected
 #define CONCAT_INNER(a, b) a##b

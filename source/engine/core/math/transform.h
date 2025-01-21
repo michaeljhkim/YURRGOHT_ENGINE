@@ -32,8 +32,6 @@ namespace Yurrgoht {
 
 		bool operator==(const Transform& other) const;
 		bool operator!=(const Transform& other) const;
-		
-		REGISTER_REFLECTION()
 	};
 
 	struct QTransform

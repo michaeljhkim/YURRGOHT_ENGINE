@@ -19,6 +19,8 @@ namespace Yurrgoht
 		bool m_contains_occlusion_channel = false;
 
 	private:
+        META_HPP_ENABLE_POLY_INFO(IAssetRef)
+		
 		friend class cereal::access;
 		template<class Archive>
 		void serialize(Archive& ar)

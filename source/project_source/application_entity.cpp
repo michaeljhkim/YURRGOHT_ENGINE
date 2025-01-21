@@ -11,10 +11,15 @@
 #include "engine/function/framework/component/sphere_collider_component.h"
 #include "engine/function/framework/component/cylinder_collider_component.h"
 
-RTTR_REGISTRATION
-{
-rttr::registration::class_<Yurrgoht::ApplicationEntity>("ApplicationEntity") .constructor<>()()
-	.property("spawn_num", &Yurrgoht::ApplicationEntity::m_spawn_num);
+REGISTER_AT_RUNTIME {
+meta_hpp::class_<Yurrgoht::ApplicationEntity>(meta_hpp::metadata_()("name", "ApplicationEntity"s)) 
+	.constructor_<>()
+	.member_("spawn_num", &Yurrgoht::ApplicationEntity::m_spawn_num);
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::ApplicationEntity>("ApplicationEntity");
+
+//adding as derived_classes to Entity metadata 
+meta_hpp::class_<Yurrgoht::Entity>(meta_hpp::metadata_()("derived_classes", "ApplicationEntity"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::ApplicationEntity)

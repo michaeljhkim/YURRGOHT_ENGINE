@@ -2,11 +2,6 @@
 
 #include "editor/base/editor_ui.h"
 
-namespace rttr {
-	class type;
-	class variant;
-}
-
 namespace Yurrgoht {
 
 	enum class EPropertyValueType {

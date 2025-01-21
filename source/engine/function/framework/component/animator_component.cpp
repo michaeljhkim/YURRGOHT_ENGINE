@@ -7,7 +7,7 @@
 
 REGISTER_AT_RUNTIME 
 {
-meta_hpp::class_<Yurrgoht::AnimatorComponent>()
+meta_hpp::class_<Yurrgoht::AnimatorComponent>(meta_hpp::metadata_()("name", "AnimatorComponent"s))
 	.member_("skeleton", &Yurrgoht::AnimatorComponent::m_skeleton);
 }
 

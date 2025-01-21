@@ -71,8 +71,9 @@ Written down thoughts to remember stuff:
 - I AM TRYING TO REPLACE RTTR WITH meta.hpp
 - I think I converted just about everything required, need to clean up commented out old code
 
-
-
+- TODO TOMORROW: when registering a child class, add some meta data to the parent
+- make a map or something and just modify that map in the meta data
+- meta data CAN accept maps
 
 
 - You want a folder with 6 images (.exr, .png, .jpg, .e.tc...)

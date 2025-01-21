@@ -49,3 +49,15 @@ if(NOT TARGET Jolt)
 endif()
 
 add_subdirectory(meta.hpp)
+
+FetchContent_Declare(
+    yaml-cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp
+    GIT_TAG "0.8.0"
+)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog
+    GIT_TAG "v1.15.0"
+)
+FetchContent_MakeAvailable(yaml-cpp spdlog)

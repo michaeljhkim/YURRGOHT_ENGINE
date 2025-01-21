@@ -1,7 +1,7 @@
 #include "capsule_collider_component.h"
 
 REGISTER_AT_RUNTIME {
-	meta_hpp::class_<Yurrgoht::CapsuleColliderComponent>()
+	meta_hpp::class_<Yurrgoht::CapsuleColliderComponent>(meta_hpp::metadata_()("name", "CapsuleColliderComponent"s))
 		.member_("radius", &Yurrgoht::CapsuleColliderComponent::m_radius)
 		.member_("height", &Yurrgoht::CapsuleColliderComponent::m_height);
 }

@@ -4,8 +4,10 @@
 
 REGISTER_AT_RUNTIME 
 {
-meta_hpp::class_<Yurrgoht::SkeletalMeshComponent>()
+meta_hpp::class_<Yurrgoht::SkeletalMeshComponent>(meta_hpp::metadata_()("name", "SkeletalMeshComponent"s))
 	.member_("skeletal_mesh", &Yurrgoht::SkeletalMeshComponent::m_skeletal_mesh);
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::Component>("SkeletalMeshComponent");
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SkeletalMeshComponent)

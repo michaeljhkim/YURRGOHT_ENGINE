@@ -2,13 +2,12 @@
 #include "engine/function/global/engine_context.h"
 #include "engine/resource/asset/asset_manager.h"
 
-RTTR_REGISTRATION
-{
-rttr::registration::class_<Yurrgoht::Material>("Material")
-	 .property("base_color_texure", &Yurrgoht::Material::m_base_color_texure)
-	 .property("metallic_roughness_occlusion_texure", &Yurrgoht::Material::m_metallic_roughness_occlusion_texure)
-	 .property("normal_texure", &Yurrgoht::Material::m_normal_texure)
-	 .property("emissive_texure", &Yurrgoht::Material::m_emissive_texure);
+REGISTER_AT_RUNTIME {
+meta_hpp::class_<Yurrgoht::Material>(meta_hpp::metadata_()("name", "Material"s))
+	.member_("base_color_texure", &Yurrgoht::Material::m_base_color_texure)
+	.member_("metallic_roughness_occlusion_texure", &Yurrgoht::Material::m_metallic_roughness_occlusion_texure)
+	.member_("normal_texure", &Yurrgoht::Material::m_normal_texure)
+	.member_("emissive_texure", &Yurrgoht::Material::m_emissive_texure);
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::Material)

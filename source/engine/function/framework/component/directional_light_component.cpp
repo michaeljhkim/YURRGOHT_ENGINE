@@ -2,8 +2,10 @@
 
 
 REGISTER_AT_RUNTIME {
-	meta_hpp::class_<Yurrgoht::DirectionalLightComponent>()
-		.member_("cascade_frustum_near", &Yurrgoht::DirectionalLightComponent::m_cascade_frustum_near);
+meta_hpp::class_<Yurrgoht::DirectionalLightComponent>(meta_hpp::metadata_()("name", "DirectionalLightComponent"s))
+	.member_("cascade_frustum_near", &Yurrgoht::DirectionalLightComponent::m_cascade_frustum_near);
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::Component>("DirectionalLightComponent");
 }
 
 
