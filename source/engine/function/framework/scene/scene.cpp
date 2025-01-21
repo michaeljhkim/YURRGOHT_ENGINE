@@ -11,7 +11,6 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Scene)
 namespace Yurrgoht {
 
 	Scene::Scene() {
-		//auto derived_entity_types = rttr::type::get_by_name("Entity").get_derived_classes();
 		auto derived_entity_types = global_reflection_scope.get_typedef("Entity").as_class().get_metadata().equal_range("derived_classes");
 		for (auto it = derived_entity_types.first; it != derived_entity_types.second; ++it) {
 			m_entity_class_names.push_back(it->second.as<std::string>());
@@ -50,9 +49,8 @@ namespace Yurrgoht {
 	}
 
 	void Scene::beginPlay() {
-		for (const auto& iter : m_entities) {
+		for (const auto& iter : m_entities)
 			iter.second->beginPlay();
-		}
 	}
 
 	void Scene::tick(float delta_time) {
@@ -63,14 +61,12 @@ namespace Yurrgoht {
 			entity->updateTransforms();
 
 			// tick entity
-			if (entity == m_camera_entity.lock() || g_engine.isPlaying() || is_stepping) {
+			if (entity == m_camera_entity.lock() || g_engine.isPlaying() || is_stepping)
 				entity->tickable(delta_time);
-			}
 		}
 
-		if (is_stepping) {
+		if (is_stepping)
 			is_stepping = false;
-		}
 	}
 
 	void Scene::step() {
@@ -82,7 +78,6 @@ namespace Yurrgoht {
 		if (iter != m_entities.end()) {
 			return iter->second;
 		}
-
 		return {};
 	}
 
@@ -113,9 +108,8 @@ namespace Yurrgoht {
 		// every entity has transform component
 		entity->addComponent(std::make_shared<TransformComponent>());
 
-		if (g_engine.isSimulating()) {
+		if (g_engine.isSimulating())
 			entity->beginPlay();
-		}
 
 		m_entities[entity->m_id] = entity;
 		return m_entities[entity->m_id];

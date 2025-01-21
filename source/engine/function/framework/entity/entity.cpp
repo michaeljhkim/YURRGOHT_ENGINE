@@ -9,7 +9,7 @@ namespace Yurrgoht {
 	REGISTER_AT_RUNTIME {
 	meta_hpp::class_<Yurrgoht::Entity>(meta_hpp::metadata_()("name", "Entity"s));
 	meta_hpp::extend_scope_(global_reflection_scope)
-			.typedef_<Yurrgoht::Entity>("Entity");
+		.typedef_<Yurrgoht::Entity>("Entity");
 	}
 
 	Entity::~Entity() {
@@ -20,22 +20,19 @@ namespace Yurrgoht {
 	}
 
 	void Entity::beginPlay() {
-		for (auto& component : m_components) {
+		for (auto& component : m_components)
 			component->beginPlay();
-		}
 	}
 
 	void Entity::tick(float delta_time) {
 		// tick components
-		for (auto& component : m_components) {
+		for (auto& component : m_components)
 			component->tickable(delta_time);
-		}
 	}
 
 	void Entity::endPlay() {
-		for (auto& component : m_components) {
+		for (auto& component : m_components)
 			component->endPlay();
-		}
 	}
 
 	void Entity::inflate() {
@@ -62,31 +59,33 @@ namespace Yurrgoht {
 
 	void Entity::detach() {
 		auto& children = m_parent.lock()->m_children;
-		children.erase(std::remove_if(children.begin(), children.end(), [this](const auto& child) {
-			return child.lock()->m_id == m_id; }), children.end());
+		children.erase(std::remove_if(children.begin(), children.end(), 
+			[this](const auto& child) {
+				return child.lock()->m_id == m_id; 
+			})
+		, children.end());
 		m_parent.reset();
 	}
 
 	void Entity::addComponent(std::shared_ptr<Component> component) {
 		// set component type name
-		component->setTypeName(meta_hpp::resolve_type(component).get_metadata().find("name")->second.as<std::string>());
+		component->setTypeName(meta_hpp::resolve_type(*component).get_metadata().find("name")->second.as<std::string>());
 
 		// attach to current entity
 		std::weak_ptr<Yurrgoht::Entity> weakEntity = weak_from_this();
 		component->attach(weakEntity);
 		component->inflate();
 		
-		if (g_engine.isSimulating()) {
+		if (g_engine.isSimulating())
 			component->beginPlay();
-		}
 
 		m_components.push_back(component);
 	}
 
 	void Entity::removeComponent(std::shared_ptr<Component> component) {
-		if (g_engine.isSimulating()) {
+		if (g_engine.isSimulating())
 			component->endPlay();
-		}
+
 		component->detach();
 		m_components.erase(std::remove(m_components.begin(), m_components.end(), component), m_components.end());
 	}

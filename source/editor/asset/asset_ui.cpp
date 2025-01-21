@@ -70,11 +70,10 @@ namespace Yurrgoht {
 
 		ImGui::BeginChild("folder_tree");
 		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-			if (is_folder_tree_hovered) {
+			if (is_folder_tree_hovered)
 				ImGui::OpenPopup("folder_op_tree_hovered_popups");
-			} else {
+			else
 				ImGui::OpenPopup("folder_op_background_hovered_popups");
-			}
 		}
 		constructFolderOpPopups("folder_op_background_hovered_popups");
 		constructFolderOpPopups("folder_op_tree_hovered_popups", true);

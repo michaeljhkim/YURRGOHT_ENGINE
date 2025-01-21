@@ -185,8 +185,6 @@ namespace Yurrgoht {
 	}
 
 	void SimulationUI::loadAsset(const std::string& url) {
-		std::cout << "TEST " << url << std::endl;
-
 		const auto& as = g_engine.assetManager();
 		EAssetType asset_type = as->getAssetType(url);
 		std::string basename = g_engine.fileSystem()->basename(url);
