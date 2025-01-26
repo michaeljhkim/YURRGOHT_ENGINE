@@ -4,7 +4,6 @@
 #include "engine/core/math/transform.h"
 
 namespace Yurrgoht {
-	
 	enum class EProjectionType {
 		Perspective, Orthographic
 	};

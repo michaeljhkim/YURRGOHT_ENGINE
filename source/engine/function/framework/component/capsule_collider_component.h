@@ -2,10 +2,8 @@
 
 #include "collider_component.h"
 
-namespace Yurrgoht
-{
-	class CapsuleColliderComponent : public ColliderComponent
-	{
+namespace Yurrgoht {
+	class CapsuleColliderComponent : public ColliderComponent {
 	public:
 		CapsuleColliderComponent();
 
@@ -16,8 +14,7 @@ namespace Yurrgoht
 		REGISTER_REFLECTION(ColliderComponent)
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("collider_component", cereal::base_class<ColliderComponent>(this)));
 			ar(cereal::make_nvp("radius", m_radius));
 			ar(cereal::make_nvp("height", m_height));

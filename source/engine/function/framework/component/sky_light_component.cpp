@@ -7,9 +7,13 @@
 REGISTER_AT_RUNTIME 
 {
 meta_hpp::class_<Yurrgoht::SkyLightComponent>(meta_hpp::metadata_()("name", "SkyLightComponent"s))
-	.member_("texture_cube", &Yurrgoht::SkyLightComponent::m_texture_cube);
+	.method_("getTextureCube", &Yurrgoht::SkyLightComponent::getTextureCube, meta_hpp::metadata_()("type_name", "std::shared_ptr<Yurrgoht::TextureCube>"s))
+	.member_("texture_cube", &Yurrgoht::SkyLightComponent::m_texture_cube, meta_hpp::metadata_()("type_name", "std::shared_ptr<Yurrgoht::TextureCube>"s));
 meta_hpp::extend_scope_(global_reflection_scope)
-	.typedef_<Yurrgoht::Component>("SkyLightComponent");
+	.typedef_<Yurrgoht::SkyLightComponent>("SkyLightComponent");
+	
+//adding as derived_classes to Component metadata 
+meta_hpp::class_<Yurrgoht::LightComponent>(meta_hpp::metadata_()("derived_classes", "SkyLightComponent"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SkyLightComponent)

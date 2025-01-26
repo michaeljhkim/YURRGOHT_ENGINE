@@ -3,10 +3,8 @@
 #include "collider_component.h"
 #include "engine/resource/asset/static_mesh.h"
 
-namespace Yurrgoht
-{
-	class MeshColliderComponent : public ColliderComponent, public IAssetRef
-	{
+namespace Yurrgoht {
+	class MeshColliderComponent : public ColliderComponent, public IAssetRef {
 	public:
 		MeshColliderComponent();
 
@@ -17,13 +15,12 @@ namespace Yurrgoht
 		REGISTER_REFLECTION(ColliderComponent)
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("component", cereal::base_class<ColliderComponent>(this)));
 		}
 
 		virtual void bindRefs() override;
-
+		
 		std::shared_ptr<StaticMesh> m_static_mesh;
 	};
 }

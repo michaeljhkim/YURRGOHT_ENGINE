@@ -8,7 +8,12 @@
 REGISTER_AT_RUNTIME 
 {
 meta_hpp::class_<Yurrgoht::AnimatorComponent>(meta_hpp::metadata_()("name", "AnimatorComponent"s))
-	.member_("skeleton", &Yurrgoht::AnimatorComponent::m_skeleton);
+	.member_("skeleton", &Yurrgoht::AnimatorComponent::m_skeleton, meta_hpp::metadata_()("type_name", "std::shared_ptr<Skeleton>"s));
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::AnimatorComponent>("AnimatorComponent");
+
+//adding as derived_classes to Component metadata 
+meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "AnimatorComponent"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::AnimatorComponent)

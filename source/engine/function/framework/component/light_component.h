@@ -3,13 +3,11 @@
 #include "component.h"
 #include "engine/core/color/color.h"
 
-namespace Yurrgoht
-{
-	class LightComponent : public Component
-	{
+namespace Yurrgoht {
+	class LightComponent : public Component {
 	public:
 		LightComponent();
-
+		
 		glm::vec3 getColor();
 
 		float m_intensity;

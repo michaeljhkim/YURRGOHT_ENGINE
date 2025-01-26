@@ -3,7 +3,6 @@
 #include "component.h"
 
 namespace Yurrgoht {
-
 	enum class EColliderType {
 		Box, Sphere, Capsule, Cylinder, Mesh
 	};
@@ -11,7 +10,6 @@ namespace Yurrgoht {
 	class ColliderComponent : public Component {
 	public:
 		EColliderType m_type;
-
 		glm::vec3 m_position = glm::vec3(0.0f);
 		glm::vec3 m_rotation = glm::vec3(0.0f);
 

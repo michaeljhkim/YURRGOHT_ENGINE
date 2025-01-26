@@ -4,7 +4,7 @@
 	branch = docking
 [submodule "external/meta.hpp"]
 	path = external/meta.hpp
-	url = https://github.com/BlackMATov/meta.hpp
+	url = git@github.com:michaeljhkim/meta.hpp.git
 [submodule "external/ImGuizmo"]
 	path = external/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git

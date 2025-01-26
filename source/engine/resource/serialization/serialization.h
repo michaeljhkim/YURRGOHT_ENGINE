@@ -10,6 +10,11 @@ using namespace std::literals;
 
 // The global scope for getting all registered values
 static meta_hpp::scope global_reflection_scope = meta_hpp::static_scope_("global_reflection_scope");
+/*
+const char* mangledName = typeid( *this ).name();
+std::unique_ptr<char, void(*)(void*)> demangledName(abi::__cxa_demangle(mangledName, nullptr, nullptr, nullptr), std::free);
+std::cout << demangledName.get() << std::endl;
+*/
 
 // FOR REFLECTION - When called, the developer defines auto_register_function_ to specify what should be reflected
 #define CONCAT_INNER(a, b) a##b
@@ -27,18 +32,8 @@ namespace {                                                                     
 static const auto_register_trigger CONCAT(auto_register_, __LINE__);                \
 static void auto_register_function_()
 
-
 static void auto_register_function_();
 #define REGISTRATION_FRIEND friend void ::auto_register_function_();
-/*						
-#define RTTR_REGISTRATION_FRIEND friend void ::rttr_auto_register_reflection_function_();          \
-			template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
-			friend struct rttr::detail::constructor_invoker;
-
-#define REGISTRATION_FRIEND friend void ::auto_register_function_();                    \
-	template < constructor_policy_family Policy, class_kind Class, typename... Args >	\
-	friend uvalue meta_hpp::detail::raw_constructor_create(type_registry& registry, std::span<const uarg> args)
-*/
 
 
 // register all user defined serialization

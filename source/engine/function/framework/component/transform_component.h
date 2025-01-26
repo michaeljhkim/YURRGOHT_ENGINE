@@ -4,13 +4,12 @@
 #include "engine/core/math/transform.h"
 
 namespace Yurrgoht {
-	
 	class TransformComponent : public Component, public Transform {
 	public:
 		void setPosition(const glm::vec3& position);
 		void setRotation(const glm::vec3& rotation);
 		void setScale(const glm::vec3& scale);
-
+		
 		bool update(bool is_chain_dirty = false, const glm::mat4& parent_global_matrix = glm::mat4(1.0));
 
 		const glm::mat4& getGlobalMatrix();

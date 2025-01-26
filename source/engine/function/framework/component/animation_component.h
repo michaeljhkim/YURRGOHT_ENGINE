@@ -4,7 +4,6 @@
 #include "engine/resource/asset/animation.h"
 
 namespace Yurrgoht {
-	
 	class AnimationComponent : public Component, public IAssetRef {
 	public:
 		void addAnimation(std::shared_ptr<Animation>& animation);

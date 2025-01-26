@@ -1,11 +1,9 @@
 #pragma once
 
 #include "engine/function/framework/component/component.h"
-
 #include <vector>
 #include <atomic>
 #include <limits>
-
 #include <cereal/types/vector.hpp>
 
 namespace Yurrgoht {
@@ -76,8 +74,8 @@ namespace Yurrgoht {
 		virtual void endPlay();
 
 	private:
-        META_HPP_ENABLE_POLY_INFO(ITickable)
 		//REGISTER_REFLECTION(ITickable)
+        META_HPP_ENABLE_POLY_INFO(ITickable)
 
 		friend Scene;
 		friend class cereal::access;

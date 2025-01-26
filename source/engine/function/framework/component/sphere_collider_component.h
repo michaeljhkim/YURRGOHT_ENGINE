@@ -2,21 +2,18 @@
 
 #include "collider_component.h"
 
-namespace Yurrgoht
-{
-	class SphereColliderComponent : public ColliderComponent
-	{
+namespace Yurrgoht {
+	class SphereColliderComponent : public ColliderComponent {
 	public:
 		SphereColliderComponent();
-
+		
 		float m_radius;
 
 	private:
 		REGISTER_REFLECTION(ColliderComponent)
-
+		
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("collider_component", cereal::base_class<ColliderComponent>(this)));
 			ar(cereal::make_nvp("radius", m_radius));
 		}

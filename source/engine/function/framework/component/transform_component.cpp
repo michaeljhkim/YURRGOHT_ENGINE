@@ -4,13 +4,16 @@
 REGISTER_AT_RUNTIME 
 {
 meta_hpp::class_<Yurrgoht::Transform>(meta_hpp::metadata_()("name", "Transform"s))
-	.member_("position", &Yurrgoht::Transform::m_position)
-	.member_("rotation", &Yurrgoht::Transform::m_rotation)
-	.member_("scale", &Yurrgoht::Transform::m_scale);
-
+	.member_("position", &Yurrgoht::Transform::m_position, meta_hpp::metadata_()("type_name", "glm::vec3"s))
+	.member_("rotation", &Yurrgoht::Transform::m_rotation, meta_hpp::metadata_()("type_name", "glm::vec3"s))
+	.member_("scale", &Yurrgoht::Transform::m_scale, meta_hpp::metadata_()("type_name", "glm::vec3"s));
 meta_hpp::class_<Yurrgoht::TransformComponent>(meta_hpp::metadata_()("name", "TransformComponent"s));
 meta_hpp::extend_scope_(global_reflection_scope)
-	.typedef_<Yurrgoht::Component>("TransformComponent");
+	.typedef_<Yurrgoht::Transform>("Transform")
+	.typedef_<Yurrgoht::TransformComponent>("TransformComponent");
+
+//adding as derived_classes to Component metadata 
+meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "TransformComponent"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::TransformComponent)

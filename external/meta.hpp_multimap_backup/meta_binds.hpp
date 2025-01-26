@@ -590,7 +590,6 @@ namespace meta_hpp
     }
 
     inline metadata_bind& metadata_bind::operator()(metadata_bind bind) & {
-        //detail::insert_or_assign(values_, std::move(bind.values_));
         detail::insert_or_assign(values_, std::move(bind.values_));
         return *this;
     }

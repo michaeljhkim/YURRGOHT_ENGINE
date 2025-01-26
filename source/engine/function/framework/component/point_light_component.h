@@ -2,13 +2,11 @@
 
 #include "light_component.h"
 
-namespace Yurrgoht
-{
-	class PointLightComponent : public LightComponent
-	{
+namespace Yurrgoht {
+	class PointLightComponent : public LightComponent {
 	public:
 		PointLightComponent();
-
+		
 		float m_radius;
 		float m_linear_attenuation;
 		float m_quadratic_attenuation;
@@ -18,8 +16,7 @@ namespace Yurrgoht
 		POLYMORPHIC_DECLARATION
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("light", cereal::base_class<LightComponent>(this)));
 			ar(cereal::make_nvp("radius", m_radius));
 			ar(cereal::make_nvp("linear_attenuation", m_linear_attenuation));

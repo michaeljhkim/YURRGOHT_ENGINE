@@ -5,9 +5,12 @@
 REGISTER_AT_RUNTIME 
 {
 meta_hpp::class_<Yurrgoht::SkeletalMeshComponent>(meta_hpp::metadata_()("name", "SkeletalMeshComponent"s))
-	.member_("skeletal_mesh", &Yurrgoht::SkeletalMeshComponent::m_skeletal_mesh);
+	.member_("skeletal_mesh", &Yurrgoht::SkeletalMeshComponent::m_skeletal_mesh, meta_hpp::metadata_()("type_name", "std::shared_ptr<Yurrgoht::SkeletalMesh>"s));
 meta_hpp::extend_scope_(global_reflection_scope)
-	.typedef_<Yurrgoht::Component>("SkeletalMeshComponent");
+	.typedef_<Yurrgoht::SkeletalMeshComponent>("SkeletalMeshComponent");
+	
+//adding as derived_classes to Component metadata 
+meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "SkeletalMeshComponent"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::SkeletalMeshComponent)

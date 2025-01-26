@@ -2,15 +2,12 @@
 
 #include "component.h"
 
-namespace Yurrgoht
-{
-	enum class EMotionType
-	{
+namespace Yurrgoht {
+	enum class EMotionType {
 		Static, Kinematic, Dynamic
 	};
 
-	class RigidbodyComponent : public Component
-	{
+	class RigidbodyComponent : public Component {
 	public:
 		EMotionType m_motion_type = EMotionType::Dynamic;
 		float m_friction = 0.2f;
@@ -26,8 +23,7 @@ namespace Yurrgoht
 		POLYMORPHIC_DECLARATION
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("component", cereal::base_class<Component>(this)));
 			ar(cereal::make_nvp("motion_type", m_motion_type));
 			ar(cereal::make_nvp("friction", m_friction));

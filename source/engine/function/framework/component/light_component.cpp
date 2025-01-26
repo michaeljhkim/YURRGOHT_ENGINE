@@ -2,11 +2,14 @@
 
 REGISTER_AT_RUNTIME {
 meta_hpp::class_<Yurrgoht::LightComponent>(meta_hpp::metadata_()("name", "LightComponent"s))
-	.member_("intensity", &Yurrgoht::LightComponent::m_intensity)
-	.member_("color", &Yurrgoht::LightComponent::m_color)
-	.member_("cast_shadow", &Yurrgoht::LightComponent::m_cast_shadow);
+	.member_("intensity", &Yurrgoht::LightComponent::m_intensity, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("color", &Yurrgoht::LightComponent::m_color, meta_hpp::metadata_()("type_name", "Color3"s))
+	.member_("cast_shadow", &Yurrgoht::LightComponent::m_cast_shadow, meta_hpp::metadata_()("type_name", "bool"s));
 meta_hpp::extend_scope_(global_reflection_scope)
-	.typedef_<Yurrgoht::Component>("LightComponent");
+	.typedef_<Yurrgoht::LightComponent>("LightComponent");
+
+//adding as derived_classes to Component metadata 
+meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "LightComponent"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::LightComponent)

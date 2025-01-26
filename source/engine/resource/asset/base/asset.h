@@ -41,7 +41,6 @@ namespace Yurrgoht {
 	};
 
 	class IAssetRef {
-		META_HPP_ENABLE_POLY_INFO()
 	public:
 		// store the reference map: property_name -> asset url
 		std::map<std::string, URL> m_ref_urls;

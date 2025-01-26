@@ -12,14 +12,17 @@
 
 REGISTER_AT_RUNTIME {
 meta_hpp::class_<Yurrgoht::CameraComponent>(meta_hpp::metadata_()("name", "CameraComponent"s))
-	.member_("fovy", &Yurrgoht::CameraComponent::m_fovy)
-	.member_("near", &Yurrgoht::CameraComponent::m_near)
-	.member_("far", &Yurrgoht::CameraComponent::m_far)
-	.member_("move_speed", &Yurrgoht::CameraComponent::m_move_speed)
-	.member_("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed)
-	.member_("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed)
-	.member_("exposure", &Yurrgoht::CameraComponent::m_exposure);
+	.member_("fovy", &Yurrgoht::CameraComponent::m_fovy, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("near", &Yurrgoht::CameraComponent::m_near, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("far", &Yurrgoht::CameraComponent::m_far, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("move_speed", &Yurrgoht::CameraComponent::m_move_speed, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("turn_speed", &Yurrgoht::CameraComponent::m_turn_speed, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("zoom_speed", &Yurrgoht::CameraComponent::m_zoom_speed, meta_hpp::metadata_()("type_name", "float"s))
+	.member_("exposure", &Yurrgoht::CameraComponent::m_exposure, meta_hpp::metadata_()("type_name", "float"s));
+meta_hpp::extend_scope_(global_reflection_scope)
+	.typedef_<Yurrgoht::CameraComponent>("CameraComponent");
 
+//adding as derived_classes to Component metadata 
 meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "CameraComponent"s));
 }
 

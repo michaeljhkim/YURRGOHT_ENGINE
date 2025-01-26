@@ -12,7 +12,7 @@ namespace Yurrgoht {
 
 		void setTextureCube(std::shared_ptr<TextureCube>& texture_cube);
 		std::shared_ptr<TextureCube> getTextureCube() { return m_texture_cube; }
-
+		
 		std::shared_ptr<StaticMesh> m_cube_mesh;
 		VmaImageViewSampler m_irradiance_texture_sampler;
 		VmaImageViewSampler m_prefilter_texture_sampler;
@@ -23,7 +23,7 @@ namespace Yurrgoht {
 
 	private:
 		REGISTER_REFLECTION(LightComponent)
-
+		
 		template<class Archive>
 		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("light", cereal::base_class<LightComponent>(this)));
@@ -32,7 +32,6 @@ namespace Yurrgoht {
 
 		virtual void bindRefs() override;
 		virtual void inflate() override;
-
 		void createIBLTextures();
 
 		std::shared_ptr<TextureCube> m_texture_cube;

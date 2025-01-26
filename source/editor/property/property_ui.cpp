@@ -47,9 +47,10 @@ namespace Yurrgoht {
 				ImGui::TableSetupColumn("column_0", ImGuiTableColumnFlags_WidthFixed, 100.0f*m_res_scale);
 				ImGui::TableSetupColumn("column_1", ImGuiTableColumnFlags_WidthStretch);
 
-				constructEntity(*selected_entity.get());
+				// CONSTRUCT ENTITY IS CALLED HERE
+				constructEntity( selected_entity->meta_poly_ptr() );
 				for (const auto& component : selected_entity->getComponents()) {
-					constructEntity(*component.get());
+					constructEntity( component->meta_poly_ptr() );
 				}
 				ImGui::EndTable();
 			}
@@ -75,15 +76,13 @@ namespace Yurrgoht {
 		const auto& current_scene = g_engine.sceneManager()->getCurrentScene();
 		m_selected_entity = current_scene->getEntity(p_event->entity_id);
 	}
+	
+	void PropertyUI::constructEntity(const meta_hpp::uvalue& u_instance) {
+		const auto p_entity = u_instance.try_as<Entity*>();
+		const auto p_component = u_instance.try_as<Component*>();
+		auto properties = u_instance.get_type().as_pointer().get_data_type().as_class().get_members();
+		//std::cout << "properties size: " << properties.size() << std::endl;
 
-	void PropertyUI::constructEntity(const meta_hpp::uvalue& instance) {
-		//const meta_hpp::class_type p_entity = meta_hpp::resolve_type(*instance.try_as<Entity>());
-		//const meta_hpp::class_type p_component = meta_hpp::resolve_type(*instance.try_as<Component>());
-		//auto properties = instance.get_derived_type().get_properties();
-		const auto p_entity = instance.try_as<Entity>();
-		const auto p_component = instance.try_as<Component>();
-		auto properties = meta_hpp::resolve_type(instance.get_type()).get_members();
-		
 		if (p_entity != nullptr && properties.empty()) {
 			return;
 		}
@@ -131,28 +130,41 @@ namespace Yurrgoht {
 
 			for (auto& prop : properties) {
 				std::string prop_name = prop.get_name();
-				//EPropertyType property_type = getPropertyType(meta_hpp::resolve_type(prop));
-				EPropertyType property_type = getPropertyType(prop);
+				EPropertyType property_type = getPropertyType(prop.get_metadata().find("type_name")->second);
 				ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type now");
-
-				meta_hpp::uvalue variant_instance = prop.get(instance);
+				
+				meta_hpp::uvalue variant = prop.get(u_instance);	//the get value just returns a member
 				if (property_type.second == EPropertyContainerType::Mono) {
-					m_property_constructors[property_type.first](prop_name, variant_instance);
-					prop.set(instance, variant_instance);
+					m_property_constructors[property_type.first](prop_name, variant);
+					prop.set(u_instance, variant);
 				}
 				//COMMENTED OUT FOR NOW BECAUSE ITS NOT POSSIBLE TO DO YET WITH meta.hpp
 				/*
-				else if (property_type.second == EPropertyContainerType::Array && variant_instance.has_index_op()) {
+				else if (property_type.second == EPropertyContainerType::Array) {
 					//auto view = variant_instance.try_as<>();
 					//auto view = variant_instance.get_type().as_array().get_data_type();
-					auto view_size = variant_instance.get_type();
-					for (size_t i = 0; i < view_size; ++i) {
+					auto view_size = variant_instance.as<prop.get_type().get_value_type()>();
+					for (auto& prop : view_size) {
+
+					}
+					for (size_t i = 0; i < view_size.size(); ++i) {
 						meta_hpp::uvalue sub_variant = variant_instance[i];
 						std::string sub_prop_name = prop_name + "_" + std::to_string(i);
 						m_property_constructors[property_type.first](sub_prop_name, sub_variant);
 						view_size.set(i, sub_variant);
 					}
 					prop.set(instance, variant_instance);
+				}
+				*/
+				/*
+				else if (property_type.second == EPropertyContainerType::Array) {
+					for (size_t i = 0; i < variant.size(); ++i) {
+						meta_hpp::uvalue sub_variant = variant[i]->meta_poly_ptr();
+						std::string sub_prop_name = prop_name + "_" + std::to_string(i);
+						m_property_constructors[property_type.first](sub_prop_name, sub_variant);
+						//view.set(variant, sub_variant);
+					}
+					prop.set(u_instance, variant);
 				}
 				*/
 			}
@@ -179,7 +191,7 @@ namespace Yurrgoht {
 
 	void PropertyUI::constructPropertyFloat(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
-
+		
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
@@ -191,7 +203,7 @@ namespace Yurrgoht {
 		addPropertyNameText(name);
 
 		ImGui::TableNextColumn();
-		ImGui::Text("%s", (*&instance.as<std::string>()).c_str());
+		ImGui::Text("%s", (instance.as<std::string>()).c_str());
 	}
 
 	void PropertyUI::constructPropertyVec2(const std::string& name, meta_hpp::uvalue& instance) {
@@ -222,7 +234,7 @@ namespace Yurrgoht {
 		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
-		glm::vec4& vec4 = instance.as<glm::vec4>();
+		glm::vec4 vec4 = instance.as<glm::vec4>();
 		ImGui::DragFloat4(label.c_str(), glm::value_ptr(vec4), DRAG_SPEED);
 		ImGui::PopItemWidth();
 	}
@@ -285,8 +297,9 @@ namespace Yurrgoht {
 		ImGui::Text("%s", name.c_str());
 	}
 
-	EPropertyType PropertyUI::getPropertyType(const meta_hpp::member& type) {
-		const std::string& type_name = type.get_name();
+	EPropertyType PropertyUI::getPropertyType(const meta_hpp::uvalue& type) {
+		const std::string& type_name = type.as<std::string>();
+
 		EPropertyValueType value_type = EPropertyValueType::Bool;
 		EPropertyContainerType container_type = EPropertyContainerType::Mono;
 		if (type_name.find("std::vector") != std::string::npos)
@@ -310,8 +323,9 @@ namespace Yurrgoht {
 			value_type = EPropertyValueType::Bool;
 		else if (type_name.find("int") != std::string::npos)
 			value_type = EPropertyValueType::Integar;
-		else if (type_name.find("float") != std::string::npos)
+		else if (type_name.find("float") != std::string::npos) {
 			value_type = EPropertyValueType::Float;
+		}
 		else if (type_name.find("std::string") != std::string::npos)
 			value_type = EPropertyValueType::String;
 		
