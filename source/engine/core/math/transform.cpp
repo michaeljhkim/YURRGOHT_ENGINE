@@ -2,11 +2,9 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <Jolt/Jolt.h>
 
-namespace Yurrgoht
-{
-
-	glm::mat4 Transform::matrix() const
-	{
+namespace Yurrgoht {
+	
+	glm::mat4 Transform::matrix() const {
 		glm::mat4 model_matrix(1.0f);
 
 		model_matrix = glm::translate(model_matrix, m_position);
@@ -18,24 +16,20 @@ namespace Yurrgoht
 		return model_matrix;
 	}
 
-	glm::vec3 Transform::transformPosition(const glm::vec3& position)
-	{
+	glm::vec3 Transform::transformPosition(const glm::vec3& position) {
 		return matrix() * glm::vec4(position, 1.0f);
 	}
 
-	glm::vec3 Transform::transformVector(const glm::vec3& vector)
-	{
+	glm::vec3 Transform::transformVector(const glm::vec3& vector) {
 		return matrix() * glm::vec4(vector, 0.0f);
 	}
 
-	glm::vec3 Transform::eulerAngles(const glm::quat& quat)
-	{
+	glm::vec3 Transform::eulerAngles(const glm::quat& quat) {
 		JPH::Vec3 euler_angles = JPH::Quat(quat.x, quat.y, quat.z, quat.w).GetEulerAngles();
 		return glm::degrees(glm::vec3(euler_angles[0], euler_angles[1], euler_angles[2]));
 	}
 
-	glm::quat Transform::quaterion(const glm::vec3& euler_angles)
-	{
+	glm::quat Transform::quaterion(const glm::vec3& euler_angles) {
 		JPH::Quat quat = JPH::Quat::sEulerAngles(JPH::Vec3(
 			glm::radians(euler_angles.x),
 			glm::radians(euler_angles.y),
@@ -44,23 +38,19 @@ namespace Yurrgoht
 		return glm::quat(quat.GetW(), quat.GetX(), quat.GetY(), quat.GetZ());
 	}
 
-	bool Transform::operator==(const Transform& other) const
-	{
+	bool Transform::operator==(const Transform& other) const {
 		return m_position == other.m_position &&
 			m_rotation == other.m_rotation &&
 			m_scale == other.m_scale;
 	}
 
-	bool Transform::operator!=(const Transform& other) const
-	{
+	bool Transform::operator!=(const Transform& other) const {
 		return m_position != other.m_position ||
 			m_rotation != other.m_rotation ||
 			m_scale != other.m_scale;
 	}
 
-	glm::mat4 QTransform::matrix() const
-
-	{
+	glm::mat4 QTransform::matrix() const {
 		glm::mat4 model_matrix(1.0f);
 
 		model_matrix = glm::translate(model_matrix, m_position);
@@ -70,8 +60,7 @@ namespace Yurrgoht
 		return model_matrix;
 	}
 
-	void QTransform::fromMatrix(const glm::mat4& m)
-	{	
+	void QTransform::fromMatrix(const glm::mat4& m) {	
 		glm::vec3 skew;
 		glm::vec4 perspective;
 		glm::decompose(m, m_scale, m_rotation, m_position, skew, perspective);

@@ -34,7 +34,6 @@
 ## TBD Features
 - Tick editor
 - Simple scripting language for easy programming and does not need to be compiled
-- Convert from using glfw to sdl2
 - Audio system with steam audio
 - Asynchronous input
 - Virtual Texturing and sparse bindings for envoirnments
@@ -115,6 +114,6 @@ All external libraries' source codes have been included in the dockerfile, so no
 - [ktx](https://github.com/KhronosGroup/KTX-Software)(texture compression and loading)
 - [cereal](https://uscilab.github.io/cereal/)(serialization)
 - [json](https://www.json.org/json-en.html)(required by cereal)
-- [rttr](https://www.rttr.org/)(reflection)
+- [meta.hpp](https://github.com/BlackMATov/meta.hpp)(reflection)
 - [eventpp](https://github.com/wqking/eventpp)(event system)
 - [jolt](https://github.com/jrouwe/JoltPhysics)(physics system)

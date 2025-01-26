@@ -2,10 +2,8 @@
 
 #include "engine/function/framework/entity/entity.h"
 
-namespace Yurrgoht
-{
-	class ApplicationEntity : public Entity
-	{
+namespace Yurrgoht {
+	class ApplicationEntity : public Entity {
 	public:
 		ApplicationEntity();
 
@@ -20,8 +18,7 @@ namespace Yurrgoht
 		REGISTER_REFLECTION(Entity)
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("entity", cereal::base_class<Entity>(this)));
 			ar(cereal::make_nvp("spawn_num", m_spawn_num));
 		}

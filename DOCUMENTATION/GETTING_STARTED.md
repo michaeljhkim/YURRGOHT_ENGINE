@@ -17,19 +17,19 @@ With that being said, this engine developed solely with the intention of being a
 All external libraries' source codes have been included in the dockerfile, or fetched with cmake fetch module, or with git submodule. 
 <br>imgui    - submodule
 <br>ImGuizmo - submodule
+<br>meta.hpp - submodule
 <br>jolt     - cmake fetch module
 <br>yaml-cpp - cmake fetch module
-<br>fmt      - cmake fetch module
 <br>spdlog   - cmake fetch module
 
 everything else is installed through docker
 
 - [imgui](https://www.dearimgui.com/)(gui)
 - [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)(gizmos)
+- [meta.hpp](https://github.com/BlackMATov/meta.hpp)(reflection)
 - [jolt](https://github.com/jrouwe/JoltPhysics)(physics system)
 - [yaml-cpp](https://github.com/jbeder/yaml-cpp)(config)
 - [spdlog](https://github.com/gabime/spdlog)(logging)
-- [fmt](https://github.com/fmtlib/fmt)(for spdlog)
 
 - [vma](https://gpuopen.com/vulkan-memory-allocator/)(vulkan resource management)
 - [glm](https://glm.g-truc.net/0.9.9/)(math)
@@ -38,7 +38,6 @@ everything else is installed through docker
 - [ktx](https://github.com/KhronosGroup/KTX-Software)(texture compression and loading)
 - [cereal](https://uscilab.github.io/cereal/)(serialization)
 - [json](https://www.json.org/json-en.html)(required by cereal)
-- [rttr](https://www.rttr.org/)(reflection)
 - [eventpp](https://github.com/wqking/eventpp)(event system)
 
 NOTE: imgui shader code has been modified to accomodate sRGB and not linear coloring, so you will have to modify that in imgui/backends/imgui_impl_vulkan.cpp . Shader code is provided in the "external" folder. 

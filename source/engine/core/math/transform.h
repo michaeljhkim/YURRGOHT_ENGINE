@@ -34,8 +34,7 @@ namespace Yurrgoht {
 		bool operator!=(const Transform& other) const;
 	};
 
-	struct QTransform
-	{
+	struct QTransform {
 		glm::vec3 m_position = glm::vec3(0.0f);
 		glm::quat m_rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 		glm::vec3 m_scale = glm::vec3(1.0f);
@@ -46,8 +45,7 @@ namespace Yurrgoht {
 	private:
 		friend class cereal::access;
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("position", m_position));
 			ar(cereal::make_nvp("rotation", m_rotation));
 			ar(cereal::make_nvp("scale", m_scale));

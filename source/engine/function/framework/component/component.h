@@ -47,6 +47,9 @@ namespace Yurrgoht {
 		const std::string& getTypeName() const { return m_type_name; }
 		void setTypeName(const std::string& type_name) { m_type_name = type_name; }
 
+		// for animation component only (at the moment), since it is the only class with a vector
+		virtual void set_vector(std::size_t index, meta_hpp::uvalue sub_variant) { return; };
+
 	protected:
 		virtual void inflate() {}
 		virtual void beginPlay() {}
@@ -65,23 +68,6 @@ namespace Yurrgoht {
 		}
 	};
 }
-
-
-/*
-#define REGISTER_REFLECTION(parent_class) \
-	META_HPP_ENABLE_POLY_INFO(Yurrgoht::parent_class) \
-	friend class cereal::access; \
-	RTTR_ENABLE()
-#define REGISTER_REFLECTION(parent_class) \
-	RTTR_REGISTRATION_FRIEND \
-	RTTR_ENABLE(Bamboo::##parent_class) \
-	friend class cereal::access;
-
-RTTR_REGISTRATION{}
-#define RTTR_REGISTRATION_FRIEND friend void ::rttr_auto_register_reflection_function_();                              \
-                                template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
-                                friend struct rttr::detail::constructor_invoker;
-*/
 
 #define REGISTER_REFLECTION(...) \
 	REGISTRATION_FRIEND \

@@ -62,8 +62,8 @@ namespace Yurrgoht {
 		children.erase(std::remove_if(children.begin(), children.end(), 
 			[this](const auto& child) {
 				return child.lock()->m_id == m_id; 
-			})
-		, children.end());
+			}), 
+			children.end());
 		m_parent.reset();
 	}
 

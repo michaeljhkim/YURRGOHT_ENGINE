@@ -81,6 +81,13 @@ namespace Yurrgoht {
 		const auto p_entity = u_instance.try_as<Entity*>();
 		const auto p_component = u_instance.try_as<Component*>();
 		auto properties = u_instance.get_type().as_pointer().get_data_type().as_class().get_members();
+
+		// In case a component has parent class members we need to get values from
+		// NOTE: this only goes up to the IMMEDIATE parents and not grandparents or such
+		for (const auto& parent_class : u_instance.get_type().as_pointer().get_data_type().as_class().get_base_classes()) {
+			auto& members = parent_class.get_members();		// for cleanliness only really
+			properties.insert(properties.end(), members.begin(), members.end());
+		}
 		//std::cout << "properties size: " << properties.size() << std::endl;
 
 		if (p_entity != nullptr && properties.empty()) {
@@ -138,35 +145,19 @@ namespace Yurrgoht {
 					m_property_constructors[property_type.first](prop_name, variant);
 					prop.set(u_instance, variant);
 				}
-				//COMMENTED OUT FOR NOW BECAUSE ITS NOT POSSIBLE TO DO YET WITH meta.hpp
-				/*
 				else if (property_type.second == EPropertyContainerType::Array) {
-					//auto view = variant_instance.try_as<>();
-					//auto view = variant_instance.get_type().as_array().get_data_type();
-					auto view_size = variant_instance.as<prop.get_type().get_value_type()>();
-					for (auto& prop : view_size) {
+					// meta.hpp has no method of setting vectors at the moment, so a class must have such method first.
+					// for animation component only (at the moment), since it is the only class with a vector
+					auto u_setter = u_instance.get_type().as_pointer().get_data_type().as_class().get_method("set_vector");
 
-					}
-					for (size_t i = 0; i < view_size.size(); ++i) {
-						meta_hpp::uvalue sub_variant = variant_instance[i];
-						std::string sub_prop_name = prop_name + "_" + std::to_string(i);
-						m_property_constructors[property_type.first](sub_prop_name, sub_variant);
-						view_size.set(i, sub_variant);
-					}
-					prop.set(instance, variant_instance);
-				}
-				*/
-				/*
-				else if (property_type.second == EPropertyContainerType::Array) {
 					for (size_t i = 0; i < variant.size(); ++i) {
-						meta_hpp::uvalue sub_variant = variant[i]->meta_poly_ptr();
+						meta_hpp::uvalue sub_variant = *variant[i];
 						std::string sub_prop_name = prop_name + "_" + std::to_string(i);
 						m_property_constructors[property_type.first](sub_prop_name, sub_variant);
-						//view.set(variant, sub_variant);
+						u_setter.invoke(u_instance, i, sub_variant);
 					}
 					prop.set(u_instance, variant);
 				}
-				*/
 			}
 			ImGui::TreePop();
 			ImGui::PopFont();
@@ -307,11 +298,11 @@ namespace Yurrgoht {
 		else if (type_name.find("std::map") != std::string::npos)
 			container_type = EPropertyContainerType::Map;
 
-		if (type_name.find("glm::vec<2") != std::string::npos)
+		if (type_name.find("glm::vec2") != std::string::npos)
 			value_type = EPropertyValueType::Vec2;
-		else if (type_name.find("glm::vec<3") != std::string::npos)
+		else if (type_name.find("glm::vec3") != std::string::npos)
 			value_type = EPropertyValueType::Vec3;
-		else if (type_name.find("glm::vec<4") != std::string::npos)
+		else if (type_name.find("glm::vec4") != std::string::npos)
 			value_type = EPropertyValueType::Vec4;
 		else if (type_name.find("Color3") != std::string::npos)
 			value_type = EPropertyValueType::Color3;

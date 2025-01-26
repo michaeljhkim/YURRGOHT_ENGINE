@@ -19,8 +19,7 @@ namespace Yurrgoht {
 		POLYMORPHIC_DECLARATION
 
 		template<class Archive>
-		void serialize(Archive& ar)
-		{
+		void serialize(Archive& ar) {
 			ar(cereal::make_nvp("component", cereal::base_class<Component>(this)));
 			ar(cereal::make_nvp("intensity", m_intensity));
 			ar(cereal::make_nvp("color", m_color));

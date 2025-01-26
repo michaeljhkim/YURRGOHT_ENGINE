@@ -75,7 +75,8 @@ namespace Yurrgoht {
 
 	private:
 		//REGISTER_REFLECTION(ITickable)
-        META_HPP_ENABLE_POLY_INFO(ITickable)
+        //META_HPP_ENABLE_POLY_INFO(ITickable)
+        META_HPP_ENABLE_POLY_INFO()
 
 		friend Scene;
 		friend class cereal::access;

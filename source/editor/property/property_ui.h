@@ -41,6 +41,6 @@ namespace Yurrgoht {
 		std::weak_ptr<class Entity> m_selected_entity;
 		std::shared_ptr<ImGuiImage> m_dummy_image;
 
-		std::map<EPropertyValueType, std::function<void(const std::string&, meta_hpp::uvalue&)> > m_property_constructors;
+		std::map<EPropertyValueType, std::function<void(const std::string&, meta_hpp::uvalue&)>> m_property_constructors;
 	};
 }

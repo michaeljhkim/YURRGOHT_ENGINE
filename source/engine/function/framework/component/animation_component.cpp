@@ -5,7 +5,8 @@
 
 REGISTER_AT_RUNTIME {
 meta_hpp::class_<Yurrgoht::AnimationComponent>(meta_hpp::metadata_()("name", "AnimationComponent"s))
-	.member_("animations", &Yurrgoht::AnimationComponent::m_animations, meta_hpp::metadata_()("type_name", "std::vector<std::shared_ptr<Animation>>"s));
+	.member_("animations", &Yurrgoht::AnimationComponent::m_animations, meta_hpp::metadata_()("type_name", "std::vector<std::shared_ptr<Animation>>"s))
+	.method_("set_vector", &Yurrgoht::AnimationComponent::set_vector);
 meta_hpp::extend_scope_(global_reflection_scope)
 	.typedef_<Yurrgoht::AnimationComponent>("AnimationComponent");
 

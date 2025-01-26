@@ -391,20 +391,17 @@ namespace Yurrgoht {
 		}
 	}
 
-	void SimulationUI::updateCamera()
-	{
+	void SimulationUI::updateCamera() {
 		// try to get new camera if current camera is not valid
-		if (!m_camera_component.lock()) {
+		if (!m_camera_component.lock())
 			m_camera_component = g_engine.sceneManager()->getCameraComponent();
-		}
 
 		// set camera component
 		m_camera_component.lock()->m_aspect_ratio = (float)m_content_region.z / m_content_region.w;
-		if (g_engine.isSimulating()) {
+		if (g_engine.isSimulating())
 			m_mouse_right_button_pressed = ImGui::IsMouseDown(ImGuiMouseButton_Right);
-		} else {
+		else
 			m_mouse_right_button_pressed = ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right);
-		}
 		
 		m_camera_component.lock()->setInput(m_mouse_right_button_pressed, isFocused());
 	}
@@ -468,14 +465,12 @@ namespace Yurrgoht {
 			}
 			#pragma clang diagnostic pop
 
-			if (m_created_entity)
-			{
+			if (m_created_entity) {
 				glm::vec3 place_pos = calcPlacePos(mouse_pos, viewport_size);
 				m_created_entity->getComponent(TransformComponent)->m_position = place_pos;
 			}
 
-			if (payload && payload->IsDelivery())
-			{
+			if (payload && payload->IsDelivery()) {
 				m_created_entity = nullptr;
 			}
 
@@ -483,8 +478,7 @@ namespace Yurrgoht {
 		}
 	}
 
-	glm::vec3 SimulationUI::calcPlacePos(const glm::vec2& mouse_pos, const glm::vec2& viewport_size)
-	{
+	glm::vec3 SimulationUI::calcPlacePos(const glm::vec2& mouse_pos, const glm::vec2& viewport_size) {
 		glm::vec3 ray_origin = glm::unProjectZO(glm::vec3(mouse_pos.x, mouse_pos.y, 0.0f), m_camera_component.lock()->getViewMatrix(), 
 			m_camera_component.lock()->getProjectionMatrix(), glm::vec4(0.0f, 0.0f, viewport_size.x, viewport_size.y));
 		glm::vec3 ray_target = glm::unProjectZO(glm::vec3(mouse_pos.x, mouse_pos.y, 1.0f), m_camera_component.lock()->getViewMatrix(),

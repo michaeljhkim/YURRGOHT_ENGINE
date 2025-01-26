@@ -9,6 +9,11 @@ namespace Yurrgoht {
 		void addAnimation(std::shared_ptr<Animation>& animation);
 		const std::vector<std::shared_ptr<Animation>>& getAnimations() { return m_animations; }
 
+		// base funtion is in Component.h
+		void set_vector(std::size_t index, meta_hpp::uvalue sub_variant) override {
+			*m_animations[index] = *sub_variant.try_as<Animation*>();
+		}
+
 	private:
 		REGISTER_REFLECTION(Component)
 
