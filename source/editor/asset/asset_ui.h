@@ -45,6 +45,10 @@ namespace Yurrgoht {
 
     	std::unique_ptr<std::stack<std::string>> backHistory;
 		std::unique_ptr<std::stack<std::string>> forwardHistory;
+		std::string current_place;
+		
+		std::deque<std::string> history;
+   		size_t current_index = 0;
 
 		// import files
 		glm::vec4 m_folder_rect;

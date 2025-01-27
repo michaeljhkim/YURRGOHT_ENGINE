@@ -17,10 +17,9 @@ namespace Yurrgoht {
 		const float k_poll_folder_time = 1.0f;
 		m_poll_folder_timer_handle = g_engine.timerManager()->addTimer(k_poll_folder_time, [this](){ pollFolders(); }, true, true);
 		openFolder(g_engine.fileSystem()->getAssetDir());
-
-		backHistory = std::make_unique<std::stack<std::string>>();
-		forwardHistory = std::make_unique<std::stack<std::string>>();
-		backHistory->push(g_engine.fileSystem()->getAssetDir());
+		
+		// set history at base asset directory
+		history.push_back(g_engine.fileSystem()->getAssetDir());
 
 		// load icon images
 		m_asset_images[EAssetType::Invalid] = loadImGuiImageFromFile("asset/engine/texture/ui/invalid.png");
@@ -135,21 +134,19 @@ namespace Yurrgoht {
 	void AssetUI::constructAssetNavigator() {
 		ImVec2 button_size(20.0f*m_res_scale, 20.0f*m_res_scale);
 		// not sure why this system works - need to look into logic
-		if( ImGui::Button(ICON_FA_ARROW_LEFT, button_size) && (backHistory->size() > 1)) {
-			forwardHistory->push(backHistory->top());
-			backHistory->pop();
-			if (!backHistory->empty()) {
-				openFolder(backHistory->top());
-				//std::cout << backHistory->top() << std::endl;
+		if( ImGui::Button(ICON_FA_ARROW_LEFT, button_size) ) {
+			if (current_index > 0) {
+				current_index--;
+				openFolder(history[current_index]);
+				//std::cout << history[current_index] << std::endl;
 			}
 		}
 		ImGui::SameLine();
-		if( ImGui::Button(ICON_FA_ARROW_RIGHT, button_size) && !forwardHistory->empty()) {
-			backHistory->push(forwardHistory->top());
-			forwardHistory->pop();
-			if (!forwardHistory->empty()) {
-				openFolder(forwardHistory->top());
-				//std::cout << forwardHistory->top() << std::endl;
+		if( ImGui::Button(ICON_FA_ARROW_RIGHT, button_size) ) {
+			if (current_index + 1 < history.size()) {
+				current_index++;
+				openFolder(history[current_index]);
+				//std::cout << history[current_index] << std::endl;
 			}
 		}
 
@@ -554,10 +551,11 @@ namespace Yurrgoht {
 			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				if (g_engine.fileSystem()->isDir(filename)) {
 					openFolder(filename);
-					backHistory->push(m_selected_folder);
-					forwardHistory.reset();
-					forwardHistory = std::make_unique<std::stack<std::string>>();
-				} else {
+					history.resize(current_index + 1);
+					history.push_back(m_selected_folder);
+        			current_index = history.size() - 1;
+				} 
+				else {
 					std::string basename = g_engine.fileSystem()->basename(filename);
 					LOG_INFO("open asset {}", basename);
 				}
