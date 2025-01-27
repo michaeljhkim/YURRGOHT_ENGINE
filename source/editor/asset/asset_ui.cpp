@@ -135,25 +135,21 @@ namespace Yurrgoht {
 	void AssetUI::constructAssetNavigator() {
 		ImVec2 button_size(20.0f*m_res_scale, 20.0f*m_res_scale);
 		// not sure why this system works - need to look into logic
-		if( ImGui::Button(ICON_FA_ARROW_LEFT, button_size) ) {
+		if( ImGui::Button(ICON_FA_ARROW_LEFT, button_size) && (backHistory->size() > 1)) {
+			forwardHistory->push(backHistory->top());
+			backHistory->pop();
 			if (!backHistory->empty()) {
-				forwardHistory->push(backHistory->top());
-				backHistory->pop();
-				if (!backHistory->empty()) {
-					openFolder(backHistory->top());
-					//std::cout << backHistory->top() << std::endl;
-				}
+				openFolder(backHistory->top());
+				//std::cout << backHistory->top() << std::endl;
 			}
 		}
 		ImGui::SameLine();
-		if( ImGui::Button(ICON_FA_ARROW_RIGHT, button_size) ) {
+		if( ImGui::Button(ICON_FA_ARROW_RIGHT, button_size) && !forwardHistory->empty()) {
+			backHistory->push(forwardHistory->top());
+			forwardHistory->pop();
 			if (!forwardHistory->empty()) {
-				backHistory->push(forwardHistory->top());
-				forwardHistory->pop();
-				if (!forwardHistory->empty()) {
-					openFolder(forwardHistory->top());
-					//std::cout << forwardHistory->top() << std::endl;
-				}
+				openFolder(forwardHistory->top());
+				//std::cout << forwardHistory->top() << std::endl;
 			}
 		}
 
@@ -537,9 +533,8 @@ namespace Yurrgoht {
 				m_selected_files.insert(m_selected_files.end(), iter->child_files.begin(), iter->child_files.end());
 			}
 			// Ensure hover states exist for all selected files
-			for (const std::string& selected_file : m_selected_files) {
+			for (const std::string& selected_file : m_selected_files)
 				m_selected_file_hover_states[selected_file] = { false };
-			}
 		}
 	}
 
@@ -568,11 +563,10 @@ namespace Yurrgoht {
 				}
 			} 
 			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-				if (g_engine.fileSystem()->isDir(filename)) {
+				if (g_engine.fileSystem()->isDir(filename))
 					ImGui::OpenPopup("folder_op_dir_hovered_popups");	// Dir right-click event
-				} else {
+				else
 					ImGui::OpenPopup("AssetPopups");
-				}
 			}
 		}
 	}
