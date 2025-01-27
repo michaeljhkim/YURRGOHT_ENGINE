@@ -1,10 +1,10 @@
-[submodule "external/imgui"]
-	path = external/imgui
-	url = https://github.com/ocornut/imgui.git
-	branch = docking
 [submodule "external/meta.hpp"]
 	path = external/meta.hpp
 	url = git@github.com:michaeljhkim/meta.hpp.git
 [submodule "external/ImGuizmo"]
 	path = external/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/michaeljhkim/imgui.git
+	branch = docking
