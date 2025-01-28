@@ -68,12 +68,33 @@ Written down thoughts to remember stuff:
 - Editor mode will also keep track of the original assets
 
 
-- I AM TRYING TO REPLACE RTTR WITH meta.hpp
-- For the loop part in property_ui that trys to modify a vector member, I think I might have to create a method for each class with a vector I need to modify
-- This method will take in a uvalue, convert it to the appropriate type after processing, and then that element in the vector will be changed
-- should probably make it have a parameter of like an index and then the uvalue that will be modifying it or something.
-- Point being is that it shouldn't be too hard, just might take a little while
-- Must make an overrideable function in component (maybe in entity as well), and then try to proceed?
+- change things so that all libraries linked to executable are now linked to another library .so file, and the new executable links to that
+- DOCUMENT SUBMODULES AND FORKS AND ESPECIALLY REASONING
+- ALSO FOR DOCUMENTATION, GO THROUGH A BRIEF OVERVIEW OF WHAT HAPPENS WHEN STARTING UP THE APPLICATION
+- TAKE ABOUT INSTANCES OF CERTAIN SYSTEMS BEING STARTED AND SUCH
+- ESPECIALLY QUIRKS IN CERTAIN CLASSES OR TYPES THAT MIGHT TRIP UP A NEW USER
+- as in it tripped up me when I STARTED
+- especially explain reflection and serialization AND the problems I had starting out with those
+- and how changing things up might break things and how to avoid that
+
+- cs-script is confusing, for now, just try to get the regular c# stuff up and runnning
+
+
+
+
+RUN mkdir cs-script && cd cs-script && \
+    wget https://github.com/oleg-shilo/cs-script/releases/download/v4.8.26.0/cs-script.linux.v4.8.26.0.7z && \
+    7z x cs-script.linux.v4.8.26.0.7z && \
+    ln -s /usr/local/bin/cs-script/cscs /usr/bin/css && \
+    export CSSCRIPT_DIR=$(current_dir) && \
+    export PATH=$PATH:$(current_dir) && \
+    echo 'export CSSCRIPT_DIR='"$(current_dir)" >> ~/.bashrc && \
+    echo 'export PATH=$PATH:'"$(current_dir)" >> ~/.bashrc
+
+    
+
+# cs-script - release install
+RUN dotnet add package CS-Script --version 4.8.27
 
 
 - You want a folder with 6 images (.exr, .png, .jpg, .e.tc...)

@@ -6,9 +6,15 @@ find_package(Vulkan REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(Ktx REQUIRED)
-#find_package("yaml-cpp" REQUIRED)
-#find_package(spdlog REQUIRED)
-#find_package(Jolt REQUIRED)
+
+# must manually link dotnet sdk libraries
+set(DOTNET_RUNTIME_PATH "/usr/lib64/dotnet/")  # Adjust for the correct version
+link_directories(${DOTNET_RUNTIME_PATH})  # Add this directory to the linker’s search paths
+set(ENV{LD_LIBRARY_PATH} "$ENV{LD_LIBRARY_PATH}:${DOTNET_RUNTIME_PATH}")
+file(GLOB_RECURSE DOTNET_RUNTIME_LIBS 
+    ${DOTNET_RUNTIME_PATH}/**/native/libnethost.so 
+    ${DOTNET_RUNTIME_PATH}/**/native/libcoreclr.so 
+    ${DOTNET_RUNTIME_PATH}/**/native/libhostfxr.so)
 
 
 # Add the source files and header files
@@ -22,7 +28,17 @@ set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Yurrgoht")
 target_include_directories(${TARGET_NAME} PRIVATE 
     "${yaml-cpp_SOURCE_DIR}/include"
     ${spdlog_SOURCE_DIR}/include
+    ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Host.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/
 )
+
+# linking dotnet core libraries
+#target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_PATH}/shared/Microsoft.NETCore.App/9.0.1/libcoreclr.so)
+#target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_PATH}/host/fxr/9.0.1/libhostfxr.so)
+#target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Host.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libnethost.so)
+#target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Runtime.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libcoreclr.so)
+#target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Runtime.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libhostfxr.so)
+target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_LIBS})
+
 
 # Link statically to Vulkan and other libraries
 target_link_libraries(${TARGET_NAME} PUBLIC ${Vulkan_LIBRARY})
@@ -32,8 +48,6 @@ target_link_libraries(${TARGET_NAME} PUBLIC imgui)
 target_link_libraries(${TARGET_NAME} PUBLIC spdlog::spdlog)
 target_link_libraries(${TARGET_NAME} PUBLIC yaml-cpp)
 target_link_libraries(${TARGET_NAME} PUBLIC stdc++)
-#target_link_libraries(${TARGET_NAME} PUBLIC RTTR::Core)
-target_link_libraries(${TARGET_NAME} PUBLIC rttr_core)
 target_link_libraries(${TARGET_NAME} PUBLIC ktx)
 target_link_libraries(${TARGET_NAME} PUBLIC meta.hpp::meta.hpp)
 target_link_libraries(${TARGET_NAME} PRIVATE Jolt)

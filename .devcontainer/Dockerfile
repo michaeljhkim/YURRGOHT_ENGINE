@@ -7,10 +7,11 @@ WORKDIR /workspaces
 RUN dnf install -y \
     mesa-vulkan-drivers vulkan-tools vulkan-loader-devel vulkan-validation-layers glslang glslc spirv-tools \
     assimp-devel glm-devel cereal-devel SDL2-devel SDL2_image-devel yaml-cpp-devel spdlog-devel \
-    git wget clang cmake ninja-build doxygen gdb\
+    git wget clang cmake ninja-build doxygen gdb p7zip p7zip-plugins \
 # for ktx software
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
-    graphviz xinput libXinerama 
+    graphviz xinput libXinerama \
+    dotnet-sdk-9.0
 RUN dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
     dnf install -y docker
 
@@ -38,18 +39,7 @@ RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
     cmake .. -G Ninja -B . -DBUILD_SHARED_LIBS=OFF && \
     cmake --install .
     
-# rttr dependency - static - manually had to set install location and then copy header files b/c rttr does not do so for static for some reason
-RUN git clone https://github.com/rttrorg/rttr.git && \
-    cd rttr && mkdir build && cd build && \
-    cmake .. -G Ninja -B . -DCMAKE_CXX_COMPILER=clang -DCMAKE_CXX_STANDARD=20 -DBUILD_RTTR_DYNAMIC=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_STATIC=ON \
-    -DBUILD_WITH_STATIC_RUNTIME_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_INSTALLER=ON -DBUILD_PACKAGE=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    cmake --build . && \
-    cmake --install . && \
-    cd ../src/rttr && \
-    find . -name "*.h" -exec install -D {} /usr/local/include/rttr/{} \;
-    
-    
+
 # Download and extract the LunarG Vulkan SDK
 ENV VULKAN_SDK_VERSION=1.3.296.0
 RUN cd /tmp && \
@@ -65,6 +55,21 @@ ENV LD_LIBRARY_PATH="${VULKAN_SDK}/lib:$LD_LIBRARY_PATH"
 ENV VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
 ENV GFXRECON_LOG_LEVEL=WARN
 
+
+# cs-script - tools install
+RUN dotnet tool install --global cs-script.cli && \
+    dotnet tool install --global cs-syntaxer
+#RUN dotnet add package CS-Script --version 4.8.27
+
+# cs-script - release install
+RUN mkdir cs-script && cd cs-script && \
+    wget https://github.com/oleg-shilo/cs-script/releases/download/v4.8.26.0/cs-script.linux.v4.8.26.0.7z && \
+    7z x cs-script.linux.v4.8.26.0.7z && \
+    ln -s /usr/local/bin/cs-script/cscs /usr/bin/css && \
+    export CSSCRIPT_DIR=$(current_dir) && \
+    export PATH=$PATH:$(current_dir) && \
+    echo 'export CSSCRIPT_DIR='"$(current_dir)" >> ~/.bashrc && \
+    echo 'export PATH=$PATH:'"$(current_dir)" >> ~/.bashrc
     
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
 #RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz

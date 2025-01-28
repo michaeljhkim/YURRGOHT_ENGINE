@@ -12,8 +12,13 @@
 		"vscode": {
 			"extensions": ["ms-vscode.cpptools",
 			"ms-vscode.cpptools-extension-pack",
+			"ms-dotnettools.vscode-dotnet-runtime",
+			"ms-dotnettools.csharp",
+			"ms-dotnettools.csdevkit",
+			"oleg-shilo.cs-script",
 			"twxs.cmake",
-			"ms-vscode.cmake-tools" ], 
+			"ms-vscode.cmake-tools",
+			"ms-azuretools.vscode-docker" ], 
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "bash", 
 				"overrideCommand": false

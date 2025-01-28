@@ -6,8 +6,7 @@
 
 namespace Yurrgoht
 {
-    class EngineContext
-    {
+    class EngineContext {
         public:
             void init();
             void destroy();

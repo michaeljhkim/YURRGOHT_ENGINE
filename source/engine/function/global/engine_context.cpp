@@ -13,6 +13,9 @@
 #include "engine/resource/asset/asset_manager.h"
 #include "engine/core/vulkan/vulkan_rhi.h"
 
+#include "engine/function/scripting/cs_scripting.h"
+
+
 namespace Yurrgoht {
     EngineContext g_engine;
 

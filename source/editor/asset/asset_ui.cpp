@@ -133,12 +133,10 @@ namespace Yurrgoht {
 	// ASSET SEARCH BAR
 	void AssetUI::constructAssetNavigator() {
 		ImVec2 button_size(20.0f*m_res_scale, 20.0f*m_res_scale);
-		// not sure why this system works - need to look into logic
 		if( ImGui::Button(ICON_FA_ARROW_LEFT, button_size) ) {
 			if (current_index > 0) {
 				current_index--;
 				openFolder(history[current_index]);
-				//std::cout << history[current_index] << std::endl;
 			}
 		}
 		ImGui::SameLine();
@@ -146,7 +144,6 @@ namespace Yurrgoht {
 			if (current_index + 1 < history.size()) {
 				current_index++;
 				openFolder(history[current_index]);
-				//std::cout << history[current_index] << std::endl;
 			}
 		}
 
@@ -254,11 +251,10 @@ namespace Yurrgoht {
 		bool is_selected = m_selected_file == filename;
 		if (is_hovered || is_selected) {
 			ImVec4 color = ImVec4(50, 50, 50, 255);
-			if (!is_hovered && is_selected) {
+			if (!is_hovered && is_selected)
 				color = ImVec4(0, 112, 224, 255);
-			} else if (is_hovered && is_selected) {
+			else if (is_hovered && is_selected)
 				color = ImVec4(14, 134, 255, 255);
-			}
 
 			ImDrawFlags draw_flags = ImDrawFlags_RoundCornersBottom;
 			const float k_margin = 4;
@@ -356,9 +352,9 @@ namespace Yurrgoht {
 					if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
 						// Get the horizontal scrollbar bounding box
 						ImRect scrollBarRect(ImGui::GetWindowPos().x,
-											ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetStyle().ScrollbarSize,
-											ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
-											ImGui::GetWindowPos().y + ImGui::GetWindowHeight());
+							ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetStyle().ScrollbarSize,
+							ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
+							ImGui::GetWindowPos().y + ImGui::GetWindowHeight());
 
 						ImGuiIO& io = ImGui::GetIO();
 						if (scrollBarRect.Contains(io.MousePos) && io.MouseWheel != 0.0f) { 	// If the mouse wheel is scrolled
@@ -394,7 +390,8 @@ namespace Yurrgoht {
 				as->importTexture2D(import_file, import_folder);
 				LOG_INFO("import texture 2d {} to {}, elapsed time: {}ms", import_file, import_folder, stop_watch.stopMs());
 				iter = m_imported_files.erase(iter);
-			} else if (as->isTextureCubeFile(import_file)) {
+			} 
+			else if (as->isTextureCubeFile(import_file)) {
 				StopWatch stop_watch;
 				stop_watch.start();
 
@@ -522,6 +519,7 @@ namespace Yurrgoht {
 			m_selected_files.clear();
 			std::vector<Yurrgoht::FolderNode>::iterator iter = std::find_if(m_folder_nodes.begin(), m_folder_nodes.end(), 
 				[this](const FolderNode& folder_node) { return folder_node.dir == m_selected_folder; });
+
 			// If folder is found, collect its child folders and files
 			if (iter != m_folder_nodes.end()) {
 				for (uint32_t child_folder : iter->child_folders) {
@@ -529,6 +527,7 @@ namespace Yurrgoht {
 				}
 				m_selected_files.insert(m_selected_files.end(), iter->child_files.begin(), iter->child_files.end());
 			}
+			
 			// Ensure hover states exist for all selected files
 			for (const std::string& selected_file : m_selected_files)
 				m_selected_file_hover_states[selected_file] = { false };
