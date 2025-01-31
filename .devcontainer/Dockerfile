@@ -11,7 +11,8 @@ RUN dnf install -y \
 # for ktx software
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
     graphviz xinput libXinerama \
-    dotnet-sdk-9.0
+# dotnet dependencies
+    krb5-libs libicu openssl-libs zlib
 RUN dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
     dnf install -y docker
 
@@ -25,9 +26,8 @@ RUN wget https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archi
     cmake --install .
 
 # KTX software dependency (ktx textures 2) - static
-RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
-    tar -xzvf v4.3.2.tar.gz && \
-    cd KTX-Software-4.3.2 && mkdir build && cd build && \
+RUN git clone --branch v4.3.2 --depth 1 https://github.com/KhronosGroup/KTX-Software.git && \
+    cd KTX-Software && mkdir build && cd build && \
     cmake -DBUILD_SHARED_LIBS=OFF -DKTX_FEATURE_TESTS=OFF -DKTX_FEATURE_STATIC_LIBRARY=ON .. && \
     make -j && \
     make install
@@ -56,6 +56,17 @@ ENV VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
 ENV GFXRECON_LOG_LEVEL=WARN
 
 
+# dotnet installation - for consistent filepath with arch package
+ENV DOTNET_INSTALL_DIR=/usr/share/dotnet/
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && \
+    chmod +x ./dotnet-install.sh && \
+    ./dotnet-install.sh  --install-dir ${DOTNET_INSTALL_DIR} --version latest && \
+    echo "export DOTNET_ROOT=${DOTNET_INSTALL_DIR}" >> /etc/bash.bashrc && \
+    echo "export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools" >> /etc/bash.bashrc && \
+    source /etc/bash.bashrc
+ENV DOTNET_ROOT=${DOTNET_INSTALL_DIR}
+ENV PATH="${DOTNET_ROOT}:${DOTNET_ROOT}/tools:${PATH}"
+    
 # cs-script - tools install
 RUN dotnet tool install --global cs-script.cli && \
     dotnet tool install --global cs-syntaxer
@@ -66,10 +77,9 @@ RUN mkdir cs-script && cd cs-script && \
     wget https://github.com/oleg-shilo/cs-script/releases/download/v4.8.26.0/cs-script.linux.v4.8.26.0.7z && \
     7z x cs-script.linux.v4.8.26.0.7z && \
     ln -s /usr/local/bin/cs-script/cscs /usr/bin/css && \
-    export CSSCRIPT_DIR=$(current_dir) && \
-    export PATH=$PATH:$(current_dir) && \
-    echo 'export CSSCRIPT_DIR='"$(current_dir)" >> ~/.bashrc && \
-    echo 'export PATH=$PATH:'"$(current_dir)" >> ~/.bashrc
+    echo 'export CSSCRIPT_DIR='"$(current_dir)" >> /etc/bash.bashrc && \
+    echo 'export PATH=$PATH:'"$(current_dir)" >> /etc/bash.bashrc && \
+    source /etc/bash.bashrc
     
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
 #RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz

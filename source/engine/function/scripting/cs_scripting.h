@@ -1,3 +1,4 @@
+#pragma once
 /*
 For loading C# code into C++ for modification:
 https://learn.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting
@@ -59,20 +60,10 @@ using string_t = std::basic_string<char_t>;
 
 namespace Yurrgoht
 {
-    // Globals to hold hostfxr exports
-    hostfxr_initialize_for_dotnet_command_line_fn init_for_cmd_line_fptr;
-    hostfxr_initialize_for_runtime_config_fn init_for_config_fptr;
-    hostfxr_get_runtime_delegate_fn get_delegate_fptr;
-    hostfxr_run_app_fn run_app_fptr;
-    hostfxr_close_fn close_fptr;
-
     // Forward declarations
     bool load_hostfxr(const char_t *app);
     load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t *assembly);
-
-    int run_component_example(const string_t& root_path);
-    int run_app_example(const string_t& root_path);
-
+    int run_app_example();
 
 /********************************************************************************************
  * Function used to load and activate .NET Core

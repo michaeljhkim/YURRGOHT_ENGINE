@@ -97,6 +97,28 @@ RUN mkdir cs-script && cd cs-script && \
 RUN dotnet add package CS-Script --version 4.8.27
 
 
+dotnet build -o ../../../../../build/source/cs_interface
+
+file(GLOB_RECURSE DOTNET_RUNTIME_LIBS_ALMA
+    ${DOTNET_RUNTIME_PATH_ALMA}/packs/Microsoft.NETCore.App.Host.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libnethost.so 
+    ${DOTNET_RUNTIME_PATH_ALMA}/packs/Microsoft.NETCore.App.Runtime.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libcoreclr.so 
+    ${DOTNET_RUNTIME_PATH_ALMA}/packs/Microsoft.NETCore.App.Runtime.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libhostfxr.so)
+
+file(GLOB_RECURSE DOTNET_RUNTIME_LIBS_ARCH
+    ${DOTNET_RUNTIME_PATH_ARCH}/packs/Microsoft.NETCore.App.Host.arch-x64/9.0.1/runtimes/arch-x64/native/libnethost.so 
+    ${DOTNET_RUNTIME_PATH_ARCH}/shared/Microsoft.NETCore.App/9.0.1/libcoreclr.so 
+    ${DOTNET_RUNTIME_PATH_ARCH}/host/fxr/9.0.1/libhostfxr.so)
+
+
+RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
+    tar -xzvf v4.3.2.tar.gz && \
+    cd KTX-Software-4.3.2 && mkdir build && cd build && \
+    cmake -DBUILD_SHARED_LIBS=OFF -DKTX_FEATURE_TESTS=OFF -DKTX_FEATURE_STATIC_LIBRARY=ON .. && \
+    make -j && \
+    make install
+
+    
+
 - You want a folder with 6 images (.exr, .png, .jpg, .e.tc...)
 FOR GENERATING DEFAULT SKYBOX - DO INSIDE FOLDER
 ktx create --format R16G16B16A16_SFLOAT --generate-mipmap --cubemap *.exr cloudy.ktx

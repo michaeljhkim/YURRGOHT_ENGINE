@@ -1,9 +1,18 @@
 #include "cs_scripting.h"
+#include <filesystem>
 
 
 
 namespace Yurrgoht
 {
+    // Globals to hold hostfxr exports
+    hostfxr_initialize_for_dotnet_command_line_fn init_for_cmd_line_fptr;
+    hostfxr_initialize_for_runtime_config_fn init_for_config_fptr;
+    hostfxr_get_runtime_delegate_fn get_delegate_fptr;
+    hostfxr_run_app_fn run_app_fptr;
+    hostfxr_close_fn close_fptr;
+
+    /*
     int main(int argc, char *argv[]) {
         // Get the current executable's directory
         // This sample assumes the managed assembly to load and its runtime configuration file are next to the host
@@ -17,101 +26,12 @@ namespace Yurrgoht
         root_path = root_path.substr(0, pos + 1);
 
         if (argc > 1 && string_compare(argv[1], STR("app")) == 0)
-            return run_app_example(root_path);
-        else 
-            return run_component_example(root_path);
+            return run_app_example();
     }
+    */
 
-
-    int run_component_example(const string_t& root_path) {
-        //
-        // STEP 1: Load HostFxr and get exported hosting functions
-        //
-        if (!load_hostfxr(nullptr))  {
-            assert(false && "Failure: load_hostfxr()");
-            return EXIT_FAILURE;
-        }
-
-        //
-        // STEP 2: Initialize and start the .NET Core runtime
-        //
-        const string_t config_path = root_path + STR("DotNetLib.runtimeconfig.json");
-        load_assembly_and_get_function_pointer_fn load_assembly_and_get_function_pointer = nullptr;
-        load_assembly_and_get_function_pointer = get_dotnet_load_assembly(config_path.c_str());
-        assert(load_assembly_and_get_function_pointer != nullptr && "Failure: get_dotnet_load_assembly()");
-
-        //
-        // STEP 3: Load managed assembly and get function pointer to a managed method
-        //
-        const string_t dotnetlib_path = root_path + STR("DotNetLib.dll");
-        const char_t *dotnet_type = STR("DotNetLib.Lib, DotNetLib");
-        const char_t *dotnet_type_method = STR("Hello");
-        // <SnippetLoadAndGet>
-        // Function pointer to managed delegate
-        component_entry_point_fn hello = nullptr;
-        int rc = load_assembly_and_get_function_pointer(
-            dotnetlib_path.c_str(),
-            dotnet_type,
-            dotnet_type_method,
-            nullptr /*delegate_type_name*/,
-            nullptr,
-            (void**)&hello);
-        // </SnippetLoadAndGet>
-        assert(rc == 0 && hello != nullptr && "Failure: load_assembly_and_get_function_pointer()");
-
-        //
-        // STEP 4: Run managed code
-        //
-        struct lib_args {
-            const char_t *message;
-            int number;
-        };
-        for (int i = 0; i < 3; ++i) {
-            // <SnippetCallManaged>
-            lib_args args {
-                STR("from host!"),
-                i
-            };
-
-            hello(&args, sizeof(args));
-            // </SnippetCallManaged>
-        }
-
-        // Function pointer to managed delegate with non-default signature
-        typedef void (CORECLR_DELEGATE_CALLTYPE *custom_entry_point_fn)(lib_args args);
-        custom_entry_point_fn custom = nullptr;
-        lib_args args {
-            STR("from host!"),
-            -1
-        };
-
-        // UnmanagedCallersOnly
-        rc = load_assembly_and_get_function_pointer(
-            dotnetlib_path.c_str(),
-            dotnet_type,
-            STR("CustomEntryPointUnmanagedCallersOnly") /*method_name*/,
-            UNMANAGEDCALLERSONLY_METHOD,
-            nullptr,
-            (void**)&custom);
-        assert(rc == 0 && custom != nullptr && "Failure: load_assembly_and_get_function_pointer()");
-        custom(args);
-
-        // Custom delegate type
-        rc = load_assembly_and_get_function_pointer(
-            dotnetlib_path.c_str(),
-            dotnet_type,
-            STR("CustomEntryPoint") /*method_name*/,
-            STR("DotNetLib.Lib+CustomEntryPointDelegate, DotNetLib") /*delegate_type_name*/,
-            nullptr,
-            (void**)&custom);
-        assert(rc == 0 && custom != nullptr && "Failure: load_assembly_and_get_function_pointer()");
-        custom(args);
-
-        return EXIT_SUCCESS;
-    }
-
-    int run_app_example(const string_t& root_path) {
-        const string_t app_path = root_path + STR("App.dll");
+    int run_app_example() {
+        const string_t app_path = std::filesystem::absolute("cs_interface/cs_interface.dll").string();
 
         if ( !load_hostfxr(app_path.c_str()) ) {
             assert(false && "Failure: load_hostfxr()");
@@ -141,17 +61,17 @@ namespace Yurrgoht
         typedef unsigned char (CORECLR_DELEGATE_CALLTYPE* is_waiting_fn)();
         is_waiting_fn is_waiting;
         rc = get_function_pointer(
-            STR("App, App"),
+            STR("Program, Program"),
             STR("IsWaiting"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&is_waiting);
         assert(rc == 0 && is_waiting != nullptr && "Failure: get_function_pointer()");
 
-        // Function pointer to App.Hello
+        // Function pointer to Program.Hello
         typedef void (CORECLR_DELEGATE_CALLTYPE* hello_fn)(const char*);
         hello_fn hello;
         rc = get_function_pointer(
-            STR("App, App"),
+            STR("Program, Program"),
             STR("Hello"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&hello);
