@@ -57,21 +57,21 @@ namespace Yurrgoht
         if (rc != 0 || get_function_pointer == nullptr)
             std::cerr << "Get delegate failed: " << std::hex << std::showbase << rc << std::endl;
 
-        // Function pointer to App.IsWaiting
+        // Function pointer to Program.IsWaiting
         typedef unsigned char (CORECLR_DELEGATE_CALLTYPE* is_waiting_fn)();
         is_waiting_fn is_waiting;
         rc = get_function_pointer(
-            STR("Program, Program"),
+            STR("Program, cs_interface"),
             STR("IsWaiting"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&is_waiting);
-        assert(rc == 0 && is_waiting != nullptr && "Failure: get_function_pointer()");
+        assert(rc == 0 && (is_waiting != nullptr) && "Failure: get_function_pointer()");
 
         // Function pointer to Program.Hello
         typedef void (CORECLR_DELEGATE_CALLTYPE* hello_fn)(const char*);
         hello_fn hello;
         rc = get_function_pointer(
-            STR("Program, Program"),
+            STR("Program, cs_interface"),
             STR("Hello"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&hello);

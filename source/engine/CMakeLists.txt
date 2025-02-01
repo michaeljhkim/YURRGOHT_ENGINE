@@ -13,11 +13,16 @@ set(DOTNET_RUNTIME_PATH "/usr/share/dotnet/")
 file(GLOB DOTNET_RUNTIME_LIBS
     ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Host.*/*/runtimes/*/native/libnethost.so
     ${DOTNET_RUNTIME_PATH}/shared/Microsoft.NETCore.App/*/libcoreclr.so
-    ${DOTNET_RUNTIME_PATH}/host/fxr/*/libhostfxr.so
-)
+    ${DOTNET_RUNTIME_PATH}/host/fxr/*/libhostfxr.so)
 file(GLOB DOTNET_HEADERS ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Host.*/*/runtimes/*/native/)
 link_directories(${DOTNET_HEADERS})
-set(ENV{LD_LIBRARY_PATH} "$ENV{LD_LIBRARY_PATH}:/usr/share/dotnet/")
+
+# for host pc to find linked files
+file(GLOB DOTNET_RUNTIME_DIRS
+    ${DOTNET_RUNTIME_PATH}/packs/Microsoft.NETCore.App.Host.*/*/runtimes/*/native/
+    ${DOTNET_RUNTIME_PATH}/shared/Microsoft.NETCore.App/*/
+    ${DOTNET_RUNTIME_PATH}/host/fxr/*/)
+set(ENV{LD_LIBRARY_PATH} "$ENV{LD_LIBRARY_PATH}:${DOTNET_RUNTIME_DIRS}")
 
 
 # Add the source files and header files

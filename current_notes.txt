@@ -96,19 +96,7 @@ RUN mkdir cs-script && cd cs-script && \
 # cs-script - release install
 RUN dotnet add package CS-Script --version 4.8.27
 
-
 dotnet build -o ../../../../../build/source/cs_interface
-
-file(GLOB_RECURSE DOTNET_RUNTIME_LIBS_ALMA
-    ${DOTNET_RUNTIME_PATH_ALMA}/packs/Microsoft.NETCore.App.Host.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libnethost.so 
-    ${DOTNET_RUNTIME_PATH_ALMA}/packs/Microsoft.NETCore.App.Runtime.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libcoreclr.so 
-    ${DOTNET_RUNTIME_PATH_ALMA}/packs/Microsoft.NETCore.App.Runtime.almalinux.9-x64/9.0.1/runtimes/almalinux.9-x64/native/libhostfxr.so)
-
-file(GLOB_RECURSE DOTNET_RUNTIME_LIBS_ARCH
-    ${DOTNET_RUNTIME_PATH_ARCH}/packs/Microsoft.NETCore.App.Host.arch-x64/9.0.1/runtimes/arch-x64/native/libnethost.so 
-    ${DOTNET_RUNTIME_PATH_ARCH}/shared/Microsoft.NETCore.App/9.0.1/libcoreclr.so 
-    ${DOTNET_RUNTIME_PATH_ARCH}/host/fxr/9.0.1/libhostfxr.so)
-
 
 RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
     tar -xzvf v4.3.2.tar.gz && \
