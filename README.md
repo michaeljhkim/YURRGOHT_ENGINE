@@ -1,7 +1,7 @@
 # YURRGOHT_ENGINE
 
 ## What is Yurrgoht?
-**Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, linux based, and is written in C++17. Dockerfile is included for easy replication of development environment
+**Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, linux based, and is written in C++20. Dockerfile is included for easy replication of development environment
 
 - This project was forked from the Bamboo game engine project by RobotBerry https://github.com/Code-Guy/Bamboo  
 - Assets for testing: https://github.com/SaschaWillems/Vulkan
@@ -112,7 +112,7 @@ All external libraries' source codes have been included in the dockerfile, so no
 
 - [vma](https://gpuopen.com/vulkan-memory-allocator/)(vulkan resource management)
 - [glm](https://glm.g-truc.net/0.9.9/)(math)
-- [sdl2](https://www.libsdl.org/)(window and input)
+- [sdl3](https://www.libsdl.org/)(window and input)
 - [tinygltf](https://github.com/syoyo/tinygltf)(model loading)
 - [ktx](https://github.com/KhronosGroup/KTX-Software)(texture compression and loading)
 - [cereal](https://uscilab.github.io/cereal/)(serialization)

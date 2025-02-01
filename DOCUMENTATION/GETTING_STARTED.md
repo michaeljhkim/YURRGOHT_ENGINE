@@ -4,7 +4,7 @@ NOTE: I have never done documentation before, so this may or may not be coherent
 # YURRGOHT ENGINE
 
 ## What is Yurrgoht?
-**Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, linux based, and is written in C++17 (may change to C++20 in the future). Dockerfile (and vscode dev conatainer configs) are included for easy replication of development environment.
+**Yurrgoht** is a lightweight game engine with high-fidelity graphics rendering and simulation functions, provides a flexible gameplay framework. Yurrgoht uses vulkan as the only graphics/computing api, linux based, and is written in C++20. Dockerfile (and vscode dev conatainer configs) are included for easy replication of development environment.
 
 - This project was forked from the Bamboo game engine project by RobotBerry https://github.com/Code-Guy/Bamboo
 - Assets for testing: https://github.com/SaschaWillems/Vulkan
@@ -33,12 +33,14 @@ everything else is installed through docker
 
 - [vma](https://gpuopen.com/vulkan-memory-allocator/)(vulkan resource management)
 - [glm](https://glm.g-truc.net/0.9.9/)(math)
-- [sdl2](https://www.libsdl.org/)(window and input)
+- [sdl3](https://www.libsdl.org/)(window and input)
 - [tinygltf](https://github.com/syoyo/tinygltf)(model loading)
 - [ktx](https://github.com/KhronosGroup/KTX-Software)(texture compression and loading)
 - [cereal](https://uscilab.github.io/cereal/)(serialization)
 - [json](https://www.json.org/json-en.html)(required by cereal)
 - [eventpp](https://github.com/wqking/eventpp)(event system)
+- [dotnet](https://dotnet.microsoft.com/en-us/)(C#)
+- [cs-script](https://github.com/oleg-shilo/cs-script)(C# scripting)
 
 NOTE: imgui shader code has been modified to accomodate sRGB and not linear coloring, so you will have to modify that in imgui/backends/imgui_impl_vulkan.cpp . Shader code is provided in the "external" folder. 
 <br/><br/>
@@ -50,8 +52,11 @@ NOTE: imgui shader code has been modified to accomodate sRGB and not linear colo
 - Must explain how asset loading works, in case there are issues (serialization)
 
 ```shell
-apt-get install -y vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools libassimp-dev libglm-dev libcereal-dev libsdl2-dev libglfw3-dev git wget clang cmake ninja-build doxygen zlib1g-dev graphviz mesa-utils libgl1-mesa-dev mesa-vulkan-drivers
+apt-get install -y vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools libassimp-dev libglm-dev libcereal-dev libsdl2-dev git wget clang cmake ninja-build doxygen zlib1g-dev graphviz mesa-utils libgl1-mesa-dev mesa-vulkan-drivers
+
+pacman -S vulkan-devel assimp glm cereal sdl3
 ```
+finish pacman instructions later
 
 ```shell
 docker build -t yurrgoht/image:1.0 .

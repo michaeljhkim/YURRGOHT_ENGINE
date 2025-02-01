@@ -1,9 +1,9 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
-#include <SDL2/SDL_image.h>
-#include <imgui/backends/imgui_impl_sdl2.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
+#include <SDL3_image/SDL_image.h>
+#include <imgui/backends/imgui_impl_sdl3.h>
 
 #include <string>
 #include <functional>

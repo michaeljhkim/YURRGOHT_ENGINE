@@ -9,32 +9,30 @@ namespace Yurrgoht {
 
 	void WindowSystem::init() {
 		// Initialize SDL
-		if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-			LOG_FATAL("failed to initialize sdl2");
+		if (!SDL_Init(SDL_INIT_VIDEO)) {
+        	std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+			LOG_FATAL("failed to initialize sdl3");
 			return;
 		}
 
 		m_focus = false;
 		m_fullscreen = g_engine.configManager()->isFullscreen();
-		SDL_DisplayMode* mode;
-		SDL_GetDisplayMode(0, 0, mode);
+		const SDL_DisplayMode* mode = SDL_GetDesktopDisplayMode(SDL_GetPrimaryDisplay());
 		// If the height of monitor is greater than 1080p, we scale up
 		// If the hieght is less than 1080p, we scale down
 		// Very simple solution for now, will make more flexible in the future
 		// Remember to get 4k fonts in the future
 		m_scale = mode->h/1080.0f;
 
-		// create sdl2 window
+		// create sdl3 window
 		bool is_packaged_fullscreen = m_fullscreen && g_engine.isApplication();
 		int width = is_packaged_fullscreen ? mode->w : g_engine.configManager()->getWindowWidth();
 		int height = is_packaged_fullscreen ? mode->h: g_engine.configManager()->getWindowHeight();
 		m_window = SDL_CreateWindow(APP_NAME,    /* Title of the SDL window */
-                    SDL_WINDOWPOS_UNDEFINED,    /* Position x of the window */
-                    SDL_WINDOWPOS_UNDEFINED,    /* Position y of the window */
                     width, height,     /* Width and Height of the window in pixels */
-                    SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE); 
+					SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE); 
 		if (!m_window) {
-			LOG_FATAL("failed to create sdl2 window");
+			LOG_FATAL("failed to create sdl3 window");
 			SDL_Quit(); 
 			return;
 		}
@@ -45,7 +43,7 @@ namespace Yurrgoht {
 			m_windowed_height = g_engine.configManager()->getWindowHeight();
 			m_windowed_pos_x = (mode->w - m_windowed_width) * 0.5f;
 			m_windowed_pos_y = (mode->h - m_windowed_height) * 0.5f;
-			SDL_SetWindowDisplayMode(m_window, mode);
+			SDL_SetWindowFullscreenMode(m_window, mode);
 		}
 
 		// Enable v-sync
@@ -54,9 +52,8 @@ namespace Yurrgoht {
 		// Disable cursor
 		//SDL_ShowCursor(SDL_DISABLE);
 		//SDL_WarpMouseInWindow(m_window, 0, 0);
-		//SDL_SetRelativeMouseMode(SDL_TRUE);
-		SDL_ShowCursor(SDL_ENABLE);
-		SDL_SetRelativeMouseMode(SDL_FALSE);
+		SDL_ShowCursor();
+		SDL_SetWindowRelativeMouseMode(m_window, false);
 
 		// Enable raw mouse motion (without hiding the cursor)
 		/*
@@ -67,13 +64,13 @@ namespace Yurrgoht {
 		}
 		*/
 
-		// set window icon
+		// Set window icon
 		SDL_Surface* iconSurface = IMG_Load(TO_ABSOLUTE("asset/engine/texture/icon/yurrgoht_small.png").c_str());
 		if (iconSurface != nullptr) {
 			SDL_SetWindowIcon(m_window, iconSurface);
-			SDL_FreeSurface(iconSurface);
-		} else { 
-			SDL_Log("Failed to load icon: %s", SDL_GetError()); 
+			SDL_DestroySurface(iconSurface);  // Free immediately after use
+		} else {
+			SDL_Log("Failed to load icon: %s", SDL_GetError());  // Log error if loading fails
 		}
 	}
 
@@ -86,59 +83,57 @@ namespace Yurrgoht {
 		SDL_Event event;
 		int action;
 		while (SDL_PollEvent(&event)) {
-			ImGui_ImplSDL2_ProcessEvent(&event);
+			ImGui_ImplSDL3_ProcessEvent(&event);
 			switch (event.type) {
-				case SDL_QUIT: {
+				case SDL_EVENT_QUIT: {
 					m_should_close = true;
 					break;
 				}
-				case SDL_KEYUP:
-				case SDL_KEYDOWN: {
-					action = (event.type == SDL_KEYDOWN) ? SDL_PRESSED : SDL_RELEASED;
-					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowKeyEvent>(event.key.keysym.sym, event.key.keysym.scancode, action, event.key.keysym.mod));
+				case SDL_EVENT_KEY_UP:
+				case SDL_EVENT_KEY_DOWN: {
+					action = (event.type == SDL_EVENT_KEY_DOWN) ? true : false;
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowKeyEvent>(event.key.key, event.key.scancode, action, event.key.mod));
 				} break;
 
-				case SDL_TEXTINPUT: {
+				case SDL_EVENT_TEXT_INPUT: {
 					const char* text = event.text.text;
 					SDL_Keymod mods = SDL_GetModState(); // Get current modifier state
 					for (int i = 0; text[i] != '\0'; ++i) {
 						Uint32 codepoint = static_cast<Uint32>(text[i]); // ASCII codepoint
-						(mods == KMOD_NONE || (mods & ~(KMOD_NUM | KMOD_CAPS)) == 0) ?
+						(mods == SDL_KMOD_NONE || (mods & ~(SDL_KMOD_NUM | SDL_KMOD_CAPS)) == 0) ?
 							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCharEvent>(codepoint)) :	// No mods or only NUMLOCK/CAPSLOCK active
 							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCharModsEvent>(codepoint, mods));	// One or more modifying keys (Shift, Ctrl, Alt, etc.) are active
 					}
 				} break;
-				case SDL_MOUSEBUTTONUP:
-				case SDL_MOUSEBUTTONDOWN: {
-					action = (event.type == SDL_MOUSEBUTTONDOWN) ? SDL_PRESSED : SDL_RELEASED;
+				case SDL_EVENT_MOUSE_BUTTON_UP:
+				case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+					action = (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) ? true : false;
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowMouseButtonEvent>(event.button.button, action, SDL_GetModState()));
 				} break;
-				case SDL_MOUSEMOTION: {
+				case SDL_EVENT_MOUSE_MOTION: {
 					m_mouse_pos_x = static_cast<double>(event.motion.x);
 					m_mouse_pos_y = static_cast<double>(event.motion.y);
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorPosEvent>(m_mouse_pos_x, m_mouse_pos_y));
 				} break;
-				case SDL_MOUSEWHEEL: {
+				case SDL_EVENT_MOUSE_WHEEL: {
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowScrollEvent>(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y)));
 				} break;
-				case SDL_DROPFILE: {
-                    dropped_file_paths.push_back(event.drop.file);
+				case SDL_EVENT_DROP_FILE: {
+                    dropped_file_paths.push_back(event.drop.data);
                 } break;
-				case SDL_WINDOWEVENT:
-					switch (event.window.event) {
-						case SDL_WINDOWEVENT_ENTER:
-							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorEnterEvent>(true));
-							break;
-						case SDL_WINDOWEVENT_LEAVE:
-							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorEnterEvent>(false));
-							break;
-						case SDL_WINDOWEVENT_SIZE_CHANGED:
-							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowSizeEvent>(event.window.data1, event.window.data2));
-							break;
-						case SDL_WINDOWEVENT_CLOSE:
-							m_should_close = true;
-							break;
-					} break;
+// SDL WINDOW EVENTS
+				case SDL_EVENT_WINDOW_MOUSE_ENTER:
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorEnterEvent>(true));
+					break;
+				case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorEnterEvent>(false));
+					break;
+				case SDL_EVENT_WINDOW_RESIZED:
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowSizeEvent>(event.window.data1, event.window.data2));
+					break;
+				case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+					m_should_close = true;
+					break;
 				default:
 					break;
 			}
@@ -160,8 +155,7 @@ namespace Yurrgoht {
 		SDL_SetWindowSize(m_window, width, height);
 	}
 	void WindowSystem::getScreenSize(int& width, int& height) {
-		SDL_DisplayMode* mode;
-		SDL_GetDisplayMode(0, 0, mode);
+		const SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
 		width = mode->w;
 		height = mode->h;
 	}
@@ -172,18 +166,16 @@ namespace Yurrgoht {
 	bool WindowSystem::isMouseButtonDown(int button) {
 		if (button < SDL_BUTTON_LEFT || button > SDL_BUTTON_X2) {
 			return false;
-		} return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(button)) != 0;
+		} return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_MASK(button)) != 0;
 	}
 
 	void WindowSystem::setFocus(bool focus) {
 		m_focus = focus;
-		if (m_focus) {
-			SDL_SetRelativeMouseMode(SDL_TRUE);  // Hide the cursor and allow relative mouse movement
-			SDL_ShowCursor(SDL_DISABLE);         // Hide the cursor
-		} else {
-			SDL_SetRelativeMouseMode(SDL_FALSE); // Disable relative mouse movement
-			SDL_ShowCursor(SDL_ENABLE);          // Show the cursor
-		}
+		SDL_SetWindowRelativeMouseMode(m_window, m_focus);  // enable/disable relative mouse movement
+		if (m_focus)
+			SDL_HideCursor();	// Hide the cursor
+		else 
+			SDL_ShowCursor();	// Show the cursor
 	}
 
 	void WindowSystem::toggleFullscreen() {
@@ -191,7 +183,7 @@ namespace Yurrgoht {
 		if (m_fullscreen) { 	// Save current window size and position for restoration and Switch to fullscreen
 			SDL_GetWindowPosition(m_window, &m_windowed_pos_x, &m_windowed_pos_y);
 			SDL_GetWindowSize(m_window, &m_windowed_width, &m_windowed_height);
-			SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			SDL_SetWindowFullscreen(m_window, SDL_GetWindowFullscreenMode(m_window));
 		} else { 	// Restore window size and position
 			SDL_SetWindowFullscreen(m_window, 0);  // Disable fullscreen
 			SDL_SetWindowPosition(m_window, m_windowed_pos_x, m_windowed_pos_y);

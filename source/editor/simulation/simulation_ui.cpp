@@ -18,8 +18,8 @@
 #include "engine/function/framework/component/sky_light_component.h"
 #include "engine/function/framework/component/spot_light_component.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 #include <ImGuizmo/ImGuizmo.h>
 
 namespace Yurrgoht {
@@ -330,7 +330,7 @@ namespace Yurrgoht {
 
 	void SimulationUI::onKey(const std::shared_ptr<class Event>& event) {
 		const WindowKeyEvent* key_event = static_cast<const WindowKeyEvent*>(event.get());
-		if (key_event->action != SDL_PRESSED) {
+		if (key_event->action != true) {
 			return;
 		} if (key_event->key == SDL_SCANCODE_F11) {
 			g_editor.toggleFullscreen();
@@ -338,7 +338,7 @@ namespace Yurrgoht {
 
 		if (g_engine.isEditor()) {
 			ESceneMode current_scene_mode = g_engine.sceneManager()->getSceneMode();
-			if ((key_event->mods & KMOD_ALT) && key_event->key == SDL_SCANCODE_P) {
+			if ((key_event->mods & SDL_KMOD_ALT) && key_event->key == SDL_SCANCODE_P) {
 				if (current_scene_mode == ESceneMode::Edit) {
 					g_engine.sceneManager()->setSceneMode(ESceneMode::Play);
 				}

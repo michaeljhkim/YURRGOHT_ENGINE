@@ -6,7 +6,7 @@ WORKDIR /workspaces
 # Install necessary build tools and libraries
 RUN dnf install -y \
     mesa-vulkan-drivers vulkan-tools vulkan-loader-devel vulkan-validation-layers glslang glslc spirv-tools \
-    assimp-devel glm-devel cereal-devel SDL2-devel SDL2_image-devel yaml-cpp-devel spdlog-devel \
+    assimp-devel glm-devel cereal-devel yaml-cpp-devel spdlog-devel \
     git wget clang cmake ninja-build doxygen gdb p7zip p7zip-plugins \
 # for ktx software
     freeglut-devel libXi-devel libXmu-devel mesa-libGL-devel mesa-libGLU-devel freeimage-devel \    
@@ -38,7 +38,23 @@ RUN wget https://github.com/wqking/eventpp/archive/refs/tags/v0.1.3.tar.gz && \
     cd eventpp-0.1.3 && mkdir build && cd build && \
     cmake .. -G Ninja -B . -DBUILD_SHARED_LIBS=OFF && \
     cmake --install .
+
+# SDL3 dependency
+RUN wget https://github.com/libsdl-org/SDL/releases/download/release-3.2.0/SDL3-3.2.0.tar.gz && \
+    tar -xzvf SDL3-3.2.0.tar.gz && \
+    cd SDL3-3.2.0 && mkdir build && \
+    cmake -S . -B build -DBUILD_SHARED_LIBS=OFF && \
+    cmake --build build && \
+    cmake --install build --prefix /usr/local
     
+# SDL3/SDL_image dependency
+RUN wget https://github.com/libsdl-org/SDL_image/releases/download/release-3.2.0/SDL3_image-3.2.0.tar.gz && \
+    tar -xzvf SDL3_image-3.2.0.tar.gz && \
+    cd SDL3_image-3.2.0 && mkdir build && \
+    cmake -S . -B build -DBUILD_SHARED_LIBS=OFF && \
+    cmake --build build && \
+    cmake --install build --prefix /usr/local
+
 
 # Download and extract the LunarG Vulkan SDK
 ENV VULKAN_SDK_VERSION=1.3.296.0

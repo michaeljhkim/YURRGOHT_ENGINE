@@ -8,7 +8,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <imgui/backends/imgui_impl_vulkan.h>
-#include <imgui/backends/imgui_impl_sdl2.h>
+#include <imgui/backends/imgui_impl_sdl3.h>
 #include "fonts/IconsFontAwesome5.h"
 
 namespace Yurrgoht {
@@ -44,7 +44,7 @@ namespace Yurrgoht {
 		RenderPass::init();
 
 		// setup platform/renderer backends
-		ImGui_ImplSDL2_InitForVulkan(g_engine.windowSystem()->getWindow());
+		ImGui_ImplSDL3_InitForVulkan(g_engine.windowSystem()->getWindow());
 		ImGui_ImplVulkan_InitInfo init_info{};
 		init_info.Instance = VulkanRHI::get().getInstance();
 		init_info.PhysicalDevice = VulkanRHI::get().getPhysicalDevice();
@@ -97,7 +97,7 @@ namespace Yurrgoht {
 	void UIPass::prepare() {
 		// process imgui frame and get draw data
 		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
+		ImGui_ImplSDL3_NewFrame();
 		ImGui::NewFrame();
 
 		// set docking over viewport
@@ -140,7 +140,7 @@ namespace Yurrgoht {
 	void UIPass::destroy() {
 		// destroy imgui
 		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
 		ImGui::DestroyContext();
 
 		RenderPass::destroy();

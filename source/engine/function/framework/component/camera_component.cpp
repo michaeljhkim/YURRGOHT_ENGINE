@@ -4,8 +4,8 @@
 #include "engine/core/event/event_system.h"
 #include "engine/function/framework/entity/entity.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 #include <algorithm>
 #include <functional>
 
@@ -125,11 +125,11 @@ namespace Yurrgoht {
 
 	void CameraComponent::onKey(const std::shared_ptr<class Event>& event) {
 		const WindowKeyEvent* key_event = static_cast<const WindowKeyEvent*>(event.get());
-		if (key_event->action != SDL_PRESSED && key_event->action != SDL_RELEASED) {
+		if (key_event->action != true && key_event->action != false) {
 			return;
 		}
 
-		bool is_pressed = key_event->action == SDL_PRESSED;
+		bool is_pressed = (key_event->action == true);
 		if (key_event->key == SDL_SCANCODE_W) {
 			m_move_forward = is_pressed;
 		} if (key_event->key == SDL_SCANCODE_S) {
