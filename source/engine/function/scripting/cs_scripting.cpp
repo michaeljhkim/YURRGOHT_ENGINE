@@ -12,26 +12,10 @@ namespace Yurrgoht
     hostfxr_run_app_fn run_app_fptr;
     hostfxr_close_fn close_fptr;
 
-    /*
-    int main(int argc, char *argv[]) {
-        // Get the current executable's directory
-        // This sample assumes the managed assembly to load and its runtime configuration file are next to the host
-        char_t host_path[MAX_PATH];
-        auto resolved = realpath(argv[0], host_path);
-        assert(resolved != nullptr);
-
-        string_t root_path = host_path;
-        auto pos = root_path.find_last_of(DIR_SEPARATOR);
-        assert(pos != string_t::npos);
-        root_path = root_path.substr(0, pos + 1);
-
-        if (argc > 1 && string_compare(argv[1], STR("app")) == 0)
-            return run_app_example();
-    }
-    */
-
+    // called in engine_context init - not sure if I should move this whole thing, but I am considering it.
     int run_app_example() {
-        const string_t app_path = std::filesystem::absolute("cs_interface/cs_interface.dll").string();
+        const string_t app_path = std::filesystem::absolute("scripting/cs_interface/cs_interface.dll").string();
+        const char* script_path = "scripting/test_script.cs";
 
         if ( !load_hostfxr(app_path.c_str()) ) {
             assert(false && "Failure: load_hostfxr()");
@@ -77,13 +61,28 @@ namespace Yurrgoht
             nullptr, nullptr, (void**)&hello);
         assert(rc == 0 && hello != nullptr && "Failure: get_function_pointer()");
 
+
+        // Function pointer to Program cs-script loader
+        typedef void (CORECLR_DELEGATE_CALLTYPE* load_file_fn)(const char*);
+        load_file_fn load_file;
+        rc = get_function_pointer(
+            STR("Program, cs_interface"),
+            STR("LoadFile"),
+            UNMANAGEDCALLERSONLY_METHOD,
+            nullptr, nullptr, (void**)&load_file);
+        assert(rc == 0 && load_file != nullptr && "Failure: get_function_pointer()");
+
+
         // Invoke the functions in a different thread from the main app
+        // Note: the actual C# code requires the hello function to be run at least 3 times, otherwise it hangs
         std::thread t([&] {
             while (is_waiting() != 1)
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
             for (int i = 0; i < 3; ++i)
                 hello("from host!");
+            
+            load_file( script_path );
         });
 
         // Run the app

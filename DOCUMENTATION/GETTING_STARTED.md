@@ -13,6 +13,16 @@ NOTE: I have never done documentation before, so this may or may not be coherent
 THIS PROJECT IS NOT DESIGNED FOR PUBLIC USE YET - 
 With that being said, this engine developed solely with the intention of being as light as possible. I have found that nearly all widely used game engines are severly bloated and I was paranoid of bugs/unnesscary overhead. With this, I would at least have full control over everything, and keep everything as LIGHT as possible. This game engine is not aiming for the most advanced graphics anyways, the most I'm hoping for in the near future is something that looks like source 1
 
+## Notable Changes From Bamboo:
+- Primarily Linux focused instead of Windows
+- Switched from glfw to sdl3
+- Switched from rttr to meta.hpp (the .hpp is apart of the full name, it's not just a header file)
+- Switched from C++17 to C++20
+- Added C# support for game scripting
+- Created docker image and dev container in order for consistent development
+- Packages are now either a submodule, cmake fetch module, or installed via docker
+- Implementing unfinished editor gui features 
+
 ## External libraries
 All external libraries' source codes have been included in the dockerfile, or fetched with cmake fetch module, or with git submodule. 
 <br>imgui    - submodule
@@ -52,7 +62,7 @@ NOTE: imgui shader code has been modified to accomodate sRGB and not linear colo
 - Must explain how asset loading works, in case there are issues (serialization)
 
 ```shell
-apt-get install -y vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools libassimp-dev libglm-dev libcereal-dev libsdl2-dev git wget clang cmake ninja-build doxygen zlib1g-dev graphviz mesa-utils libgl1-mesa-dev mesa-vulkan-drivers
+apt-get install -y vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools libassimp-dev libglm-dev libcereal-dev libsdl3-dev git wget clang cmake ninja-build doxygen zlib1g-dev graphviz mesa-utils libgl1-mesa-dev mesa-vulkan-drivers
 
 pacman -S vulkan-devel assimp glm cereal sdl3
 ```

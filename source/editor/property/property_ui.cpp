@@ -82,17 +82,33 @@ namespace Yurrgoht {
 		const auto p_component = u_instance.try_as<Component*>();
 		auto properties = u_instance.get_type().as_pointer().get_data_type().as_class().get_members();
 
-		// In case a component has parent class members we need to get values from
-		// NOTE: this only goes up to the IMMEDIATE parents and not grandparents or such
-		for (const auto& parent_class : u_instance.get_type().as_pointer().get_data_type().as_class().get_base_classes()) {
-			auto& members = parent_class.get_members();		// for cleanliness only really
-			properties.insert(properties.end(), members.begin(), members.end());
-		}
-		//std::cout << "properties size: " << properties.size() << std::endl;
+		/*
+		- In case a component has parent class members we need to get values from
+		- Basic premise is if the parent classes themselves also have a parent, we insert the elements from their base class list into the deque
+		- For each class in the base class list, we get the reflected members from the members list.
+		- This will allow us to get all reflected members, regardless of how many levels of inheritance
+		*/
+		std::deque<meta_hpp::class_type> parent_classes(
+			u_instance.get_type().as_pointer().get_data_type().as_class().get_base_classes().begin(), 
+			u_instance.get_type().as_pointer().get_data_type().as_class().get_base_classes().end()
+		);
+		while (!parent_classes.empty()) {
+			auto current_class = parent_classes.front();
+			parent_classes.pop_front();
 
-		if (p_entity != nullptr && properties.empty()) {
-			return;
+			// If there are parent classes to this current class, we insert it into the deque to process their members 
+			if (!current_class.get_base_classes().empty())
+				parent_classes.insert(parent_classes.end(), current_class.get_base_classes().begin(), current_class.get_base_classes().end());
+
+			// We insert the members of the current class if it has reflected members
+			if (!current_class.get_members().empty())
+				properties.insert(properties.end(), current_class.get_members().begin(), current_class.get_members().end());
 		}
+
+
+		if (p_entity != nullptr && properties.empty())
+			return;
+
 
 		// add name title
 		ImGui::TableNextRow();
@@ -147,7 +163,7 @@ namespace Yurrgoht {
 				}
 				else if (property_type.second == EPropertyContainerType::Array) {
 					// meta.hpp has no method of setting vectors at the moment, so a class must have such method first.
-					// for animation component only (at the moment), since it is the only class with a vector
+					// for animation component only (at the moment), since it is the only class with an exposed vector 
 					auto u_setter = u_instance.get_type().as_pointer().get_data_type().as_class().get_method("set_vector");
 
 					for (size_t i = 0; i < variant.size(); ++i) {
@@ -314,9 +330,8 @@ namespace Yurrgoht {
 			value_type = EPropertyValueType::Bool;
 		else if (type_name.find("int") != std::string::npos)
 			value_type = EPropertyValueType::Integar;
-		else if (type_name.find("float") != std::string::npos) {
+		else if (type_name.find("float") != std::string::npos)
 			value_type = EPropertyValueType::Float;
-		}
 		else if (type_name.find("std::string") != std::string::npos)
 			value_type = EPropertyValueType::String;
 		

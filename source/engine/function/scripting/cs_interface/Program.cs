@@ -1,9 +1,24 @@
-﻿// taken directly from microsoft netcore-hosting sample: https://learn.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting
-// Console.WriteLine("Hello, World!");
+﻿/* 
+- taken directly from microsoft netcore-hosting sample: https://learn.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting
+- how to make and build C# projects: https://youtu.be/KOoVm-KA8DA
+- official dotnet build instructions: https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build
+
+- Console.WriteLine("Hello, World!");
+*/
 
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+
+using System.IO;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Xml.Linq;
+using CSScriptLib;
+
+public interface ITestScript {
+    void test_script_hello();
+}
 
 public class Program {
     private static byte isWaiting = 0;
@@ -27,5 +42,13 @@ public class Program {
             Console.WriteLine("Signaling Program to close");
             mre.Set();
         }
+    }
+
+    // cs-script test
+    [UnmanagedCallersOnly]    
+    public static void LoadFile(IntPtr script_path) {
+        string msg = Marshal.PtrToStringUTF8(script_path);
+        dynamic test = CSScript.Evaluator.LoadFile<ITestScript>(msg);
+        test.test_script_hello();
     }
 }

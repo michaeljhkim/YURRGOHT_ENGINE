@@ -77,7 +77,9 @@ Written down thoughts to remember stuff:
 - especially explain reflection and serialization AND the problems I had starting out with those
 - and how changing things up might break things and how to avoid that
 
-- cs-script is confusing, for now, just try to get the regular c# stuff up and runnning
+- create a history for simulation_ui transformations (like the directory history for asset_ui)
+- manually add CRTL+Z in order to go back in transformation history
+- CRTL+Y for forward in transformation history
 
 
 
@@ -91,19 +93,12 @@ RUN mkdir cs-script && cd cs-script && \
     echo 'export CSSCRIPT_DIR='"$(current_dir)" >> ~/.bashrc && \
     echo 'export PATH=$PATH:'"$(current_dir)" >> ~/.bashrc
 
-    
-
 # cs-script - release install
 RUN dotnet add package CS-Script --version 4.8.27
 
-dotnet build -o ../../../../../build/source/cs_interface
+dotnet build -o ../../../../../build/source/scripting/cs_interface
 
-RUN wget https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/v4.3.2.tar.gz && \
-    tar -xzvf v4.3.2.tar.gz && \
-    cd KTX-Software-4.3.2 && mkdir build && cd build && \
-    cmake -DBUILD_SHARED_LIBS=OFF -DKTX_FEATURE_TESTS=OFF -DKTX_FEATURE_STATIC_LIBRARY=ON .. && \
-    make -j && \
-    make install
+try to add dotnet build thing here into cmake
 
     
 

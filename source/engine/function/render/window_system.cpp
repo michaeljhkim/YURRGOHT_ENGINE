@@ -29,7 +29,8 @@ namespace Yurrgoht {
 		int width = is_packaged_fullscreen ? mode->w : g_engine.configManager()->getWindowWidth();
 		int height = is_packaged_fullscreen ? mode->h: g_engine.configManager()->getWindowHeight();
 		m_window = SDL_CreateWindow(APP_NAME,    /* Title of the SDL window */
-                    width, height,     /* Width and Height of the window in pixels */
+                    width, 		/* Width of the window in pixels */
+					height,     /* Height of the window in pixels */
 					SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE); 
 		if (!m_window) {
 			LOG_FATAL("failed to create sdl3 window");
@@ -81,18 +82,16 @@ namespace Yurrgoht {
 
 	void WindowSystem::pollEvents() {
 		SDL_Event event;
-		int action;
 		while (SDL_PollEvent(&event)) {
 			ImGui_ImplSDL3_ProcessEvent(&event);
 			switch (event.type) {
 				case SDL_EVENT_QUIT: {
 					m_should_close = true;
-					break;
-				}
+				} break;
 				case SDL_EVENT_KEY_UP:
 				case SDL_EVENT_KEY_DOWN: {
-					action = (event.type == SDL_EVENT_KEY_DOWN) ? true : false;
-					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowKeyEvent>(event.key.key, event.key.scancode, action, event.key.mod));
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowKeyEvent>(event.key.key, event.key.scancode, 
+						(event.type == SDL_EVENT_KEY_DOWN), event.key.mod));
 				} break;
 
 				case SDL_EVENT_TEXT_INPUT: {
@@ -101,14 +100,14 @@ namespace Yurrgoht {
 					for (int i = 0; text[i] != '\0'; ++i) {
 						Uint32 codepoint = static_cast<Uint32>(text[i]); // ASCII codepoint
 						(mods == SDL_KMOD_NONE || (mods & ~(SDL_KMOD_NUM | SDL_KMOD_CAPS)) == 0) ?
-							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCharEvent>(codepoint)) :	// No mods or only NUMLOCK/CAPSLOCK active
-							g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCharModsEvent>(codepoint, mods));	// One or more modifying keys (Shift, Ctrl, Alt, etc.) are active
+						g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCharEvent>(codepoint)) :	// No mods or only NUMLOCK/CAPSLOCK active
+						g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCharModsEvent>(codepoint, mods));	// One or more modifying keys (Shift, Ctrl, Alt, etc.) are active
 					}
 				} break;
 				case SDL_EVENT_MOUSE_BUTTON_UP:
 				case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-					action = (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) ? true : false;
-					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowMouseButtonEvent>(event.button.button, action, SDL_GetModState()));
+					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowMouseButtonEvent>(event.button.button, 
+						(event.type == SDL_EVENT_MOUSE_BUTTON_DOWN), SDL_GetModState()) );
 				} break;
 				case SDL_EVENT_MOUSE_MOTION: {
 					m_mouse_pos_x = static_cast<double>(event.motion.x);
@@ -122,18 +121,18 @@ namespace Yurrgoht {
                     dropped_file_paths.push_back(event.drop.data);
                 } break;
 // SDL WINDOW EVENTS
-				case SDL_EVENT_WINDOW_MOUSE_ENTER:
+				case SDL_EVENT_WINDOW_MOUSE_ENTER: {
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorEnterEvent>(true));
-					break;
-				case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+				} break;
+				case SDL_EVENT_WINDOW_MOUSE_LEAVE: {
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowCursorEnterEvent>(false));
-					break;
-				case SDL_EVENT_WINDOW_RESIZED:
+                } break;
+				case SDL_EVENT_WINDOW_RESIZED: {
 					g_engine.eventSystem()->asyncDispatch(std::make_shared<WindowSizeEvent>(event.window.data1, event.window.data2));
-					break;
-				case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                } break;
+				case SDL_EVENT_WINDOW_CLOSE_REQUESTED: {
 					m_should_close = true;
-					break;
+                } break;
 				default:
 					break;
 			}
@@ -166,7 +165,8 @@ namespace Yurrgoht {
 	bool WindowSystem::isMouseButtonDown(int button) {
 		if (button < SDL_BUTTON_LEFT || button > SDL_BUTTON_X2) {
 			return false;
-		} return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_MASK(button)) != 0;
+		} 
+		return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON_MASK(button)) != 0;
 	}
 
 	void WindowSystem::setFocus(bool focus) {
