@@ -14,7 +14,7 @@ namespace Yurrgoht
 
     // called in engine_context init - not sure if I should move this whole thing, but I am considering it.
     int run_app_example() {
-        const string_t app_path = std::filesystem::absolute("scripting/cs_interface/cs_interface.dll").string();
+        const string_t app_path = "scripting/cs_interface/cs_interface.dll";
         const char* script_path = "scripting/test_script.cs";
 
         if ( !load_hostfxr(app_path.c_str()) ) {
@@ -78,10 +78,11 @@ namespace Yurrgoht
         std::thread t([&] {
             while (is_waiting() != 1)
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
+            
             for (int i = 0; i < 3; ++i)
                 hello("from host!");
-            
+
+            // cs-script load
             load_file( script_path );
         });
 

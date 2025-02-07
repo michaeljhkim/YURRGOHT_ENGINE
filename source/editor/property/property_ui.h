@@ -38,6 +38,10 @@ namespace Yurrgoht {
 		void addPropertyNameText(const std::string& name);
 		EPropertyType getPropertyType(const meta_hpp::uvalue& type);
 
+		void addComponent();
+		char m_plus_buf[128];
+		char m_trash_buf[128];
+
 		std::weak_ptr<class Entity> m_selected_entity;
 		std::shared_ptr<ImGuiImage> m_dummy_image;
 

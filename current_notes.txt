@@ -81,24 +81,21 @@ Written down thoughts to remember stuff:
 - manually add CRTL+Z in order to go back in transformation history
 - CRTL+Y for forward in transformation history
 
+- try to add dotnet build thing here into cmake
+- When developers attach a script to an entity, it will come with a template
+- There will be a "main" function (not named main) that cs_interface will automatically look for
+- This "main" is where all of the real action occurs
+
+- figure out how to move tables vertically in properties
 
 
 
-RUN mkdir cs-script && cd cs-script && \
-    wget https://github.com/oleg-shilo/cs-script/releases/download/v4.8.26.0/cs-script.linux.v4.8.26.0.7z && \
-    7z x cs-script.linux.v4.8.26.0.7z && \
-    ln -s /usr/local/bin/cs-script/cscs /usr/bin/css && \
-    export CSSCRIPT_DIR=$(current_dir) && \
-    export PATH=$PATH:$(current_dir) && \
-    echo 'export CSSCRIPT_DIR='"$(current_dir)" >> ~/.bashrc && \
-    echo 'export PATH=$PATH:'"$(current_dir)" >> ~/.bashrc
 
 # cs-script - release install
 RUN dotnet add package CS-Script --version 4.8.27
 
 dotnet build -o ../../../../../build/source/scripting/cs_interface
 
-try to add dotnet build thing here into cmake
 
     
 

@@ -85,7 +85,7 @@ namespace Yurrgoht {
 		ImGui::Spacing();
 		ImGui::Indent(k_spacing);
 
-		ImGui::BeginChild("asset_navigator", ImVec2( (content_size.x * (1 - k_folder_tree_width_scale) - k_spacing * 3), 24*m_res_scale), true);
+		ImGui::BeginChild("asset_navigator", ImVec2( (content_size.x * (1.0f-k_folder_tree_width_scale) - k_spacing*3), 24.0f*m_res_scale), true);
 		constructAssetNavigator();
 		ImGui::EndChild();
 
@@ -214,16 +214,6 @@ namespace Yurrgoht {
 		std::string basename = g_engine.fileSystem()->basename(filename);
 		const auto& asset_manager = g_engine.assetManager();
 
-		/*
-		std::string import_folder = g_engine.fileSystem()->relative(m_selected_folder);
-		for (auto iter = m_imported_files.begin(); iter != m_imported_files.end(); ) {
-			if (asset_manager->isGltfFile(import_file)) {
-			} else if (asset_manager->isTexture2DFile(import_file)) {
-			} else if (asset_manager->isTextureCubeFile(import_file)) {
-			} 
-		m_imported_files = filename;
-		*/
-
 		if (g_engine.fileSystem()->isFile(filename)) {
 			EAssetType asset_type = asset_manager->getAssetType(filename);
 			tex_id = (ImTextureID)m_asset_images[asset_type]->tex_id;
@@ -321,7 +311,7 @@ namespace Yurrgoht {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 				ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
 				ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
-				char str[import_file.length() + 1]; // Ensure enough space
+				char str[import_file.length() + 1]; 	// Ensure enough space
 				std::strcpy(str, import_file.c_str());
 				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x ;
 				
