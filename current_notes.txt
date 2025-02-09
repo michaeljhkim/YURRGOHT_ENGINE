@@ -86,8 +86,16 @@ Written down thoughts to remember stuff:
 - There will be a "main" function (not named main) that cs_interface will automatically look for
 - This "main" is where all of the real action occurs
 
-- figure out how to move tables vertically in properties
+- figure out how to move child windows vertically in properties
 
+
+- now that property_ui layout has been figured out for the most part, it is time to finally work on attach/remove component
+- when attach option selected, a popup will come up with all built-in components (maybe even some hover text)
+- when remove option selected, a popup will come up asking if the user is sure (checkbox will be added somewhere to turn this off maybe)
+
+- There should be 2 more options for attaching/removing scripts
+- maybe user will also be able to attach scripts through the asset_ui
+- 
 
 
 
@@ -95,8 +103,7 @@ Written down thoughts to remember stuff:
 RUN dotnet add package CS-Script --version 4.8.27
 
 dotnet build -o ../../../../../build/source/scripting/cs_interface
-
-
+    
     
 
 - You want a folder with 6 images (.exr, .png, .jpg, .e.tc...)

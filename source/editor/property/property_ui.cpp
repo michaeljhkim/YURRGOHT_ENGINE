@@ -30,7 +30,7 @@ namespace Yurrgoht {
 		m_dummy_image = loadImGuiImageFromImageViewSampler(g_engine.assetManager()->getDefaultTexture2D());
 
 		// icon + label - buffer creation
-		std::string m_plus_name = "add component"; 
+		std::string m_plus_name = "attach component"; 
 		sprintf(m_plus_buf, "%s %s###%s", ICON_FA_PLUS, m_plus_name.c_str(), m_plus_name.c_str());
 		std::string m_trash_name = "remove component"; 
 		sprintf(m_trash_buf, "%s %s###%s", ICON_FA_TRASH, m_trash_name.c_str(), m_trash_name.c_str());
@@ -48,23 +48,29 @@ namespace Yurrgoht {
 		}
 
 		if (selected_entity) {
-			// FOR ImGuiTableFlags_ContextMenuInBody, MUST CHANGE CONTEXT MENU (look into it first)
-			ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | 
-				ImGuiTableFlags_Resizable | ImGuiTableFlags_ContextMenuInBody | ImGuiTableFlags_SizingFixedSame;
-
 			// CONSTRUCT ENTITY IS CALLED HERE
 			constructEntity( selected_entity->meta_poly_ptr() );
 			for (const auto& component : selected_entity->getComponents()) {
 				const std::string& type_name = component->getTypeName();
 				std::string title = type_name.substr(0, type_name.length() - 9);
 
-				// Align the table's width with the header if needed
-				if (ImGui::BeginTable(("component_"+type_name).c_str(), 2, table_flags)) {
-					ImGui::TableSetupColumn("column_0", ImGuiTableColumnFlags_WidthFixed);
-					ImGui::TableSetupColumn("column_1", ImGuiTableColumnFlags_WidthStretch);
-					constructEntity( component->meta_poly_ptr() );
-					ImGui::EndTable();
+				ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.1f, 0.1f));
+				ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_Borders;
+
+				if (ImGui::BeginChild(title.c_str(), ImVec2(0, 0), child_flags)) {
+					// add name title
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+					ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed;
+					if (ImGui::TreeNodeEx(title.c_str(), tree_node_flags)) {
+						//ImGui::Spacing();
+						constructEntity( component->meta_poly_ptr() );
+						ImGui::TreePop();
+					}
+					ImGui::PopStyleVar();
+					ImGui::EndChild();
 				}
+				ImGui::PopStyleVar(2);
 			}
 			
 			if (ImGui::Button(m_plus_buf)) {
@@ -129,31 +135,27 @@ namespace Yurrgoht {
 		if (p_entity != nullptr && properties.empty())
 			return;
 
-		// add name title
-		ImGui::TableNextRow();
-		ImGui::TableNextColumn();
-
-		ImGuiTreeNodeFlags tree_node_flags = 0;
-		tree_node_flags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick |
-			ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_AllowItemOverlap;
-		const std::string& type_name = (p_component != nullptr) ? p_component->getTypeName() : "Entity";
-		std::string title = type_name.substr(0, type_name.length() - 9) + " ";
-		bool is_tree_open = ImGui::TreeNodeEx(title.c_str(), tree_node_flags);
 
 		// add option button
-		ImGui::TableNextColumn();
+		/*
 		ImVec4 rect_color = ImGui::IsItemActive() ? ImGui::GetStyleColorVec4(ImGuiCol_HeaderActive) : (
 			ImGui::IsItemHovered() ? ImGui::GetStyleColorVec4(ImGuiCol_HeaderHovered) : ImGui::GetStyleColorVec4(ImGuiCol_Header)
 		);
 		ImVec2 p_min = ImGui::GetCursorScreenPos();
 		ImVec2 p_max = ImVec2(p_min.x + ImGui::GetContentRegionAvail().x, p_min.y + ImGui::GetItemRectSize().y);
 		ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, ImGui::GetColorU32(rect_color));
-
+		*/
+		ImGui::SameLine();
 		if (p_component != nullptr) {
+			/*
 			ImVec4 button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
 			button_color.w = 0.0f;
 			ImGui::PushStyleColor(ImGuiCol_Button, button_color);
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 40.0f*m_res_scale);
+			*/
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.0f, 3.0f));
+			ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 50.0f*m_res_scale);
+			ImGui::BeginChild("#header_buttons", ImVec2(0.0f, 0.0f), child_flags);
 			if (ImGui::Button(ICON_FA_PLUS)) {
 				// THIS PART ACTUALLY NEEDS CODE!!!
 				LOG_INFO("add component");
@@ -162,63 +164,81 @@ namespace Yurrgoht {
 			if (ImGui::Button(ICON_FA_TRASH)) {
 				LOG_INFO("remove component");
 			}
-			ImGui::PopStyleColor();
+			ImGui::EndChild();
+			
+			ImGui::PopStyleVar();
+			//ImGui::PopStyleColor();
 		}
 
 		// add properties
-		if (is_tree_open) {
-			ImGui::PushFont(defaultFont());
-			ImGui::TableNextRow();
-
-			for (auto& prop : properties) {
-				std::string prop_name = prop.get_name();
-				EPropertyType property_type = getPropertyType(prop.get_metadata().find("type_name")->second);
-				ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type now");
-				
-				meta_hpp::uvalue variant = prop.get(u_instance);	//the get value just returns a member
-				if (property_type.second == EPropertyContainerType::Mono) {
-					m_property_constructors[property_type.first](prop_name, variant);
-					prop.set(u_instance, variant);
-				}
-				else if (property_type.second == EPropertyContainerType::Array) {
-					// meta.hpp has no method of setting vectors at the moment, so a class must have such method first.
-					// for animation component only (at the moment), since it is the only class with an exposed vector 
-					auto u_setter = u_instance.get_type().as_pointer().get_data_type().as_class().get_method("set_vector");
-
-					for (size_t i = 0; i < variant.size(); ++i) {
-						meta_hpp::uvalue sub_variant = *variant[i];
-						std::string sub_prop_name = prop_name + "_" + std::to_string(i);
-						m_property_constructors[property_type.first](sub_prop_name, sub_variant);
-						u_setter.invoke(u_instance, i, sub_variant);
-					}
-					prop.set(u_instance, variant);
-				}
+		for (auto& prop : properties) {
+			std::string prop_name = prop.get_name();
+			EPropertyType property_type = getPropertyType(prop.get_metadata().find("type_name")->second);
+			ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type now");
+			
+			meta_hpp::uvalue variant = prop.get(u_instance);	//the get value just returns a member
+			if (property_type.second == EPropertyContainerType::Mono) {
+				m_property_constructors[property_type.first](prop_name, variant);
+				prop.set(u_instance, variant);
 			}
-			ImGui::TreePop();
-			ImGui::PopFont();
+			else if (property_type.second == EPropertyContainerType::Array) {
+				// meta.hpp has no method of setting vectors at the moment, so a class must have such method first.
+				// for animation component only (at the moment), since it is the only class with an exposed vector 
+				auto u_setter = u_instance.get_type().as_pointer().get_data_type().as_class().get_method("set_vector");
+
+				for (size_t i = 0; i < variant.size(); ++i) {
+					meta_hpp::uvalue sub_variant = *variant[i];
+					std::string sub_prop_name = prop_name + "_" + std::to_string(i);
+					m_property_constructors[property_type.first](sub_prop_name, sub_variant);
+					u_setter.invoke(u_instance, i, sub_variant);
+				}
+				prop.set(u_instance, variant);
+			}
 		}
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
 	}
 
+	// placed checkbox inside of box that is the same size as int and float boxes - for conformity
 	void PropertyUI::constructPropertyBool(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
+		ImGui::SameLine();
 
-		ImGui::TableNextColumn();
-		std::string label = "##" + name;
-		ImGui::Checkbox(label.c_str(), &instance.as<bool>());
+		// FramePadding affects size of Checkbox - Checkbox size is calculated from Frampadding
+		// also modified for fitting Checkbox within child window 
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.0f, 3.0f));
+		ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
+
+   		// we used child window for this because of the auto-resizing and spacing
+		ImGui::BeginChild("CheckBoxFrame", ImVec2(0.0f, 0.0f), child_flags);
+		ImGui::Checkbox(("##" + name).c_str(), &instance.as<bool>());
+		ImGui::SameLine();
+		ImGui::Text("needs name"); // Text inside the frame
+		ImGui::EndChild();
+		
+		ImGui::PopStyleVar();
 	}
 
 	void PropertyUI::constructPropertyIntegar(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
+		ImGui::SameLine();
 
-		ImGui::TableNextColumn();
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
 		ImGui::InputInt(label.c_str(), &instance.as<int>());
+		ImGui::PopItemWidth();
 	}
 
 	void PropertyUI::constructPropertyFloat(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
-		
-		ImGui::TableNextColumn();
+		ImGui::SameLine();
+		/*
+		float spacing = ImGui::GetContentRegionAvail().x*0.5f - ImGui::CalcTextSize(name.c_str()).x;
+		ImGui::SameLine(0, spacing);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+		*/
+
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
 		ImGui::InputFloat(label.c_str(), &instance.as<float>());
@@ -227,15 +247,16 @@ namespace Yurrgoht {
 
 	void PropertyUI::constructPropertyString(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
+		ImGui::SameLine();
 
-		ImGui::TableNextColumn();
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		ImGui::Text("%s", (instance.as<std::string>()).c_str());
+		ImGui::PopItemWidth();
 	}
 
 	void PropertyUI::constructPropertyVec2(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
-		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
 		glm::vec2& vec2 = instance.as<glm::vec2>();
@@ -243,22 +264,50 @@ namespace Yurrgoht {
 		ImGui::PopItemWidth();
 	}
 
+
+
+
+	void PropertyUI::DragFloatInlineLabel(const std::string& name, float *value, float size) {
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
+
+		// we used child window for this because of the auto-resizing and spacing
+		ImGui::BeginChild(("DragFloatFrame_" + name).c_str(), ImVec2(size, 0.0f), child_flags);
+		ImGui::PopStyleVar();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 6.0f);
+		ImGui::AlignTextToFramePadding();
+			ImGui::Text("%s", (name + ":").c_str()); 
+		ImGui::SameLine(0.0f, 6.0f); 
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+			ImGui::DragFloat(("##" + name).c_str(), value, DRAG_SPEED);
+			ImGui::PopItemWidth();
+		ImGui::EndChild();
+	}
+
 	void PropertyUI::constructPropertyVec3(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
-
-		ImGui::TableNextColumn();
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
-		std::string label = "##" + name;
+		//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4.0f*m_res_scale); // Move up to reduce space
+		
+		float single_space = ImGui::CalcTextSize("#").x * 0.6f;
+		float size = ImGui::GetContentRegionAvail().x / 3.0f - single_space;
 		glm::vec3& vec3 = instance.as<glm::vec3>();
 		ImGuiSliderFlags flags = 0;
-		ImGui::DragFloat3(label.c_str(), glm::value_ptr(vec3), DRAG_SPEED);
-		ImGui::PopItemWidth();
+		//ImGui::DragFloat3(label.c_str(), glm::value_ptr(vec3), DRAG_SPEED);
+		
+		ImGui::PushID(("##" + name).c_str());
+		ImGui::BeginGroup();
+			DragFloatInlineLabel("X", &vec3.x, size);
+		ImGui::SameLine(0.0f, single_space);
+			DragFloatInlineLabel("Y", &vec3.y, size);
+		ImGui::SameLine(0.0f, single_space);
+			DragFloatInlineLabel("Z", &vec3.z, size);
+		ImGui::EndGroup();
+		ImGui::PopID();
 	}
 
 	void PropertyUI::constructPropertyVec4(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
-		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
 		glm::vec4 vec4 = instance.as<glm::vec4>();
@@ -269,7 +318,6 @@ namespace Yurrgoht {
 	void PropertyUI::constructPropertyColor3(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
-		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
 		Color3& color3 = instance.as<Color3>();
@@ -280,7 +328,6 @@ namespace Yurrgoht {
 	void PropertyUI::constructPropertyColor4(const std::string& name, meta_hpp::uvalue& instance) {
 		addPropertyNameText(name);
 
-		ImGui::TableNextColumn();
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		std::string label = "##" + name;
 		Color4& color4 = instance.as<Color4>();
@@ -289,22 +336,21 @@ namespace Yurrgoht {
 	}
 
 	void PropertyUI::constructPropertyAsset(const std::string& name, meta_hpp::uvalue& instance) {
-		ImGui::TableNextColumn();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
-		ImGui::Text("%s", name.c_str());
-
-		ImGui::TableNextColumn();
+		addPropertyNameText(name);
+		ImGui::SameLine();
 
 		// asset preview image
-		const ImVec2 icon_size(60, 60);
+		const ImVec2 icon_size(30.0f*m_res_scale, 30.0f*m_res_scale);
 		ImGui::Image((ImTextureID)m_dummy_image->tex_id, icon_size);
+		ImGui::SameLine();
 
 		// asset find combo box
-		ImGui::SameLine();
 		const char* asset_names[] = { "asset_0", "asset_1", "asset_2", "asset_3" };
 		int selected_index = 0;
 		const char* preview_value = asset_names[selected_index];
 		ImGuiComboFlags combo_flags = 0;
+		
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		if (ImGui::BeginCombo("##select_asset", preview_value, combo_flags)) {
 			for (int i = 0; i < IM_ARRAYSIZE(asset_names); ++i) {
 				const bool is_selected = selected_index == i;
@@ -316,13 +362,34 @@ namespace Yurrgoht {
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::PopItemWidth();
 	}
 
+	/*
+	I wanted to achieve:
+	- the ability for the user to highlight and copy the text
+	- a way to cut off the text if the window space is not accomodating, in order to maintain the ratio of 50/50 between the name and the value
+	- I did NOT want the text to overlap or be overlapped
+
+	InputText allowed me to do this
+	*/
 	void PropertyUI::addPropertyNameText(const std::string& name) {
-		ImGui::TableNextColumn();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - (20.0f*m_res_scale));
-		ImGui::Text("%s", name.c_str());
+		// create storage buffer for the property name
+		char str[name.length() + 1]; 	// Ensure enough space
+		std::strcpy(str, name.c_str());
+		std::string property_label = "##property_" + name;	// unique name for label 
+		
+		// removes background coloring and border
+		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0));    // Transparent background
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));     // No border
+		
+		// actual text
+		ImGui::InputText(property_label.c_str(), str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
+		
+		// Reset background & border color
+		ImGui::PopItemWidth();	
+		ImGui::PopStyleColor(2);  
 	}
 
 	/*

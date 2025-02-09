@@ -313,16 +313,14 @@ namespace Yurrgoht {
 				ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
 				char str[import_file.length() + 1]; 	// Ensure enough space
 				std::strcpy(str, import_file.c_str());
-				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x ;
+				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x;	// "...." is just for spacing
 				
 				ImGui::OpenPopup("Import Asset");
 				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_NoScrollbar)) {
     				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), ImGuiChildFlags_AutoResizeY);
 					ImGui::Text("Importing gltf:");
 					//ImGui::SameLine();
-					(ImGui::GetWindowWidth() > file_path_length) ?
-						ImGui::PushItemWidth(file_path_length):
-						ImGui::PushItemWidth(ImGui::GetWindowWidth());
+					ImGui::PushItemWidth( std::min(ImGui::GetWindowWidth(), file_path_length) );
 					ImGui::InputText("##import_gltf", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_ElideLeft);
 					ImGui::PopItemWidth();
 					ImGui::Separator();

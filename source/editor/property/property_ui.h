@@ -35,6 +35,7 @@ namespace Yurrgoht {
 		void constructPropertyColor4(const std::string& name, meta_hpp::uvalue& instance);
 		void constructPropertyAsset(const std::string& name, meta_hpp::uvalue& instance);
 
+		void DragFloatInlineLabel(const std::string& name, float *value, float size);
 		void addPropertyNameText(const std::string& name);
 		EPropertyType getPropertyType(const meta_hpp::uvalue& type);
 
