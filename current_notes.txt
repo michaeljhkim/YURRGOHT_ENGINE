@@ -95,7 +95,17 @@ Written down thoughts to remember stuff:
 
 - There should be 2 more options for attaching/removing scripts
 - maybe user will also be able to attach scripts through the asset_ui
-- 
+- user will for certain be able to navigate file system and find the appropriate .cs file
+
+
+- Maybe just add component option and then user selects/deselect components
+- Selected components should move to the bottom on next opening
+- Selectable item should be based on if the component listed is initalized
+- Function should be passed through the uvalue instance
+
+- Attaching components is just about done
+- Adding script components is now on the docket
+- Perhaps borrow the way asset_ui handles folders, how it shows where the files are and such
 
 
 

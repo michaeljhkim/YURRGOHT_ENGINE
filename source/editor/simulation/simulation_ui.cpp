@@ -79,14 +79,14 @@ namespace Yurrgoht {
 			return;
 		}
 
-		// Manually detect if the mouse is within the image bounds
-		ImVec2 mouse_pos = ImGui::GetMousePos();
-		bool is_mouse_in_image = 
-			mouse_pos.x >= cursor_screen_pos.x && mouse_pos.x <= cursor_screen_pos.x + content_size.x &&
-			mouse_pos.y >= cursor_screen_pos.y && mouse_pos.y <= cursor_screen_pos.y + content_size.y;
+		// Detect if the mouse is within the image bounds using Dummy
+		// Invisible Button was originally used, but imguizmo added parameters to check for buttons
+		ImGui::SetCursorScreenPos(cursor_screen_pos);
+		ImGui::SetNextItemAllowOverlap();
+		ImGui::Dummy(ImGui::GetContentRegionAvail());	// Dummy is used because it allows managing overlapping items
 
 		// Check if the mouse is in the image and the left mouse button is clicked
-		if (is_mouse_in_image && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && (!m_selected_entity.lock() || !ImGuizmo::IsOver()) ) {
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && (!m_selected_entity.lock() || !ImGuizmo::IsOver()) ) {
 			g_engine.eventSystem()->syncDispatch(std::make_shared<PickEntityEvent>(mouse_x, mouse_y));
 		}
 		updateCamera();

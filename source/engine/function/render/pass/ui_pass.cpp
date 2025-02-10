@@ -132,30 +132,29 @@ namespace Yurrgoht {
 		bool is_success = ImGui_ImplVulkan_Init(&init_info);
 		ASSERT(is_success, "failed to init imgui");
 
-		/*
+
 		// add consola font
 		const float k_base_font_size = 14.0f;
+		ImFontConfig config;
+		config.RasterizerDensity = g_engine.windowSystem()->getResolutionScale();	// Ensures font resolution matches DPI
 		const auto& fs = g_engine.fileSystem();
-		//io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/consola.ttf").c_str(), k_base_font_size);
-
-		// add small consola font
-		const float k_small_font_size = 12.0f;
-		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/consola.ttf").c_str(), k_small_font_size);
-		*/
-		const auto& fs = g_engine.fileSystem();
+		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/imgui_fonts/ProggyClean.ttf").c_str(), k_base_font_size, &config);
 
 		// add icon font
-		io.Fonts->AddFontDefault();
-		const float k_icon_font_size = 11.2f;
+		const float k_icon_font_size = k_base_font_size * 0.8f;
 		ImFontConfig icons_config;
 		icons_config.MergeMode = true;
 		icons_config.PixelSnapH = true;
 		icons_config.GlyphMinAdvanceX = k_icon_font_size;
+		icons_config.RasterizerDensity = g_engine.windowSystem()->getResolutionScale();
 		static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
 		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/fa-solid-900.ttf").c_str(), k_icon_font_size, &icons_config, icons_ranges);
 
+		// add small consola font
+		const float k_small_font_size = 12.0f;
+		io.Fonts->AddFontFromFileTTF(fs->absolute("asset/engine/font/imgui_fonts/ProggyClean.ttf").c_str(), k_small_font_size, &config);
+
 		// add big icon font
-		io.Fonts->AddFontDefault();
 		const float k_big_icon_font_size = 18.0f;
 		icons_config.MergeMode = false;
 		icons_config.GlyphMinAdvanceX = k_big_icon_font_size;

@@ -310,14 +310,13 @@ namespace Yurrgoht {
 			if (as->isGltfFile(import_file)) {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 				ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
-				ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
+				//ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
 				char str[import_file.length() + 1]; 	// Ensure enough space
 				std::strcpy(str, import_file.c_str());
 				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x;	// "...." is just for spacing
 				
 				ImGui::OpenPopup("Import Asset");
 				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-    				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), ImGuiChildFlags_AutoResizeY);
 					ImGui::Text("Importing gltf:");
 					//ImGui::SameLine();
 					ImGui::PushItemWidth( std::min(ImGui::GetWindowWidth(), file_path_length) );
@@ -350,9 +349,10 @@ namespace Yurrgoht {
 							ImGui::SetScrollX(ImGui::GetScrollX() + io.MouseWheel * 20.0f*m_res_scale);		// Update horizontal scrolling using MouseWheel
 						}
 					}
-    				ImGui::EndChild();
 
-				 	ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, (ImGui::GetWindowSize().y - (button_pos_y + 4.0f*m_res_scale)) ));
+				 	ImGui::SetCursorPos(ImVec2(0.0f, (ImGui::GetWindowSize().y - (button_pos_y + 4.0f*m_res_scale)) ));
+    				ImGui::BeginChild("import_option_area", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y));
+					ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, 0.0f));
 					if (ImGui::Button("OK", ImVec2(120.0f*m_res_scale, 0))) {
 						ImGui::CloseCurrentPopup();
 						StopWatch stop_watch;
@@ -368,6 +368,8 @@ namespace Yurrgoht {
 						ImGui::CloseCurrentPopup();
 						iter = m_imported_files.erase(iter);
 					}
+    				ImGui::EndChild();
+
 					ImGui::EndPopup();
 				}
 				break;
@@ -419,8 +421,7 @@ namespace Yurrgoht {
 			createCustomSeperatorText("REFERENCES");
 			if (ImGui::MenuItem("  Copy URL")) {
 				LOG_INFO("Copy URL");
-			}
-			if (ImGui::MenuItem("  Copy File Path")) {
+			} if (ImGui::MenuItem("  Copy File Path")) {
 				LOG_INFO("Copy file path");
 			}
 			ImGui::PopStyleVar();
@@ -446,11 +447,10 @@ namespace Yurrgoht {
 			}
 
 			if (is_background_not_hoverd) {
-				if (ImGui::MenuItem("  Delete")) {
+				if (ImGui::MenuItem("  Delete"))
 					is_delete_folder = true;
-				} if (ImGui::MenuItem("  Rename")) {
+				if (ImGui::MenuItem("  Rename"))
 					is_renaming = true;
-				}
 			}
 
 			ImGui::PopStyleVar();

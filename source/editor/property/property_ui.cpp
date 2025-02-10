@@ -4,6 +4,28 @@
 #include "engine/function/framework/scene/scene_manager.h"
 #include "engine/core/color/color.h"
 
+#include "engine/function/framework/component/animation_component.h"
+#include "engine/function/framework/component/animator_component.h"
+#include "engine/function/framework/component/camera_component.h"
+#include "engine/function/framework/component/rigidbody_component.h"
+#include "engine/function/framework/component/transform_component.h"
+#include "engine/function/framework/component/skeletal_mesh_component.h"
+#include "engine/function/framework/component/static_mesh_component.h"
+
+#include "engine/function/framework/component/directional_light_component.h"
+#include "engine/function/framework/component/light_component.h"
+#include "engine/function/framework/component/point_light_component.h"
+#include "engine/function/framework/component/sky_light_component.h"
+#include "engine/function/framework/component/spot_light_component.h"
+
+#include "engine/function/framework/component/box_collider_component.h"
+#include "engine/function/framework/component/capsule_collider_component.h"
+#include "engine/function/framework/component/collider_component.h"
+#include "engine/function/framework/component/cylinder_collider_component.h"
+#include "engine/function/framework/component/mesh_collider_component.h"
+#include "engine/function/framework/component/sphere_collider_component.h"
+
+
 #define DRAG_SPEED 0.1f
 
 namespace Yurrgoht {
@@ -24,14 +46,36 @@ namespace Yurrgoht {
 			{ EPropertyValueType::Asset, std::bind(&PropertyUI::constructPropertyAsset, this, std::placeholders::_1, std::placeholders::_2) },
 		};
 
+		m_property_components = {
+			//{"AnimationComponent"			, std::bind(&PropertyUI::CreateComponent<AnimationComponent>, this)			},
+			{"AnimatorComponent"			, std::bind(&PropertyUI::CreateComponent<AnimatorComponent>, this)			},
+			{"BoxColliderComponent"			, std::bind(&PropertyUI::CreateComponent<BoxColliderComponent>, this)		},
+			{"CameraComponent"	   			, std::bind(&PropertyUI::CreateComponent<CameraComponent>, this)			},
+			{"CapsuleColliderComponent"		, std::bind(&PropertyUI::CreateComponent<CapsuleColliderComponent>, this)	},
+			{"ColliderComponent"			, std::bind(&PropertyUI::CreateComponent<ColliderComponent>, this)			},
+			{"CylinderColliderComponent" 	, std::bind(&PropertyUI::CreateComponent<CylinderColliderComponent>, this)	},
+			{"DirectionalLightComponent"	, std::bind(&PropertyUI::CreateComponent<DirectionalLightComponent>, this)	},
+			//{"LightComponent"				, std::bind(&PropertyUI::CreateComponent<LightComponent>, this)				},
+			{"MeshColliderComponent"		, std::bind(&PropertyUI::CreateComponent<MeshColliderComponent>, this)		},
+			{"PointLightComponent"			, std::bind(&PropertyUI::CreateComponent<PointLightComponent>, this)		},
+			{"RigidbodyComponent"			, std::bind(&PropertyUI::CreateComponent<RigidbodyComponent>, this)			},
+			{"SkeletalMeshComponent"		, std::bind(&PropertyUI::CreateComponent<SkeletalMeshComponent>, this)		},
+			{"SkyLightComponent"			, std::bind(&PropertyUI::CreateComponent<SkyLightComponent>, this)			},
+			{"SphereColliderComponent"		, std::bind(&PropertyUI::CreateComponent<SphereColliderComponent>, this)	},
+			{"SpotLightComponent"			, std::bind(&PropertyUI::CreateComponent<SpotLightComponent>, this)			},
+			{"StaticMeshComponent"			, std::bind(&PropertyUI::CreateComponent<StaticMeshComponent>, this)		},
+			//{"TransformComponent"			, std::bind(&PropertyUI::CreateComponent<TransformComponent>, this)			},
+			// should probably never remove TransformComponent because it will most likely always be required
+		};
+
 		g_engine.eventSystem()->addListener(EEventType::SelectEntity, std::bind(&PropertyUI::onSelectEntity, this, std::placeholders::_1));
 
 		// get dummy texture2d
 		m_dummy_image = loadImGuiImageFromImageViewSampler(g_engine.assetManager()->getDefaultTexture2D());
 
 		// icon + label - buffer creation
-		std::string m_plus_name = "attach component"; 
-		sprintf(m_plus_buf, "%s %s###%s", ICON_FA_PLUS, m_plus_name.c_str(), m_plus_name.c_str());
+		std::string m_plus_name = "Manage Components"; 
+		sprintf(m_plus_buf, "%s %s###%s", ICON_FA_COG, m_plus_name.c_str(), m_plus_name.c_str());
 		std::string m_trash_name = "remove component"; 
 		sprintf(m_trash_buf, "%s %s###%s", ICON_FA_TRASH, m_trash_name.c_str(), m_trash_name.c_str());
 
@@ -61,9 +105,11 @@ namespace Yurrgoht {
 				if (ImGui::BeginChild(title.c_str(), ImVec2(0, 0), child_flags)) {
 					// add name title
 					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-					ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed;
+					ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap | 
+						ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanFullWidth;
 					if (ImGui::TreeNodeEx(title.c_str(), tree_node_flags)) {
 						//ImGui::Spacing();
+						ImGui::Unindent();
 						constructEntity( component->meta_poly_ptr() );
 						ImGui::TreePop();
 					}
@@ -72,15 +118,16 @@ namespace Yurrgoht {
 				}
 				ImGui::PopStyleVar(2);
 			}
-			
-			if (ImGui::Button(m_plus_buf)) {
-				// THIS PART ACTUALLY NEEDS CODE!!!
-				LOG_INFO("attach component");
+
+			if (ImGui::Button(m_plus_buf)) {	
+				LOG_INFO("manage components");
+				showing_component_manager = true;
+				ImGui::OpenPopup("Manage Components");
 			}
-			if (ImGui::Button(m_trash_buf)) {
-				LOG_INFO("remove component");
-			}
-		} else {
+			if (showing_component_manager)
+				componentManager(selected_entity->meta_poly_ptr());
+		} 
+		else {
 			const char* hint_text = "select any entity to display properties";
 			float window_width = ImGui::GetWindowSize().x;
 			float window_height = ImGui::GetWindowSize().y;
@@ -154,13 +201,15 @@ namespace Yurrgoht {
 			*/
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.0f, 3.0f));
 			ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 50.0f*m_res_scale);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 60.0f*m_res_scale);
 			ImGui::BeginChild("#header_buttons", ImVec2(0.0f, 0.0f), child_flags);
+			/*
 			if (ImGui::Button(ICON_FA_PLUS)) {
 				// THIS PART ACTUALLY NEEDS CODE!!!
 				LOG_INFO("add component");
 			}
 			ImGui::SameLine(0, 5);
+			*/
 			if (ImGui::Button(ICON_FA_TRASH)) {
 				LOG_INFO("remove component");
 			}
@@ -189,7 +238,7 @@ namespace Yurrgoht {
 				for (size_t i = 0; i < variant.size(); ++i) {
 					meta_hpp::uvalue sub_variant = *variant[i];
 					std::string sub_prop_name = prop_name + "_" + std::to_string(i);
-					m_property_constructors[property_type.first](sub_prop_name, sub_variant);
+					m_property_constructors.at(property_type.first)(sub_prop_name, sub_variant);
 					u_setter.invoke(u_instance, i, sub_variant);
 				}
 				prop.set(u_instance, variant);
@@ -214,7 +263,8 @@ namespace Yurrgoht {
 		ImGui::BeginChild("CheckBoxFrame", ImVec2(0.0f, 0.0f), child_flags);
 		ImGui::Checkbox(("##" + name).c_str(), &instance.as<bool>());
 		ImGui::SameLine();
-		ImGui::Text("needs name"); // Text inside the frame
+		//ImGui::Text("%s", name.c_str()); // Text inside the frame - cannot decide what to put in yet, so just the name
+		ImGui::Text("On");
 		ImGui::EndChild();
 		
 		ImGui::PopStyleVar();
@@ -266,20 +316,20 @@ namespace Yurrgoht {
 
 
 
-
-	void PropertyUI::DragFloatInlineLabel(const std::string& name, float *value, float size) {
+	// produces nearly the same result as DragFloat3, except labels are displayed inline
+	void PropertyUI::DragFloatInlineLabel(const std::string& label, float *value, float size) {
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 		ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
 
 		// we used child window for this because of the auto-resizing and spacing
-		ImGui::BeginChild(("DragFloatFrame_" + name).c_str(), ImVec2(size, 0.0f), child_flags);
+		ImGui::BeginChild(("DragFloatFrame_" + label).c_str(), ImVec2(size, 0.0f), child_flags);
 		ImGui::PopStyleVar();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 6.0f);
 		ImGui::AlignTextToFramePadding();
-			ImGui::Text("%s", (name + ":").c_str()); 
+			ImGui::Text("%s", (label + ":").c_str()); 
 		ImGui::SameLine(0.0f, 6.0f); 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
-			ImGui::DragFloat(("##" + name).c_str(), value, DRAG_SPEED);
+			ImGui::DragFloat(("##" + label).c_str(), value, DRAG_SPEED);
 			ImGui::PopItemWidth();
 		ImGui::EndChild();
 	}
@@ -340,9 +390,9 @@ namespace Yurrgoht {
 		ImGui::SameLine();
 
 		// asset preview image
-		const ImVec2 icon_size(30.0f*m_res_scale, 30.0f*m_res_scale);
+		const ImVec2 icon_size(20.0f*m_res_scale, 20.0f*m_res_scale);
 		ImGui::Image((ImTextureID)m_dummy_image->tex_id, icon_size);
-		ImGui::SameLine();
+		ImGui::SameLine(0, 8.0f);
 
 		// asset find combo box
 		const char* asset_names[] = { "asset_0", "asset_1", "asset_2", "asset_3" };
@@ -350,7 +400,7 @@ namespace Yurrgoht {
 		const char* preview_value = asset_names[selected_index];
 		ImGuiComboFlags combo_flags = 0;
 		
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+		ImGui::PushItemWidth(std::max(ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize(preview_value).x * 1.5f));
 		if (ImGui::BeginCombo("##select_asset", preview_value, combo_flags)) {
 			for (int i = 0; i < IM_ARRAYSIZE(asset_names); ++i) {
 				const bool is_selected = selected_index == i;
@@ -392,83 +442,42 @@ namespace Yurrgoht {
 		ImGui::PopStyleColor(2);  
 	}
 
-	/*
-	void PropertyUI::addComponent() {
-		float button_pos_y = 25.0f * m_res_scale;
-		float window_width = 0.0f;
-		float window_height = 0.0f;
-		ImVec2 import_text_size;
 
-		const auto& as = g_engine.assetManager();
-		std::string import_folder = g_engine.fileSystem()->relative(m_selected_folder);
-		for (auto iter = m_imported_files.begin(); iter != m_imported_files.end(); ) {
-			ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-			ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
-			ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
-			char str[import_file.length() + 1]; 	// Ensure enough space
-			std::strcpy(str, import_file.c_str());
-			float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x ;
-			
-			ImGui::OpenPopup("Import Asset");
-			if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), ImGuiChildFlags_AutoResizeY);
-				ImGui::Text("Importing gltf:");
-				//ImGui::SameLine();
-				(ImGui::GetWindowWidth() > file_path_length) ?
-					ImGui::PushItemWidth(file_path_length):
-					ImGui::PushItemWidth(ImGui::GetWindowWidth());
-				ImGui::InputText("##import_gltf", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_ElideLeft);
-				ImGui::PopItemWidth();
-				ImGui::Separator();
-			
-				ImGui::SeparatorText("Mesh");
-				static bool force_static_mesh = false;
-				ImGui::Checkbox("force static mesh", &force_static_mesh);
+	void PropertyUI::componentManager(const meta_hpp::uvalue& selected_entity) {
+		auto p_entity = selected_entity.try_as<Entity*>();
+		//float button_pos_y = 25.0f * m_res_scale;
+		//ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
 
-				static bool combine_meshes = true;
-				ImGui::Checkbox("combine meshes", &combine_meshes);
-
-				ImGui::SeparatorText("Material");
-				static bool contains_occlusion_channel = true;
-				ImGui::Checkbox("contain occlusion channel", &contains_occlusion_channel);
-
-				// Detect mouse hover and manually handle horizontal scrolling
-				if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
-					// Get the horizontal scrollbar bounding box
-					ImRect scrollBarRect(ImGui::GetWindowPos().x,
-						ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetStyle().ScrollbarSize,
-						ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
-						ImGui::GetWindowPos().y + ImGui::GetWindowHeight());
-
-					ImGuiIO& io = ImGui::GetIO();
-					if (scrollBarRect.Contains(io.MousePos) && io.MouseWheel != 0.0f) { 	// If the mouse wheel is scrolled
-						ImGui::SetScrollY(0.0f);
-						ImGui::SetScrollX(ImGui::GetScrollX() + io.MouseWheel * 20.0f*m_res_scale);		// Update horizontal scrolling using MouseWheel
-					}
-				}
-				ImGui::EndChild();
-
-				ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, (ImGui::GetWindowSize().y - (button_pos_y + 4.0f*m_res_scale)) ));
-				if (ImGui::Button("OK", ImVec2(120.0f*m_res_scale, 0))) {
-					ImGui::CloseCurrentPopup();
-					StopWatch stop_watch;
-					stop_watch.start();
-
-					as->importGltf(import_file, import_folder, { combine_meshes, force_static_mesh, contains_occlusion_channel });
-					LOG_INFO("import gltf {} to {}, elapsed time: {}ms", import_file, import_folder, stop_watch.stopMs());
-					iter = m_imported_files.erase(iter);
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		if (ImGui::BeginPopupModal("Manage Components", nullptr, ImGuiWindowFlags_None)) {
+			//ImGui::Text("Importing gltf:");
+			for (auto iter = m_property_components.begin(); iter != m_property_components.end(); ++iter) {
+				const bool has_component = p_entity->hasComponent_str(iter->first);
+				/*
+				if (ImGui::Checkbox(("##" + iter->first).c_str(), &has_component)){
+					has_component ? p_entity->removeComponent(p_entity->getComponent<Component>(iter->first)) : p_entity->addComponent(iter->second());
 				}
 				ImGui::SameLine();
-
-				if (ImGui::Button("Cancel", ImVec2(120.0f*m_res_scale, 0))) {
-					ImGui::CloseCurrentPopup();
-					iter = m_imported_files.erase(iter);
+				*/
+				if (ImGui::Selectable(iter->first.c_str(), has_component, ImGuiSelectableFlags_NoAutoClosePopups)) {
+					has_component ? p_entity->removeComponent(p_entity->getComponent<Component>(iter->first)) : p_entity->addComponent(iter->second());
 				}
-				ImGui::EndPopup();
 			}
+
+			ImGui::SetCursorPos(ImVec2(0.0f, (ImGui::GetWindowSize().y - (29.0f*m_res_scale)) ));
+			ImGui::BeginChild("import_option_area", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y));
+			ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, 0.0f));
+
+			if (ImGui::Button("Close", ImVec2(120.0f*m_res_scale, 0)) ) {
+				ImGui::CloseCurrentPopup();  // Manually close the popup
+				showing_component_manager = false;
+			}
+			ImGui::EndChild();
+
+			ImGui::EndPopup();
 		}
+
 	}
-	*/
 
 
 	EPropertyType PropertyUI::getPropertyType(const meta_hpp::uvalue& type) {

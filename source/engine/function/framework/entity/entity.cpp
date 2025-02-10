@@ -39,6 +39,7 @@ namespace Yurrgoht {
 		for (auto& component : m_components) {
 			// set component type name
 			component->setTypeName(meta_hpp::resolve_type(*component).get_metadata().find("name")->second.as<std::string>());
+			std::cout << meta_hpp::resolve_type(*component).get_metadata().find("name")->second.as<std::string>() << std::endl;
 
 			// attach to current entity
 			std::weak_ptr<Yurrgoht::Entity> weakEntity = weak_from_this();
