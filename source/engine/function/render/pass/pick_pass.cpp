@@ -9,19 +9,16 @@
 
 #define MAX_SIZE 512u
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	PickPass::PickPass()
-	{
+	PickPass::PickPass() {
 		m_formats[0] = VK_FORMAT_R8G8B8A8_UNORM;
 		m_formats[1] = VulkanRHI::get().getDepthFormat();
 
 		m_enabled = false;
 	}
 
-	void PickPass::render()
-	{
+	void PickPass::render() {
 		StopWatch stop_watch;
 		stop_watch.start();
 
@@ -59,15 +56,12 @@ namespace Yurrgoht
 
 		// render meshes
 		uint32_t entity_index = 0;
-		for (const auto& render_data : m_render_datas)
-		{
+		for (const auto& render_data : m_render_datas) {
 			std::shared_ptr<SkeletalMeshRenderData> skeletal_mesh_render_data = nullptr;
 			std::shared_ptr<StaticMeshRenderData> static_mesh_render_data = std::static_pointer_cast<StaticMeshRenderData>(render_data);
 			bool is_skeletal_mesh = render_data->type == ERenderDataType::SkeletalMesh;;
 			if (is_skeletal_mesh)
-			{
 				skeletal_mesh_render_data = std::static_pointer_cast<SkeletalMeshRenderData>(render_data);
-			}
 
 			uint32_t pipeline_index = (uint32_t)is_skeletal_mesh;
 			VkPipeline pipeline = m_pipelines[pipeline_index];
@@ -87,14 +81,12 @@ namespace Yurrgoht
 			std::vector<uint32_t>& index_offsets = static_mesh_render_data->index_offsets;
 			size_t sub_mesh_count = index_counts.size();
 			glm::vec4 color = encodeEntityID(m_entity_ids[entity_index++]);
-			for (size_t i = 0; i < sub_mesh_count; ++i)
-			{
+			for (size_t i = 0; i < sub_mesh_count; ++i) {
 				// push constants
 				updatePushConstants(command_buffer, pipeline_layout, { &static_mesh_render_data->transform_pco, &color });
 
 				// bone matrix ubo
-				if (is_skeletal_mesh)
-				{
+				if (is_skeletal_mesh) {
 					// update(push) sub mesh descriptors
 					std::vector<VkWriteDescriptorSet> desc_writes;
 					std::array<VkDescriptorBufferInfo, 1> desc_buffer_infos{};
@@ -112,8 +104,7 @@ namespace Yurrgoht
 
 		// render billboards
 		vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[2]);
-		for (const auto& render_data : m_billboard_render_datas)
-		{
+		for (const auto& render_data : m_billboard_render_datas) {
 			// push constants
 			glm::vec4 color = encodeEntityID(m_entity_ids[entity_index++]);
 			updatePushConstants(command_buffer, m_pipeline_layouts[2], { &render_data->position, &color }, m_billboard_push_constant_ranges);
@@ -135,8 +126,7 @@ namespace Yurrgoht
 		m_enabled = false;
 	}
 
-	void PickPass::createRenderPass()
-	{
+	void PickPass::createRenderPass() {
 		// color attachment
 		std::array<VkAttachmentDescription, 2> attachments = {};
 		attachments[0].format = m_formats[0];
@@ -181,8 +171,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create render pass");
 	}
 
-	void PickPass::createDescriptorSetLayouts()
-	{
+	void PickPass::createDescriptorSetLayouts() {
 		VkDescriptorSetLayoutCreateInfo desc_set_layout_ci{};
 		desc_set_layout_ci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		desc_set_layout_ci.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR;
@@ -200,8 +189,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create skeletal mesh descriptor set layout");
 	}
 
-	void PickPass::createPipelineLayouts()
-	{
+	void PickPass::createPipelineLayouts() {
 		m_push_constant_ranges =
 		{
 			{ VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TransformPCO) },
@@ -236,8 +224,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create billboard pipeline layout");
 	}
 
-	void PickPass::createPipelines()
-	{
+	void PickPass::createPipelines() {
 		// vertex input state
 		// vertex bindings
 		std::vector<VkVertexInputBindingDescription> vertex_input_binding_descriptions;
@@ -335,8 +322,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create billboard graphics pipeline");
 	}
 
-	void PickPass::createFramebuffer()
-	{
+	void PickPass::createFramebuffer() {
 		// 1.create color/depth images and view
 		VulkanUtil::createImageAndView(m_width, m_height, 1, 1, VK_SAMPLE_COUNT_1_BIT, m_formats[0],
 			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
@@ -366,16 +352,13 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create pick pass frame buffer");
 	}
 
-	void PickPass::createResizableObjects(uint32_t width, uint32_t height)
-	{
-		if (width > height)
-		{
+	void PickPass::createResizableObjects(uint32_t width, uint32_t height) {
+		if (width > height) {
 			m_width = std::min(width, MAX_SIZE);
 			m_height = m_width * height / width;
 			m_scale_ratio = (float)m_width / width;
 		}
-		else
-		{
+		else {
 			m_height = std::min(height, MAX_SIZE);
 			m_width = m_height * width / height;
 			m_scale_ratio = (float)m_height / height;
@@ -384,32 +367,26 @@ namespace Yurrgoht
 		createFramebuffer();
 	}
 
-	void PickPass::destroyResizableObjects()
-	{
+	void PickPass::destroyResizableObjects() {
 		m_color_image_view.destroy();
 		m_depth_image_view.destroy();
 
 		RenderPass::destroyResizableObjects();
 	}
 
-	void PickPass::pick(uint32_t mouse_x, uint32_t mouse_y)
-	{
+	void PickPass::pick(uint32_t mouse_x, uint32_t mouse_y) {
 		m_mouse_x = (uint32_t)(mouse_x * m_scale_ratio);
 		m_mouse_y = (uint32_t)(mouse_y * m_scale_ratio);
 
 		if (m_mouse_x < m_width && m_mouse_y < m_height)
-		{
 			m_enabled = true;
-		}
 	}
 
-	bool PickPass::isEnabled()
-	{
+	bool PickPass::isEnabled() {
 		return RenderPass::isEnabled() && m_enabled;
 	}
 
-	glm::vec4 PickPass::encodeEntityID(uint32_t id)
-	{
+	glm::vec4 PickPass::encodeEntityID(uint32_t id) {
 		glm::vec4 color;
 		id += 1;
 		color.r = (id & 0xFF) / 255.0;
@@ -419,8 +396,7 @@ namespace Yurrgoht
 		return color;
 	}
 
-	uint32_t PickPass::decodeEntityID(const uint8_t* color)
-	{
+	uint32_t PickPass::decodeEntityID(const uint8_t* color) {
 		uint32_t id;
 		id = color[0] + (color[1] << 8) + (color[2] << 16) - 1;
 		return id;

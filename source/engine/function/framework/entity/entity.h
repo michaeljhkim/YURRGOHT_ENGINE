@@ -28,6 +28,7 @@ namespace Yurrgoht {
 		const std::weak_ptr<Entity>& getParent() { return m_parent; }
 		const std::vector<std::weak_ptr<Entity>>& getChildren() { return m_children; }
 		const auto& getComponents() const { return m_components; }
+		void changeName(const std::string& new_name) { m_name = new_name; }
 
 		void addComponent(std::shared_ptr<Component> component);
 		void removeComponent(std::shared_ptr<Component> component);
@@ -40,11 +41,8 @@ namespace Yurrgoht {
 			}
 			return false;
 		}
-
 		// circumvents the macro in case the input is an actual string
-		bool hasComponent_str(const std::string& type_name) {
-			return this->hasComponent(type_name);
-		}
+		bool hasComponent_str(const std::string& type_name) { return this->hasComponent(type_name); }
 
 		template<typename TComponent>
 		std::shared_ptr<TComponent> getComponent(const std::string& type_name) {
@@ -59,9 +57,8 @@ namespace Yurrgoht {
 		std::vector<std::shared_ptr<TComponent>> getChildComponents(const std::string& type_name) {
 			std::vector<std::shared_ptr<TComponent>> child_components;
 			for (const auto& component : m_components) {
-				if (component->getTypeName().find(type_name) != std::string::npos) {
+				if (component->getTypeName().find(type_name) != std::string::npos)
 					child_components.push_back(std::static_pointer_cast<TComponent>(component));
-				}
 			}
 
 			return child_components;

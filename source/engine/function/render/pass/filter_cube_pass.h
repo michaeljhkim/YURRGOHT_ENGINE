@@ -2,15 +2,12 @@
 
 #include "render_pass.h"
 
-namespace Yurrgoht
-{
-	enum class EFilterType
-	{
+namespace Yurrgoht {
+	enum class EFilterType {
 		Irradiance, Prefilter
 	};
 
-	class FilterCubePass : public RenderPass
-	{
+	class FilterCubePass : public RenderPass {
 	public:
 		FilterCubePass(std::shared_ptr<class TextureCube>& skybox_texture_cube);
 

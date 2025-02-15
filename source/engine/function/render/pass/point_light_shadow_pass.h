@@ -2,10 +2,8 @@
 
 #include "render_pass.h"
 
-namespace Yurrgoht
-{
-	class PointLightShadowPass : public RenderPass
-	{
+namespace Yurrgoht {
+	class PointLightShadowPass : public RenderPass {
 	public:
 		PointLightShadowPass();
 

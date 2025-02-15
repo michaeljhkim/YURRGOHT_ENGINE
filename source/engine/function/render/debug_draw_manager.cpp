@@ -5,11 +5,9 @@
 #define MAX_VERTEX_COUNT 1024
 #define UPDATE_BUFFER_FPS 30
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 	
-	void DebugDrawManager::init()
-	{
+	void DebugDrawManager::init() {
 		m_vertex_count = 0;
 		m_max_vertex_buffer_size = MAX_VERTEX_COUNT * sizeof(DebugDrawVertex);
 		VulkanUtil::createBuffer(m_max_vertex_buffer_size,
@@ -25,37 +23,29 @@ namespace Yurrgoht
 		m_tick_timer_handle = g_engine.timerManager()->addTimer(1.0f / UPDATE_BUFFER_FPS, [this]() { update(); }, true);
 	}
 
-	void DebugDrawManager::clear()
-	{
+	void DebugDrawManager::clear() {
 		// clear vertices
 		m_vertices.clear();
 	}
 
-	void DebugDrawManager::destroy()
-	{
+	void DebugDrawManager::destroy() {
 		m_vertex_buffer.destroy();
 		m_staging_buffer.destroy();
 		g_engine.timerManager()->removeTimer(m_tick_timer_handle);
 	}
 
-	void DebugDrawManager::drawLine(const glm::vec3& start, const glm::vec3& end, const Color3& color /*= Color3::White*/)
-	{
+	void DebugDrawManager::drawLine(const glm::vec3& start, const glm::vec3& end, const Color3& color /*= Color3::White*/) {
 		m_vertices.push_back({ start, color.toVec3() });
 		m_vertices.push_back({ end, color.toVec3() });
 	}
 
-	void DebugDrawManager::drawLines(const std::vector<DebugDrawLine>& lines)
-	{
+	void DebugDrawManager::drawLines(const std::vector<DebugDrawLine>& lines) {
 		for (const auto& line : lines)
-		{
 			drawLine(line.start, line.end, line.color);
-		}
 	}
 
-	void DebugDrawManager::drawBox(const glm::vec3& center, const glm::vec3& extent /*= glm::vec3(1.0f)*/, const glm::vec3& rotation /*= glm::vec3(0.0f)*/, const Color3& color /*= Color3::White*/)
-	{
-		if (rotation == k_zero_vector)
-		{
+	void DebugDrawManager::drawBox(const glm::vec3& center, const glm::vec3& extent /*= glm::vec3(1.0f)*/, const glm::vec3& rotation /*= glm::vec3(0.0f)*/, const Color3& color /*= Color3::White*/) {
+		if (rotation == k_zero_vector) {
 			drawLine(center + glm::vec3(extent.x, extent.y, extent.z), center + glm::vec3(extent.x, -extent.y, extent.z), color);
 			drawLine(center + glm::vec3(extent.x, -extent.y, extent.z), center + glm::vec3(-extent.x, -extent.y, extent.z), color);
 			drawLine(center + glm::vec3(-extent.x, -extent.y, extent.z), center + glm::vec3(-extent.x, extent.y, extent.z), color);
@@ -71,8 +61,7 @@ namespace Yurrgoht
 			drawLine(center + glm::vec3(-extent.x, -extent.y, extent.z), center + glm::vec3(-extent.x, -extent.y, -extent.z), color);
 			drawLine(center + glm::vec3(-extent.x, extent.y, extent.z), center + glm::vec3(-extent.x, extent.y, -extent.z), color);
 		}
-		else
-		{
+		else {
 			Transform transform;
 			transform.m_rotation = rotation;
 			glm::vec3 start = transform.transformPosition(glm::vec3(extent.x, extent.y, extent.z));
@@ -145,12 +134,10 @@ namespace Yurrgoht
 
 	}
 
-	void DebugDrawManager::update()
-	{
+	void DebugDrawManager::update() {
 		// update vertex buffer
 		m_vertex_count = static_cast<uint32_t>(m_vertices.size());
-		if (m_vertex_count > 0)
-		{
+		if (m_vertex_count > 0) {
 			VkDeviceSize vertex_buffer_size = m_vertex_count * sizeof(DebugDrawVertex);
 			ASSERT(vertex_buffer_size < m_max_vertex_buffer_size, "debug draw vertex overflow");
 			VulkanUtil::updateBuffer(m_staging_buffer, m_vertices.data(), vertex_buffer_size);

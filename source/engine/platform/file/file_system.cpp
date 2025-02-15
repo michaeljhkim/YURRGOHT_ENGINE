@@ -88,19 +88,16 @@ namespace Yurrgoht {
 
 	std::vector<std::string> FileSystem::traverse(const std::string& path, bool is_recursive, EFileOrderType file_order_type, bool is_reverse) {
 		std::vector<std::string> filenames;
-		if (!std::filesystem::exists(path)) {
+		if (!std::filesystem::exists(path))
 			return filenames;
-		}
 
 		if (is_recursive) {
-			for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
+			for (const auto& file : std::filesystem::recursive_directory_iterator(path)) 
 				filenames.push_back(file.path().generic_string());
-			}
 		}
 		else {
-			for (const auto& file : std::filesystem::directory_iterator(path)) {
+			for (const auto& file : std::filesystem::directory_iterator(path))
 				filenames.push_back(file.path().generic_string());
-			}
 		}
 
 		std::sort(filenames.begin(), filenames.end(), 
@@ -142,11 +139,11 @@ namespace Yurrgoht {
 	}
 
 	std::string FileSystem::getShaderDir() {
-		return absolute("shader");
+		return absolute("asset/engine/shader/uncompiled");
 	}
 
 	std::string FileSystem::getSpvDir() {
-		return absolute("asset/engine/shader");
+		return absolute("asset/engine/shader/compiled");
 	}
 
 	std::string FileSystem::getLogDir() {
@@ -184,29 +181,29 @@ namespace Yurrgoht {
 	}
 
 	bool FileSystem::createDir(const std::string& path, bool is_recursive) {
-		if (exists(path)) {
+		if (exists(path))
 			return false;
-		}
-		if (is_recursive) {
+
+		if (is_recursive)
 			return std::filesystem::create_directories(std::filesystem::path(path));
-		}
+
 		return std::filesystem::create_directory(std::filesystem::path(path));
 	}
 
 	bool FileSystem::removeFile(const std::string& filename) {
-		if (!exists(filename)) {
+		if (!exists(filename))
 			return false;
-		}
+
 		return std::filesystem::remove(filename);
 	}
 
 	bool FileSystem::removeDir(const std::string& path, bool is_recursive) {
-		if (!exists(path)) {
+		if (!exists(path))
 			return false;
-		}
-		if (is_recursive) {
+			
+		if (is_recursive)
 			return std::filesystem::remove_all(path) > 0;
-		}
+
 		return std::filesystem::remove(path);
 	}
 

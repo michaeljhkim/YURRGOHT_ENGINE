@@ -4,32 +4,25 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/core/math/transform.h"
 
-namespace Yurrgoht
-{
-
-	DirectionalLightShadowPass::DirectionalLightShadowPass()
-	{
+namespace Yurrgoht {
+	DirectionalLightShadowPass::DirectionalLightShadowPass() {
 		m_format = VulkanRHI::get().getDepthFormat();
 		m_size = 2048;
 		m_cascade_split_lambda = 0.95f;
 	}
 
-	void DirectionalLightShadowPass::init()
-	{
+	void DirectionalLightShadowPass::init() {
 		RenderPass::init();
 
 		// create shadow cascade uniform buffers
 		m_shadow_cascade_ubs.resize(MAX_FRAMES_IN_FLIGHT);
 		for (VmaBuffer& uniform_buffer : m_shadow_cascade_ubs)
-		{
 			VulkanUtil::createBuffer(sizeof(ShadowCascadeUBO), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_AUTO_PREFER_HOST, uniform_buffer);
-		}
 
 		createResizableObjects(m_size, m_size);
 	}
 
-	void DirectionalLightShadowPass::render()
-	{
+	void DirectionalLightShadowPass::render() {
 		VkRenderPassBeginInfo render_pass_bi{};
 		render_pass_bi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		render_pass_bi.renderPass = m_render_pass;
@@ -61,13 +54,11 @@ namespace Yurrgoht
 		scissor.extent = { m_size, m_size };
 		vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
-		for (const auto& render_data : m_render_datas)
-		{
+		for (const auto& render_data : m_render_datas) {
 			std::shared_ptr<SkeletalMeshRenderData> skeletal_mesh_render_data = nullptr;
 			std::shared_ptr<StaticMeshRenderData> static_mesh_render_data = std::static_pointer_cast<StaticMeshRenderData>(render_data);
 			bool is_skeletal_mesh = render_data->type == ERenderDataType::SkeletalMesh;
-			if (is_skeletal_mesh)
-			{
+			if (is_skeletal_mesh) {
 				skeletal_mesh_render_data = std::static_pointer_cast<SkeletalMeshRenderData>(render_data);
 			}
 
@@ -88,8 +79,7 @@ namespace Yurrgoht
 			std::vector<uint32_t>& index_counts = static_mesh_render_data->index_counts;
 			std::vector<uint32_t>& index_offsets = static_mesh_render_data->index_offsets;
 			size_t sub_mesh_count = index_counts.size();
-			for (size_t i = 0; i < sub_mesh_count; ++i)
-			{
+			for (size_t i = 0; i < sub_mesh_count; ++i) {
 				// push constants
 				updatePushConstants(command_buffer, pipeline_layout, { &static_mesh_render_data->transform_pco });
 
@@ -99,8 +89,7 @@ namespace Yurrgoht
 				std::array<VkDescriptorImageInfo, 1> desc_image_infos{};
 
 				// bone matrix ubo
-				if (is_skeletal_mesh)
-				{
+				if (is_skeletal_mesh) {
 					addBufferDescriptorSet(desc_writes, desc_buffer_infos[0], skeletal_mesh_render_data->bone_ubs[flight_index], 0);
 				}
 
@@ -122,19 +111,15 @@ namespace Yurrgoht
 		m_render_datas.clear();
 	}
 
-	void DirectionalLightShadowPass::destroy()
-	{
+	void DirectionalLightShadowPass::destroy() {
 		RenderPass::destroy();
 
 		// destroy shadow cascade uniform buffers
 		for (VmaBuffer& uniform_buffer : m_shadow_cascade_ubs)
-		{
 			uniform_buffer.destroy();
-		}
 	}
 
-	void DirectionalLightShadowPass::createRenderPass()
-	{
+	void DirectionalLightShadowPass::createRenderPass() {
 		// depth attachment
 		VkAttachmentDescription depth_attachment{};
 		depth_attachment.format = m_format;
@@ -184,8 +169,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create render pass");
 	}
 
-	void DirectionalLightShadowPass::createDescriptorSetLayouts()
-	{
+	void DirectionalLightShadowPass::createDescriptorSetLayouts() {
 		std::vector<VkDescriptorSetLayoutBinding> desc_set_layout_bindings = {
 			{1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT, nullptr},
 			{2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr}
@@ -208,10 +192,8 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create skeletal mesh descriptor set layout");
 	}
 
-	void DirectionalLightShadowPass::createPipelineLayouts()
-	{
-		m_push_constant_ranges =
-		{
+	void DirectionalLightShadowPass::createPipelineLayouts() {
+		m_push_constant_ranges = {
 			{ VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TransformPCO) },
 		};
 
@@ -231,8 +213,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create skeletal mesh pipeline layout");
 	}
 
-	void DirectionalLightShadowPass::createPipelines()
-	{
+	void DirectionalLightShadowPass::createPipelines() {
 		// vertex input state
 		// vertex bindings
 		std::vector<VkVertexInputBindingDescription> vertex_input_binding_descriptions;
@@ -310,8 +291,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create directional light shadow pass's static mesh graphics pipeline");
 	}
 
-	void DirectionalLightShadowPass::createFramebuffer()
-	{
+	void DirectionalLightShadowPass::createFramebuffer() {
 		// create depth image view sampler
 		VulkanUtil::createImageViewSampler(m_size, m_size, nullptr, 1, SHADOW_CASCADE_NUM, m_format,
 			VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, m_shadow_image_view_sampler,
@@ -331,15 +311,13 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create directional light shadow framebuffer");
 	}
 
-	void DirectionalLightShadowPass::destroyResizableObjects()
-	{
+	void DirectionalLightShadowPass::destroyResizableObjects() {
 		m_shadow_image_view_sampler.destroy();
 
 		RenderPass::destroyResizableObjects();
 	}
 
-	void DirectionalLightShadowPass::updateCascades(const ShadowCascadeCreateInfo& shadow_cascade_ci)
-	{
+	void DirectionalLightShadowPass::updateCascades(const ShadowCascadeCreateInfo& shadow_cascade_ci) {
 		float cascade_splits[SHADOW_CASCADE_NUM];
 
 		float near = shadow_cascade_ci.camera_near;
@@ -355,8 +333,7 @@ namespace Yurrgoht
 
 		// Calculate split depths based on view camera frustum
 		// Based on method presented in https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch10.html
-		for (uint32_t i = 0; i < SHADOW_CASCADE_NUM; ++i) 
-		{
+		for (uint32_t i = 0; i < SHADOW_CASCADE_NUM; ++i) {
 			float p = (i + 1) / static_cast<float>(SHADOW_CASCADE_NUM);
 			float log = min_z * std::pow(ratio, p);
 			float uniform = min_z + range_z * p;
@@ -366,11 +343,9 @@ namespace Yurrgoht
 
 		// Calculate orthographic projection matrix for each cascade
 		float last_cascade_split = 0.0f;
-		for (uint32_t c = 0; c < SHADOW_CASCADE_NUM; ++c)
-		{
+		for (uint32_t c = 0; c < SHADOW_CASCADE_NUM; ++c) {
 			float cascade_split = cascade_splits[c];
-			glm::vec3 frustum_corners[8] =
-			{
+			glm::vec3 frustum_corners[8] = {
 				glm::vec3(-1.0f, 1.0f, 0.0f),
 				glm::vec3(1.0f, 1.0f, 0.0f),
 				glm::vec3(1.0f, -1.0f, 0.0f),
@@ -382,14 +357,12 @@ namespace Yurrgoht
 			};
 
 			// Project frustum corners into scene space
-			for (uint32_t i = 0; i < 8; ++i)
-			{
+			for (uint32_t i = 0; i < 8; ++i) {
 				glm::vec4 inv_frustum_corner = shadow_cascade_ci.inv_camera_view_proj * glm::vec4(frustum_corners[i], 1.0f);
 				frustum_corners[i] = inv_frustum_corner / inv_frustum_corner.w;
 			}
 
-			for (uint32_t i = 0; i < 4; ++i)
-			{
+			for (uint32_t i = 0; i < 4; ++i) {
 				glm::vec3 dist = frustum_corners[i + 4] - frustum_corners[i];
 				frustum_corners[i + 4] = frustum_corners[i] + (dist * cascade_split);
 				frustum_corners[i] = frustum_corners[i] + (dist * last_cascade_split);
@@ -397,15 +370,13 @@ namespace Yurrgoht
 
 			// Get frustum center
 			glm::vec3 frustum_center = glm::vec3(0.0f);
-			for (uint32_t i = 0; i < 8; ++i) 
-			{
+			for (uint32_t i = 0; i < 8; ++i) {
 				frustum_center += frustum_corners[i];
 			}
 			frustum_center /= 8.0f;
 
 			float radius = 0.0f;
-			for (uint32_t i = 0; i < 8; ++i) 
-			{
+			for (uint32_t i = 0; i < 8; ++i) {
 				float distance = glm::length(frustum_corners[i] - frustum_center);
 				radius = std::max(radius, distance);
 			}

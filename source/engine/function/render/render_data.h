@@ -1,30 +1,25 @@
 #pragma once
 
 #include "engine/core/vulkan/vulkan_util.h"
-#include "host_device.h"
+#include "../build/source/asset/engine/shader/uncompiled/include/host_device.h"
 
-namespace Yurrgoht
-{
-	enum class ERenderDataType
-	{
+namespace Yurrgoht {
+	enum class ERenderDataType {
 		Base, Lighting, StaticMesh, SkeletalMesh, Skybox, Billboard, PostProcess
 	};
 
-	struct PBRTexture
-	{
+	struct PBRTexture {
 		VmaImageViewSampler base_color_texure;
 		VmaImageViewSampler metallic_roughness_occlusion_texure;
 		VmaImageViewSampler normal_texure;
 		VmaImageViewSampler emissive_texure;
 	};
 
-	struct RenderData
-	{
+	struct RenderData {
 		ERenderDataType type = ERenderDataType::Base;
 	};
 
-	struct LightingRenderData : public RenderData
-	{
+	struct LightingRenderData : public RenderData {
 		LightingRenderData() { type = ERenderDataType::Lighting; }
 
 		glm::mat4 camera_view_proj;
@@ -40,8 +35,7 @@ namespace Yurrgoht
 		std::vector<VmaImageViewSampler> spot_light_shadow_textures;
 	};
 
-	struct MeshRenderData : public RenderData
-	{
+	struct MeshRenderData : public RenderData {
 		VmaBuffer vertex_buffer;
 		VmaBuffer index_buffer;
 		std::vector<uint32_t> index_counts;
@@ -49,23 +43,25 @@ namespace Yurrgoht
 		TransformPCO transform_pco;
 	};
 
-	struct StaticMeshRenderData : public MeshRenderData
-	{
+	struct InfiniteGridRenderData : public RenderData {
+		ViewUniformsPCO view_uniforms;
+	};
+
+
+	struct StaticMeshRenderData : public MeshRenderData {
 		StaticMeshRenderData() { type = ERenderDataType::StaticMesh; }
 
 		std::vector<MaterialPCO> material_pcos;
 		std::vector<PBRTexture> pbr_textures;
 	};
 
-	struct SkeletalMeshRenderData : public StaticMeshRenderData
-	{
+	struct SkeletalMeshRenderData : public StaticMeshRenderData {
 		SkeletalMeshRenderData() { type = ERenderDataType::SkeletalMesh; }
 
 		std::vector<VmaBuffer> bone_ubs;
 	};
 
-	struct SkyboxRenderData : public RenderData
-	{
+	struct SkyboxRenderData : public RenderData {
 		SkyboxRenderData() { type = ERenderDataType::Skybox; }
 
 		VmaBuffer vertex_buffer;
@@ -75,8 +71,7 @@ namespace Yurrgoht
 		VmaImageViewSampler env_texture;
 	};
 
-	struct BillboardRenderData : public RenderData
-	{
+	struct BillboardRenderData : public RenderData {
 		BillboardRenderData() { type = ERenderDataType::Billboard; }
 
 		vec4 position;
@@ -84,16 +79,14 @@ namespace Yurrgoht
 		VmaImageViewSampler texture;
 	};
 
-	struct PostProcessRenderData : public RenderData
-	{
+	struct PostProcessRenderData : public RenderData {
 		PostProcessRenderData() { type = ERenderDataType::PostProcess; }
 
 		const VmaImageViewSampler* p_color_texture;
 		const VmaImageViewSampler* outline_texture;
 	};
 
-	struct ShadowCascadeCreateInfo
-	{
+	struct ShadowCascadeCreateInfo {
 		float camera_near;
 		float camera_far;
 		mat4 inv_camera_view_proj;
@@ -102,15 +95,13 @@ namespace Yurrgoht
 		float light_cascade_frustum_near;
 	};
 
-	struct ShadowCubeCreateInfo
-	{
+	struct ShadowCubeCreateInfo {
 		vec3 light_pos;
 		float light_near;
 		float light_far;
 	};
 
-	struct ShadowFrustumCreateInfo
-	{
+	struct ShadowFrustumCreateInfo {
 		vec3 light_pos;
 		vec3 light_dir;
 		float light_angle;

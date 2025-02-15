@@ -66,6 +66,7 @@ namespace Yurrgoht {
 		std::shared_ptr<T> CreateComponent() { return std::make_shared<T>(); }
 		void componentManager(const meta_hpp::uvalue& selected_entity);
 		bool showing_component_manager = false;
+		ImGuiWindowClass noAutoMerge;
 
 		char m_plus_buf[128];
 		char m_trash_buf[128];

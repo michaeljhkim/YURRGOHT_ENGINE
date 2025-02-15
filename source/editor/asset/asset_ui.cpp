@@ -310,49 +310,48 @@ namespace Yurrgoht {
 			if (as->isGltfFile(import_file)) {
 				ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 				ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
-				//ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
+				ImGui::SetNextWindowSize(ImVec2(500.f*m_res_scale, 250.f*m_res_scale), ImGuiCond_Appearing);
 				char str[import_file.length() + 1]; 	// Ensure enough space
 				std::strcpy(str, import_file.c_str());
-				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x;	// "...." is just for spacing
+				float file_path_length = ImGui::CalcTextSize((import_file + "....").c_str()).x;
 				
 				ImGui::OpenPopup("Import Asset");
 				if (ImGui::BeginPopupModal("Import Asset", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-					ImGui::Text("Importing gltf:");
-					//ImGui::SameLine();
-					ImGui::PushItemWidth( std::min(ImGui::GetWindowWidth(), file_path_length) );
-					ImGui::InputText("##import_gltf", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_ElideLeft);
-					ImGui::PopItemWidth();
-					ImGui::Separator();
-				
-					ImGui::SeparatorText("Mesh");
-					static bool force_static_mesh = false;
-					ImGui::Checkbox("force static mesh", &force_static_mesh);
+    				ImGui::BeginChild("import_option_area", ImVec2(0, -button_pos_y), ImGuiChildFlags_AutoResizeY);
+						ImGui::Text("Importing gltf:");
+						ImGui::PushItemWidth(std::min(ImGui::GetWindowWidth(), file_path_length));
+						ImGui::InputText("##import_gltf", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_ElideLeft);
+						ImGui::PopItemWidth();
+						ImGui::Separator();
+					
+						ImGui::SeparatorText("Mesh");
+						static bool force_static_mesh = false;
+						ImGui::Checkbox("force static mesh", &force_static_mesh);
 
-					static bool combine_meshes = true;
-					ImGui::Checkbox("combine meshes", &combine_meshes);
+						static bool combine_meshes = true;
+						ImGui::Checkbox("combine meshes", &combine_meshes);
 
-					ImGui::SeparatorText("Material");
-					static bool contains_occlusion_channel = true;
-					ImGui::Checkbox("contain occlusion channel", &contains_occlusion_channel);
+						ImGui::SeparatorText("Material");
+						static bool contains_occlusion_channel = true;
+						ImGui::Checkbox("contain occlusion channel", &contains_occlusion_channel);
 
-					// Detect mouse hover and manually handle horizontal scrolling
-					if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
-						// Get the horizontal scrollbar bounding box
-						ImRect scrollBarRect(ImGui::GetWindowPos().x,
-							ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetStyle().ScrollbarSize,
-							ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
-							ImGui::GetWindowPos().y + ImGui::GetWindowHeight());
+						// Detect mouse hover and manually handle horizontal scrolling
+						if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
+							// Get the horizontal scrollbar bounding box
+							ImRect scrollBarRect(ImGui::GetWindowPos().x,
+								ImGui::GetWindowPos().y + ImGui::GetWindowHeight() - ImGui::GetStyle().ScrollbarSize,
+								ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),
+								ImGui::GetWindowPos().y + ImGui::GetWindowHeight());
 
-						ImGuiIO& io = ImGui::GetIO();
-						if (scrollBarRect.Contains(io.MousePos) && io.MouseWheel != 0.0f) { 	// If the mouse wheel is scrolled
-							ImGui::SetScrollY(0.0f);
-							ImGui::SetScrollX(ImGui::GetScrollX() + io.MouseWheel * 20.0f*m_res_scale);		// Update horizontal scrolling using MouseWheel
+							ImGuiIO& io = ImGui::GetIO();
+							if (scrollBarRect.Contains(io.MousePos) && io.MouseWheel != 0.0f) { 	// If the mouse wheel is scrolled
+								ImGui::SetScrollY(0.0f);
+								ImGui::SetScrollX(ImGui::GetScrollX() + io.MouseWheel * 20.0f*m_res_scale);		// Update horizontal scrolling using MouseWheel
+							}
 						}
-					}
+    				ImGui::EndChild();
 
-				 	ImGui::SetCursorPos(ImVec2(0.0f, (ImGui::GetWindowSize().y - (button_pos_y + 4.0f*m_res_scale)) ));
-    				ImGui::BeginChild("import_option_area", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y));
-					ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, 0.0f));
+				 	ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, (ImGui::GetWindowSize().y - (button_pos_y + 4.0f*m_res_scale)) ));
 					if (ImGui::Button("OK", ImVec2(120.0f*m_res_scale, 0))) {
 						ImGui::CloseCurrentPopup();
 						StopWatch stop_watch;
@@ -368,8 +367,6 @@ namespace Yurrgoht {
 						ImGui::CloseCurrentPopup();
 						iter = m_imported_files.erase(iter);
 					}
-    				ImGui::EndChild();
-
 					ImGui::EndPopup();
 				}
 				break;

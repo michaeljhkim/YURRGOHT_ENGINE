@@ -7,11 +7,9 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/function/render/render_data.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	MainPass::MainPass()
-	{
+	MainPass::MainPass() {
 		m_formats = {
 			VK_FORMAT_R8G8B8A8_UNORM,
 			VK_FORMAT_R16G16B16A16_SFLOAT,
@@ -22,8 +20,7 @@ namespace Yurrgoht
 		};
 	}
 
-	void MainPass::render()
-	{
+	void MainPass::render() {
 		VkRenderPassBeginInfo render_pass_bi{};
 		render_pass_bi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		render_pass_bi.renderPass = m_render_pass;
@@ -32,11 +29,11 @@ namespace Yurrgoht
 		render_pass_bi.renderArea.extent = { m_width, m_height };
 
 		std::array<VkClearValue, 6> clear_values{};
-		clear_values[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
-		clear_values[1].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clear_values[2].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clear_values[3].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clear_values[4].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clear_values[0].color = { {0.0f, 0.0f, 0.0f, 1.0f} };
+		clear_values[1].color = { {0.0f, 0.0f, 0.0f, 0.0f} };
+		clear_values[2].color = { {0.0f, 0.0f, 0.0f, 0.0f} };
+		clear_values[3].color = { {0.0f, 0.0f, 0.0f, 0.0f} };
+		clear_values[4].color = { {0.0f, 0.0f, 0.0f, 0.0f} };
 		clear_values[5].depthStencil = { 1.0f, 0 };
 		render_pass_bi.clearValueCount = static_cast<uint32_t>(clear_values.size());
 		render_pass_bi.pClearValues = clear_values.data();
@@ -61,15 +58,12 @@ namespace Yurrgoht
 
 		// 1.deferred subpass
 		for (const auto& render_data : m_render_datas)
-		{
 			render_mesh(render_data, ERendererType::Deferred);
-		}
 
 		// 2.composition subpass
 		vkCmdNextSubpass(command_buffer, VK_SUBPASS_CONTENTS_INLINE);
 
-		if (!m_render_datas.empty())
-		{
+		if (!m_render_datas.empty()) {
 			vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[2]);
 
 			std::vector<VkWriteDescriptorSet> desc_writes;
@@ -93,8 +87,7 @@ namespace Yurrgoht
 			std::vector<VmaImageViewSampler> point_light_shadow_textures = m_lighting_render_data->point_light_shadow_textures;
 			std::vector<VmaImageViewSampler> spot_light_shadow_textures = m_lighting_render_data->spot_light_shadow_textures;
 			std::vector<VkDescriptorImageInfo> desc_image_infos(textures.size() + point_light_shadow_textures.size() + spot_light_shadow_textures.size(), VkDescriptorImageInfo{});
-			for (size_t i = 0; i < textures.size(); ++i)
-			{
+			for (size_t i = 0; i < textures.size(); ++i) {
 				addImageDescriptorSet(desc_writes, desc_image_infos[i], textures[i], i);
 			}
 			addImagesDescriptorSet(desc_writes, &desc_image_infos[textures.size()], point_light_shadow_textures, textures.size());
@@ -110,8 +103,7 @@ namespace Yurrgoht
 
 		// 3.1 debug draw
 		const auto& ddm = g_engine.debugDrawSystem();
-		if (!ddm->empty())
-		{
+		if (!ddm->empty()) {
 			vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[6]);
 
 			// bind vertex and index buffer
@@ -125,8 +117,7 @@ namespace Yurrgoht
 		}
 
 		// 3.2 render skybox
-		if (m_skybox_render_data)
-		{
+		if (m_skybox_render_data) {
 			// bind pipeline
 			vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[5]);
 
@@ -150,15 +141,13 @@ namespace Yurrgoht
 		}
 
 		// 3.3 render transparency meshes
-		for (const auto& render_data : m_transparency_render_datas)
-		{
+		for (const auto& render_data : m_transparency_render_datas) {
 			render_mesh(render_data, ERendererType::Forward);
 		}
 
 		// 3.4 render billboards
 		vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[7]);
-		for (const auto& render_data : m_billboard_render_datas)
-		{
+		for (const auto& render_data : m_billboard_render_datas) {
 			// push constants
 			vkCmdPushConstants(command_buffer, m_pipeline_layouts[7], VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_GEOMETRY_BIT,
 				0, sizeof(glm::vec4) + sizeof(glm::vec2), &render_data->position);
@@ -172,33 +161,41 @@ namespace Yurrgoht
 			vkCmdDraw(command_buffer, 1, 1, 0, 0);
 		}
 
+		// 3.5 render infinite xz grid
+		if (m_grid_render_data) {
+			// bind pipeline
+			vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[8]);
+
+			// push constants
+			vkCmdPushConstants(command_buffer, m_pipeline_layouts[8], VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ViewUniformsPCO), &m_grid_render_data->view_uniforms);
+			
+			vkCmdDraw(command_buffer, 6, 1, 0, 0);
+		}
+
 		vkCmdEndRenderPass(command_buffer);
 	}
 
-	void MainPass::createRenderPass()
-	{
+	void MainPass::createRenderPass() {
 		// attachments
 		std::array<VkAttachmentDescription, 6> attachments{};
 		std::array<VkAttachmentReference, 6> references{};
 		std::array<VkAttachmentReference, 5> input_references{};
-		for (uint32_t i = 0; i < 6; ++i)
-		{
+		for (uint32_t i = 0; i < 6; ++i) {
 			attachments[i].samples = VK_SAMPLE_COUNT_1_BIT;
 			attachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			attachments[i].storeOp = (i == 0 || i == 5) ? VK_ATTACHMENT_STORE_OP_STORE : VK_ATTACHMENT_STORE_OP_DONT_CARE;
 			attachments[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			attachments[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 			attachments[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			attachments[i].finalLayout = i == 0 ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : (
-				i == 5 ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+			attachments[i].finalLayout = (i == 0) ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : (
+				(i == 5) ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 			attachments[i].format = m_formats[i];
 
 			references[i].attachment = i;
-			references[i].layout = i == 5 ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			references[i].layout = (i == 5) ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		}
 
-		for (uint32_t i = 0; i < 5; ++i)
-		{
+		for (uint32_t i = 0; i < 5; ++i) {
 			input_references[i].attachment = i + 1;
 			input_references[i].layout = i == 4 ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
@@ -274,15 +271,14 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create render pass");
 	}
 
-	void MainPass::createDescriptorSetLayouts()
-	{
+	void MainPass::createDescriptorSetLayouts() {
 		// gbuffer descriptor set layouts
 		std::vector<VkDescriptorSetLayoutBinding> desc_set_layout_bindings = {
 			{1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr},
 			{2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr},
 			{3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr},
 			{4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr},
-			{5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr},
+			{5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr},	// not used for now - figure out what it was meant for
 		};
 
 		VkDescriptorSetLayoutCreateInfo desc_set_layout_ci{};
@@ -291,7 +287,7 @@ namespace Yurrgoht
 		desc_set_layout_ci.bindingCount = static_cast<uint32_t>(desc_set_layout_bindings.size());
 		desc_set_layout_ci.pBindings = desc_set_layout_bindings.data();
 
-		m_desc_set_layouts.resize(8);
+		m_desc_set_layouts.resize(9);
 		VkResult result = vkCreateDescriptorSetLayout(VulkanRHI::get().getDevice(), &desc_set_layout_ci, nullptr, &m_desc_set_layouts[0]);
 		CHECK_VULKAN_RESULT(result, "create gbuffer static mesh descriptor set layout");
 
@@ -352,7 +348,6 @@ namespace Yurrgoht
 		desc_set_layout_bindings = {
 			{0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr}
 		};
-
 		desc_set_layout_ci.bindingCount = static_cast<uint32_t>(desc_set_layout_bindings.size());
 		desc_set_layout_ci.pBindings = desc_set_layout_bindings.data();
 		result = vkCreateDescriptorSetLayout(VulkanRHI::get().getDevice(), &desc_set_layout_ci, nullptr, &m_desc_set_layouts[5]);
@@ -367,18 +362,22 @@ namespace Yurrgoht
 		desc_set_layout_ci.pBindings = nullptr;
 		result = vkCreateDescriptorSetLayout(VulkanRHI::get().getDevice(), &desc_set_layout_ci, nullptr, &m_desc_set_layouts[6]);
 		CHECK_VULKAN_RESULT(result, "create debug draw descriptor set layout");
+
+		// infinite xz grid descriptor set layouts
+		desc_set_layout_ci.bindingCount = 0;
+		desc_set_layout_ci.pBindings = nullptr;
+		result = vkCreateDescriptorSetLayout(VulkanRHI::get().getDevice(), &desc_set_layout_ci, nullptr, &m_desc_set_layouts[8]);
+		CHECK_VULKAN_RESULT(result, "create infinite xz grid descriptor set layout");
 	}
 
-	void MainPass::createPipelineLayouts()
-	{
+	void MainPass::createPipelineLayouts() {
 		// gbuffer pipeline layouts
 		VkPipelineLayoutCreateInfo pipeline_layout_ci{};
 		pipeline_layout_ci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipeline_layout_ci.setLayoutCount = 1;
 		pipeline_layout_ci.pSetLayouts = &m_desc_set_layouts[0];
 
-		m_push_constant_ranges =
-		{
+		m_push_constant_ranges = {
 			{ VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TransformPCO) },
 			{ VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(TransformPCO), sizeof(MaterialPCO) }
 		};
@@ -386,7 +385,7 @@ namespace Yurrgoht
 		pipeline_layout_ci.pushConstantRangeCount = static_cast<uint32_t>(m_push_constant_ranges.size());
 		pipeline_layout_ci.pPushConstantRanges = m_push_constant_ranges.data();
 
-		m_pipeline_layouts.resize(8);
+		m_pipeline_layouts.resize(9);
 		VkResult result = vkCreatePipelineLayout(VulkanRHI::get().getDevice(), &pipeline_layout_ci, nullptr, &m_pipeline_layouts[0]);
 		CHECK_VULKAN_RESULT(result, "create gbuffer static mesh pipeline layout");
 
@@ -431,13 +430,19 @@ namespace Yurrgoht
 		push_constant_range = { VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_GEOMETRY_BIT, 0, sizeof(glm::vec4) + sizeof(glm::vec2) };
 		result = vkCreatePipelineLayout(VulkanRHI::get().getDevice(), &pipeline_layout_ci, nullptr, &m_pipeline_layouts[7]);
 		CHECK_VULKAN_RESULT(result, "create billboard pipeline layout");
+
+		// infinite xz grid pipeline layouts
+		pipeline_layout_ci.pSetLayouts = &m_desc_set_layouts[8];
+		VkPushConstantRange g_push_constant_range = { VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ViewUniformsPCO) };
+		pipeline_layout_ci.pPushConstantRanges = &g_push_constant_range;
+		pipeline_layout_ci.pushConstantRangeCount = 1;
+		result = vkCreatePipelineLayout(VulkanRHI::get().getDevice(), &pipeline_layout_ci, nullptr, &m_pipeline_layouts[8]);
+		CHECK_VULKAN_RESULT(result, "create infinite xz grid pipeline layout");
 	}
 
-	void MainPass::createPipelines()
-	{
+	void MainPass::createPipelines() {
 		// color blending
-		for (int i = 0; i < 3; ++i)
-		{
+		for (int i = 0; i < 3; ++i) {
 			m_color_blend_attachments.push_back(m_color_blend_attachments.front());
 		}
 		m_color_blend_ci.attachmentCount = static_cast<uint32_t>(m_color_blend_attachments.size());
@@ -492,7 +497,7 @@ namespace Yurrgoht
 		m_pipeline_ci.renderPass = m_render_pass;
 		m_pipeline_ci.subpass = 0;
 
-		m_pipelines.resize(8);
+		m_pipelines.resize(9);
 
 		// create gbuffer static mesh pipeline
 		VkResult result = vkCreateGraphicsPipelines(VulkanRHI::get().getDevice(), m_pipeline_cache, 1, &m_pipeline_ci, nullptr, &m_pipelines[0]);
@@ -572,7 +577,6 @@ namespace Yurrgoht
 			shader_manager->getShaderStageCI("screen.vert", VK_SHADER_STAGE_VERTEX_BIT),
 			shader_manager->getShaderStageCI("deferred_lighting.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
 		};
-
 		m_pipeline_ci.pVertexInputState = &composition_vertex_input_ci;
 		m_pipeline_ci.layout = m_pipeline_layouts[2];
 		m_pipeline_ci.subpass = 1;
@@ -591,7 +595,6 @@ namespace Yurrgoht
 			shader_manager->getShaderStageCI("billboard.geom", VK_SHADER_STAGE_GEOMETRY_BIT),
 			shader_manager->getShaderStageCI("billboard.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
 		};
-
 		m_pipeline_ci.stageCount = static_cast<uint32_t>(shader_stage_cis.size());
 		m_pipeline_ci.pStages = shader_stage_cis.data();
 		m_pipeline_ci.layout = m_pipeline_layouts[7];
@@ -613,7 +616,6 @@ namespace Yurrgoht
 			shader_manager->getShaderStageCI("debug_draw.vert", VK_SHADER_STAGE_VERTEX_BIT),
 			shader_manager->getShaderStageCI("debug_draw.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
 		};
-
 		m_pipeline_ci.pVertexInputState = &vertex_input_ci;
 		m_pipeline_ci.stageCount = static_cast<uint32_t>(shader_stage_cis.size());
 		m_pipeline_ci.pStages = shader_stage_cis.data();
@@ -621,10 +623,38 @@ namespace Yurrgoht
 		m_pipeline_ci.subpass = 2;
 		result = vkCreateGraphicsPipelines(VulkanRHI::get().getDevice(), m_pipeline_cache, 1, &m_pipeline_ci, nullptr, &m_pipelines[6]);
 		CHECK_VULKAN_RESULT(result, "create debug draw graphics pipeline");
+
+
+		// infinite xz grid pipeline - it only has a single push constant
+		m_rasterize_state_ci.cullMode = VK_CULL_MODE_BACK_BIT;
+		m_input_assembly_state_ci.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		m_depth_stencil_ci.depthTestEnable = VK_TRUE;
+		m_depth_stencil_ci.depthWriteEnable = VK_FALSE;
+		m_color_blend_attachments[0].blendEnable = VK_TRUE;
+
+		// vertex input
+		vertex_input_ci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		vertex_input_ci.vertexBindingDescriptionCount = 0;
+		vertex_input_ci.pVertexBindingDescriptions = nullptr;
+		vertex_input_ci.vertexAttributeDescriptionCount = 0;
+		vertex_input_ci.pVertexAttributeDescriptions = nullptr;
+		vertex_input_binding_descriptions[0].stride = 0;
+
+		// shader stages
+		shader_stage_cis = {
+			shader_manager->getShaderStageCI("grid.vert", VK_SHADER_STAGE_VERTEX_BIT),
+			shader_manager->getShaderStageCI("grid.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+		};
+		m_pipeline_ci.pVertexInputState = &vertex_input_ci;
+		m_pipeline_ci.stageCount = static_cast<uint32_t>(shader_stage_cis.size());
+		m_pipeline_ci.pStages = shader_stage_cis.data();
+		m_pipeline_ci.layout = m_pipeline_layouts[8];
+		m_pipeline_ci.subpass = 2;
+		result = vkCreateGraphicsPipelines(VulkanRHI::get().getDevice(), m_pipeline_cache, 1, &m_pipeline_ci, nullptr, &m_pipelines[8]);
+		CHECK_VULKAN_RESULT(result, "create infinite xz grid graphics pipeline");
 	}
 
-	void MainPass::createFramebuffer()
-	{
+	void MainPass::createFramebuffer() {
 		VulkanUtil::createImageViewSampler(m_width, m_height, nullptr, 1, 1, m_formats[0],
 			VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, m_color_texture_sampler,
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
@@ -667,8 +697,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create main frame buffer");
 	}
 
-	void MainPass::destroyResizableObjects()
-	{
+	void MainPass::destroyResizableObjects() {
 		m_color_texture_sampler.destroy();
 		m_normal_texture_sampler.destroy();
 		m_base_color_texture_sampler.destroy();
@@ -679,8 +708,7 @@ namespace Yurrgoht
 		RenderPass::destroyResizableObjects();
 	}
 
-	void MainPass::render_mesh(const std::shared_ptr<RenderData>& render_data, ERendererType renderer_type)
-	{
+	void MainPass::render_mesh(const std::shared_ptr<RenderData>& render_data, ERendererType renderer_type) {
 		VkCommandBuffer command_buffer = VulkanRHI::get().getCommandBuffer();
 		uint32_t flight_index = VulkanRHI::get().getFlightIndex();
 
@@ -688,9 +716,7 @@ namespace Yurrgoht
 		std::shared_ptr<StaticMeshRenderData> static_mesh_render_data = std::static_pointer_cast<StaticMeshRenderData>(render_data);
 		bool is_skeletal_mesh = render_data->type == ERenderDataType::SkeletalMesh;;
 		if (is_skeletal_mesh)
-		{
 			skeletal_mesh_render_data = std::static_pointer_cast<SkeletalMeshRenderData>(render_data);
-		}
 
 		uint32_t pipeline_index = (uint32_t)is_skeletal_mesh + (renderer_type == ERendererType::Deferred ? 0 : 3);
 		VkPipeline pipeline = m_pipelines[pipeline_index];
@@ -709,8 +735,7 @@ namespace Yurrgoht
 		std::vector<uint32_t>& index_counts = static_mesh_render_data->index_counts;
 		std::vector<uint32_t>& index_offsets = static_mesh_render_data->index_offsets;
 		size_t sub_mesh_count = index_counts.size();
-		for (size_t i = 0; i < sub_mesh_count; ++i)
-		{
+		for (size_t i = 0; i < sub_mesh_count; ++i) {
 			// push constants
 			updatePushConstants(command_buffer, pipeline_layout, { &static_mesh_render_data->transform_pco, &static_mesh_render_data->material_pcos[i] });
 
@@ -721,13 +746,10 @@ namespace Yurrgoht
 
 			// bone matrix ubo
 			if (is_skeletal_mesh)
-			{
 				addBufferDescriptorSet(desc_writes, desc_buffer_infos[0], skeletal_mesh_render_data->bone_ubs[flight_index], 0);
-			}
 
 			// forward rendering
-			if (renderer_type == ERendererType::Forward)
-			{
+			if (renderer_type == ERendererType::Forward) {
 				// lighting ubo
 				addBufferDescriptorSet(desc_writes, desc_buffer_infos[1], m_lighting_render_data->lighting_ubs[flight_index], 11);
 
@@ -740,9 +762,7 @@ namespace Yurrgoht
 				};
 				const uint32_t k_binding_offset = 5;
 				for (size_t t = 0; t < ibl_textures.size(); ++t)
-				{
 					addImageDescriptorSet(desc_writes, desc_image_infos[t], ibl_textures[t], static_cast<uint32_t>(t + k_binding_offset));
-				}
 
 				addImagesDescriptorSet(desc_writes, &desc_image_infos[ibl_textures.size()], m_lighting_render_data->point_light_shadow_textures, ibl_textures.size() + k_binding_offset);
 				addImagesDescriptorSet(desc_writes, &desc_image_infos[ibl_textures.size() + m_lighting_render_data->point_light_shadow_textures.size()], 
@@ -757,9 +777,7 @@ namespace Yurrgoht
 				static_mesh_render_data->pbr_textures[i].emissive_texure,
 			};
 			for (size_t t = 0; t < pbr_textures.size(); ++t)
-			{
 				addImageDescriptorSet(desc_writes, desc_image_infos[t + 20], pbr_textures[t], static_cast<uint32_t>(t + 1));
-			}
 
 			VulkanRHI::get().getVkCmdPushDescriptorSetKHR()(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 				pipeline_layout, 0, static_cast<uint32_t>(desc_writes.size()), desc_writes.data());

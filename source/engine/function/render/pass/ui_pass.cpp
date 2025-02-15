@@ -29,6 +29,7 @@ namespace Yurrgoht {
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		io.IniFilename = nullptr;
 
 		// setup Dear ImGui style
@@ -206,6 +207,12 @@ namespace Yurrgoht {
 
 		// record dear imgui primitives into command buffer
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), command_buffer);
+
+		// for multiple viewports
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
 
 		vkCmdEndRenderPass(command_buffer);
 	}

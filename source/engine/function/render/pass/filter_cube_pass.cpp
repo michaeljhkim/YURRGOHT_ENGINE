@@ -11,18 +11,15 @@
 
 #include <fstream>
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	struct IrradiancePCO
-	{
+	struct IrradiancePCO {
 		glm::mat4 mvp;
 		float delta_phi;
 		float delta_theta;
 	};
 
-	struct PrefilterPCO
-	{
+	struct PrefilterPCO {
 		glm::mat4 mvp;
 		float roughness;
 		uint32_t samples;
@@ -34,28 +31,24 @@ namespace Yurrgoht
 
 		m_sizes[0] = 64;
 		m_sizes[1] = 512;
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 2; ++i)
 			m_mip_levels[i] = VulkanUtil::calcMipLevel(m_sizes[i]);
-		}
 
 		m_skybox_texture_cube = skybox_texture_cube;
 		m_skybox_mesh = g_engine.assetManager()->loadAsset<StaticMesh>("asset/engine/mesh/primitive/stm_cube.stm");
 	}
 
-	void FilterCubePass::init()
-	{
+	void FilterCubePass::init() {
 		RenderPass::init();
 
 		createFramebuffer();
 	}
 
-	void FilterCubePass::render()
-	{
+	void FilterCubePass::render() {
 		StopWatch stop_watch;
 		stop_watch.start();
 
-		for (uint32_t i = 0; i < 2; ++i)
-		{
+		for (uint32_t i = 0; i < 2; ++i) {
 			EFilterType FilterType = (EFilterType)i;
 
 			uint32_t width = m_sizes[i];
@@ -77,8 +70,7 @@ namespace Yurrgoht
 			render_pass_bi.pClearValues = clear_values;
 			render_pass_bi.framebuffer = m_framebuffers[i];
 
-			std::vector<glm::mat4> view_matrices = 
-			{
+			std::vector<glm::mat4> view_matrices = {
 				glm::rotate(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f)),
 				glm::rotate(glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f)),
 				glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)),
@@ -101,10 +93,8 @@ namespace Yurrgoht
 			VkImage cube_image = m_cube_image_view_samplers[i].image();
 			VulkanUtil::transitionImageLayout(cube_image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_formats[i], m_mip_levels[i], 6);
 
-			for (uint32_t f = 0; f < 6; ++f)
-			{
-				for (uint32_t m = 0; m < m_mip_levels[i]; ++m)
-				{
+			for (uint32_t f = 0; f < 6; ++f) {
+				for (uint32_t m = 0; m < m_mip_levels[i]; ++m) {
 					VkCommandBuffer command_buffer = VulkanUtil::beginInstantCommands();
 					vkCmdBeginRenderPass(command_buffer, &render_pass_bi, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -116,8 +106,7 @@ namespace Yurrgoht
 					glm::mat4 mvp = glm::perspectiveRH_ZO((float)PI / 2.0f, 1.0f, 0.1f, 512.0f) * view_matrices[f];
 					switch (FilterType)
 					{
-					case EFilterType::Irradiance:
-					{
+					case EFilterType::Irradiance: {
 						IrradiancePCO irradiance_pco;
 						irradiance_pco.mvp = mvp;
 						irradiance_pco.delta_phi = PI / 90.0f;
@@ -125,10 +114,8 @@ namespace Yurrgoht
 						vkCmdPushConstants(command_buffer, m_pipeline_layouts[i], 
 							VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 
 							0, sizeof(IrradiancePCO), &irradiance_pco);
-					}
-						break;
-					case EFilterType::Prefilter:
-					{
+					} break;
+					case EFilterType::Prefilter: {
 						PrefilterPCO prefilter_pco;
 						prefilter_pco.mvp = mvp;
 						prefilter_pco.roughness = (float)m / (float)(m_mip_levels[i] - 1);
@@ -136,8 +123,7 @@ namespace Yurrgoht
 						vkCmdPushConstants(command_buffer, m_pipeline_layouts[i], 
 							VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 
 							0, sizeof(PrefilterPCO), &prefilter_pco);
-					}
-						break;
+					} break;
 					default:
 						break;
 					}

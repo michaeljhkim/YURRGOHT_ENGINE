@@ -2,10 +2,8 @@
 
 #include "render_pass.h"
 
-namespace Yurrgoht
-{
-	class MainPass : public RenderPass
-	{
+namespace Yurrgoht {
+	class MainPass : public RenderPass {
 	public:
 		MainPass();
 
@@ -20,6 +18,8 @@ namespace Yurrgoht
 
 		void setLightingRenderData(const std::shared_ptr<LightingRenderData>& lighting_render_data) { m_lighting_render_data = lighting_render_data; }
 		void setSkyboxRenderData(const std::shared_ptr<SkyboxRenderData>& skybox_render_data) { m_skybox_render_data = skybox_render_data; }
+		void setInfiniteGridRenderDatas(const std::shared_ptr<InfiniteGridRenderData>& grid_render_datas) { m_grid_render_data = grid_render_datas; }
+
 		void setBillboardRenderDatas(const std::vector<std::shared_ptr<BillboardRenderData>>& billboard_render_datas) {
 			m_billboard_render_datas = billboard_render_datas;
 		}
@@ -30,8 +30,7 @@ namespace Yurrgoht
 		const VmaImageViewSampler* getColorTexture() { return &m_color_texture_sampler; }
 
 	private:
-		enum class ERendererType
-		{
+		enum class ERendererType {
 			Deferred, Forward
 		};
 
@@ -55,6 +54,7 @@ namespace Yurrgoht
 		std::vector<std::shared_ptr<RenderData>> m_transparency_render_datas;
 		std::shared_ptr<LightingRenderData> m_lighting_render_data;
 		std::shared_ptr<SkyboxRenderData> m_skybox_render_data;
+		std::shared_ptr<InfiniteGridRenderData> m_grid_render_data;
 		std::vector<std::shared_ptr<BillboardRenderData>> m_billboard_render_datas;
 	};
 }

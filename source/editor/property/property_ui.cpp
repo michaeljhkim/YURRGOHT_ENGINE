@@ -58,7 +58,8 @@ namespace Yurrgoht {
 			//{"LightComponent"				, std::bind(&PropertyUI::CreateComponent<LightComponent>, this)				},
 			{"MeshColliderComponent"		, std::bind(&PropertyUI::CreateComponent<MeshColliderComponent>, this)		},
 			{"PointLightComponent"			, std::bind(&PropertyUI::CreateComponent<PointLightComponent>, this)		},
-			{"RigidbodyComponent"			, std::bind(&PropertyUI::CreateComponent<RigidbodyComponent>, this)			},
+			// issues with rigidbody, look into it later
+			//{"RigidbodyComponent"			, std::bind(&PropertyUI::CreateComponent<RigidbodyComponent>, this)			},
 			{"SkeletalMeshComponent"		, std::bind(&PropertyUI::CreateComponent<SkeletalMeshComponent>, this)		},
 			{"SkyLightComponent"			, std::bind(&PropertyUI::CreateComponent<SkyLightComponent>, this)			},
 			{"SphereColliderComponent"		, std::bind(&PropertyUI::CreateComponent<SphereColliderComponent>, this)	},
@@ -72,6 +73,9 @@ namespace Yurrgoht {
 
 		// get dummy texture2d
 		m_dummy_image = loadImGuiImageFromImageViewSampler(g_engine.assetManager()->getDefaultTexture2D());
+
+		// set the viewport flag to  
+		noAutoMerge.ViewportFlagsOverrideSet = ImGuiViewportFlags_NoAutoMerge;
 
 		// icon + label - buffer creation
 		std::string m_plus_name = "Manage Components"; 
@@ -122,7 +126,6 @@ namespace Yurrgoht {
 			if (ImGui::Button(m_plus_buf)) {	
 				LOG_INFO("manage components");
 				showing_component_manager = true;
-				ImGui::OpenPopup("Manage Components");
 			}
 			if (showing_component_manager)
 				componentManager(selected_entity->meta_poly_ptr());
@@ -191,25 +194,18 @@ namespace Yurrgoht {
 		ImVec2 p_min = ImGui::GetCursorScreenPos();
 		ImVec2 p_max = ImVec2(p_min.x + ImGui::GetContentRegionAvail().x, p_min.y + ImGui::GetItemRectSize().y);
 		ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, ImGui::GetColorU32(rect_color));
-		*/
+		
 		ImGui::SameLine();
 		if (p_component != nullptr) {
-			/*
-			ImVec4 button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
-			button_color.w = 0.0f;
-			ImGui::PushStyleColor(ImGuiCol_Button, button_color);
-			*/
+			//ImVec4 button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+			//button_color.w = 0.0f;
+			//ImGui::PushStyleColor(ImGuiCol_Button, button_color);
+			
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.0f, 3.0f));
 			ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 60.0f*m_res_scale);
-			ImGui::BeginChild("#header_buttons", ImVec2(0.0f, 0.0f), child_flags);
-			/*
-			if (ImGui::Button(ICON_FA_PLUS)) {
-				// THIS PART ACTUALLY NEEDS CODE!!!
-				LOG_INFO("add component");
-			}
-			ImGui::SameLine(0, 5);
-			*/
+			ImGui::BeginChild("#header_buttons", ImVec2(0, 0), child_flags);
+			
 			if (ImGui::Button(ICON_FA_TRASH)) {
 				LOG_INFO("remove component");
 			}
@@ -218,6 +214,7 @@ namespace Yurrgoht {
 			ImGui::PopStyleVar();
 			//ImGui::PopStyleColor();
 		}
+		*/
 
 		// add properties
 		for (auto& prop : properties) {
@@ -260,7 +257,7 @@ namespace Yurrgoht {
 		ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
 
    		// we used child window for this because of the auto-resizing and spacing
-		ImGui::BeginChild("CheckBoxFrame", ImVec2(0.0f, 0.0f), child_flags);
+		ImGui::BeginChild("CheckBoxFrame", ImVec2(0, 0), child_flags);
 		ImGui::Checkbox(("##" + name).c_str(), &instance.as<bool>());
 		ImGui::SameLine();
 		//ImGui::Text("%s", name.c_str()); // Text inside the frame - cannot decide what to put in yet, so just the name
@@ -318,16 +315,16 @@ namespace Yurrgoht {
 
 	// produces nearly the same result as DragFloat3, except labels are displayed inline
 	void PropertyUI::DragFloatInlineLabel(const std::string& label, float *value, float size) {
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 		ImGuiChildFlags child_flags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_FrameStyle | ImGuiChildFlags_Borders;
 
 		// we used child window for this because of the auto-resizing and spacing
-		ImGui::BeginChild(("DragFloatFrame_" + label).c_str(), ImVec2(size, 0.0f), child_flags);
+		ImGui::BeginChild(("DragFloatFrame_" + label).c_str(), ImVec2(size, 0), child_flags);
 		ImGui::PopStyleVar();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 6.0f);
 		ImGui::AlignTextToFramePadding();
 			ImGui::Text("%s", (label + ":").c_str()); 
-		ImGui::SameLine(0.0f, 6.0f); 
+		ImGui::SameLine(0, 6.0f); 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::DragFloat(("##" + label).c_str(), value, DRAG_SPEED);
 			ImGui::PopItemWidth();
@@ -347,9 +344,9 @@ namespace Yurrgoht {
 		ImGui::PushID(("##" + name).c_str());
 		ImGui::BeginGroup();
 			DragFloatInlineLabel("X", &vec3.x, size);
-		ImGui::SameLine(0.0f, single_space);
+		ImGui::SameLine(0, single_space);
 			DragFloatInlineLabel("Y", &vec3.y, size);
-		ImGui::SameLine(0.0f, single_space);
+		ImGui::SameLine(0, single_space);
 			DragFloatInlineLabel("Z", &vec3.z, size);
 		ImGui::EndGroup();
 		ImGui::PopID();
@@ -443,13 +440,17 @@ namespace Yurrgoht {
 	}
 
 
+
 	void PropertyUI::componentManager(const meta_hpp::uvalue& selected_entity) {
 		auto p_entity = selected_entity.try_as<Entity*>();
-		//float button_pos_y = 25.0f * m_res_scale;
+		float button_height = 30.0f * m_res_scale;
 		//ImGui::GetStyle().ScrollbarSize = 10.f*m_res_scale;
 
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-		if (ImGui::BeginPopupModal("Manage Components", nullptr, ImGuiWindowFlags_None)) {
+
+		// window that pops up uses it's own viewport and not the main viewport
+		//ImGui::SetNextWindowClass(&noAutoMerge);
+		if (ImGui::Begin("Manage Components", &showing_component_manager, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking)) {
 			//ImGui::Text("Importing gltf:");
 			for (auto iter = m_property_components.begin(); iter != m_property_components.end(); ++iter) {
 				const bool has_component = p_entity->hasComponent_str(iter->first);
@@ -464,21 +465,26 @@ namespace Yurrgoht {
 				}
 			}
 
-			ImGui::SetCursorPos(ImVec2(0.0f, (ImGui::GetWindowSize().y - (29.0f*m_res_scale)) ));
-			ImGui::BeginChild("import_option_area", ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y));
-			ImGui::SetCursorPos(ImVec2(8.0f*m_res_scale, 0.0f));
-
-			if (ImGui::Button("Close", ImVec2(120.0f*m_res_scale, 0)) ) {
-				ImGui::CloseCurrentPopup();  // Manually close the popup
-				showing_component_manager = false;
+			/*
+			ImGuiViewport *viewport = ImGui::FindViewportByID(ImGui::FindWindowByName("Manage Components")->ID);
+			if (ImGui::BeginViewportSideBar("bottom_menubar", viewport, ImGuiDir_Down, button_height, ImGuiWindowFlags_None)) {
+				if (ImGui::Button("Close", ImVec2(120.0f*m_res_scale, 0)) ) {
+					showing_component_manager = false;
+				}
+				ImGui::End();
 			}
-			ImGui::EndChild();
+			*/
+			if (ImGui::BeginMenuBar()) {
+				if (ImGui::Button("Close", ImVec2(120.0f*m_res_scale, 0)) ) {
+					showing_component_manager = false;
+				}
+				ImGui::EndMenuBar();
+			}
 
-			ImGui::EndPopup();
+			ImGui::End();
 		}
 
 	}
-
 
 	EPropertyType PropertyUI::getPropertyType(const meta_hpp::uvalue& type) {
 		const std::string& type_name = type.as<std::string>();

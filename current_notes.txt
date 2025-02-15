@@ -98,14 +98,35 @@ Written down thoughts to remember stuff:
 - user will for certain be able to navigate file system and find the appropriate .cs file
 
 
-- Maybe just add component option and then user selects/deselect components
-- Selected components should move to the bottom on next opening
-- Selectable item should be based on if the component listed is initalized
-- Function should be passed through the uvalue instance
+- basic Component Manager is just about done (still not sure if I should keep button in tree headers to remove components)
+- remember to add a way to move components around in the property_ui windows
+- remember to add a way to store values and such from a removed component 
+    - basically when user removes a component, values are remembered
+    - so if a component is removed by accident, the values can be brought back
+    - if this feature does get added, then the option to reset values must also be added
+- remember to add a way to push selected components at the bottom of the popup after changing it previously
+- Add method of changing the name of entity
+    - add a button that leads to a tiny popup that just has an input textbox thing
+    - entity class now has a function that changes the name of the entity
+- menubar location is not optimal, but I don't think there's anything I can do at the moment
 
-- Attaching components is just about done
-- Adding script components is now on the docket
+- Adding script is now on the docket
 - Perhaps borrow the way asset_ui handles folders, how it shows where the files are and such
+
+
+- Engine render tick function
+- runs the tick() function in render_system.cpp
+    - this tick() function then runs the collectRenderDatas() function which collects render data 
+    - after finishing this, it runs the render() function belonging to vulkan_rhi.cpp
+- most important part of that function is that it runs the recordFrame() function
+    - recordFrame() in vulkan_rhi.cpp raises a flag to the event listener which activates the onRecordFrame() function in render_system.cpp
+
+- create new pipeline inside of main pass for the grid shaders
+- modify collectRenderDatas to collect data for grid
+
+- IDEA: give grid.vert a couple more outputs, the values that would makeup the y-axis
+    - then modify the grid.frag to output the y-axis
+- for now work on "add script" option, more immediate
 
 
 

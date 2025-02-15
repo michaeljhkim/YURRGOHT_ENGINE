@@ -14,20 +14,31 @@ using uint = unsigned int;
 
 #include "constants.h"
 
-struct BoneUBO
-{
+struct BoneUBO {
 	mat4 bone_matrices[MAX_BONE_NUM];
 };
 
-struct TransformPCO
-{
+// PCO = Push Constant Object
+/*
+layout(set = 0, binding = 0) uniform ViewUniforms {
+    mat4 view;
+    mat4 proj;
+    vec3 pos;
+} view;
+*/
+struct ViewUniformsPCO {
+    mat4 view;
+    mat4 proj;
+    vec3 pos;
+};
+
+struct TransformPCO {
     mat4 m;
     mat4 nm;
     mat4 mvp;
 };
 
-struct MaterialPCO
-{
+struct MaterialPCO {
     vec4 base_color_factor;
     vec4 emissive_factor;
 	float m_metallic_factor;
@@ -40,22 +51,19 @@ struct MaterialPCO
     int has_normal_texture;
 };
 
-struct SkyLight
-{
+struct SkyLight {
     vec3 color;
 	float prefilter_mip_levels;
 };
 
-struct DirectionalLight
-{
+struct DirectionalLight {
 	vec3 direction; int cast_shadow;
 	vec3 color; float padding0;
 	mat4 cascade_view_projs[SHADOW_CASCADE_NUM];
 	vec4 cascade_splits;
 };
 
-struct PointLight
-{
+struct PointLight {
 	vec3 position; 
     float padding0; // inner_cutoff for SpotLight, cast shadow for PointLight
 
@@ -68,15 +76,13 @@ struct PointLight
     int cast_shadow;
 };
 
-struct SpotLight
-{
+struct SpotLight {
     PointLight _pl;
     vec3 direction; float padding0;
     mat4 view_proj;
 };
 
-struct LightingUBO
-{
+struct LightingUBO {
     // camera
     vec3 camera_pos;
     float exposure;
@@ -99,8 +105,7 @@ struct LightingUBO
     int shader_debug_option;
 };
 
-struct MaterialInfo
-{
+struct MaterialInfo {
     vec3 position;
     vec3 normal;
     vec4 base_color;
@@ -110,13 +115,11 @@ struct MaterialInfo
     float occlusion;
 };
 
-struct ShadowCascadeUBO
-{
+struct ShadowCascadeUBO {
     mat4 cascade_view_projs[SHADOW_CASCADE_NUM];
 };
 
-struct ShadowCubeUBO
-{
+struct ShadowCubeUBO {
     mat4 face_view_projs[SHADOW_FACE_NUM];
 };
 

@@ -234,12 +234,10 @@ namespace Yurrgoht {
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMax().y));
 		if (ImGui::BeginPopup(popup_name.c_str())) {
 			for (size_t i = 0; i < values.size(); ++i) {
-				if (ImGui::RadioButton(values[i].c_str(), &index, i)) {
+				if (ImGui::RadioButton(values[i].c_str(), &index, i))
 					is_radio_button_pressed = true;
-				}
-				if (i != values.size() - 1) {
+				if (i != values.size() - 1)
 					ImGui::Spacing();
-				}
 			}
 			ImGui::EndPopup();
 		}
@@ -253,17 +251,15 @@ namespace Yurrgoht {
 		if (ImGui::BeginPopup(popup_name.c_str())) {
 			for (size_t i = 0; i < values.size(); ++i) {
 				if (ImGui::Checkbox(values[i].first.c_str(), &values[i].second)) {
-					if (values[i].second) {
+					if (values[i].second)
 						show_debug_option |= (1 << i);
-					} else {
+					else
 						show_debug_option &= ~(1 << i);
-					}
 
 					g_engine.renderSystem()->setShowDebugOption(show_debug_option);
 				}
-				if (i != values.size() - 1) {
+				if (i != values.size() - 1)
 					ImGui::Spacing();
-				}
 			}
 			ImGui::EndPopup();
 		}
@@ -275,24 +271,50 @@ namespace Yurrgoht {
 		for (size_t i = 0; i < names.size(); ++i) {
 			ImGui::SameLine(i == 0 ? ImGui::GetContentRegionAvail().x - (130.0f*m_res_scale) : 0.0f);
 			ImGui::PushStyleColor(ImGuiCol_Button, i == (size_t)m_operation_mode ? ImVec4(0.26f, 0.59f, 0.98f, 0.8f) : ImVec4(0.4f, 0.4f, 0.4f, 0.8f));
-			if ( ImGui::Button(names[i].c_str(), ImVec2(24.0f*m_res_scale, 24.0f*m_res_scale)) ) {
+			if ( ImGui::Button(names[i].c_str(), ImVec2(24.0f*m_res_scale, 24.0f*m_res_scale)) )
 				m_operation_mode = (EOperationMode)i;
-			}
+
 			ImGui::PopStyleColor();
 		}
 	}
 
-	void SimulationUI::constructImGuizmo() {
- 		if (!m_selected_entity.lock()) {
- 			return;
- 		}
+	ImVec2 WorldToScreen(const glm::vec3& worldPos, glm::mat4 viewMatrix, glm::mat4 projMatrix, float width, float height) {
+		// Step 1: Transform world position to camera space (view space)
+		glm::vec4 cameraSpacePos = viewMatrix * glm::vec4(worldPos, 1.0f);
 
+		// Step 2: Project the camera space position into clip space
+		glm::vec4 clipSpacePos = projMatrix * cameraSpacePos;
+
+		// Step 3: Convert from clip space to NDC (Normalized Device Coordinates)
+		// Clip space coordinates range from -1 to 1 for all axes
+		glm::vec3 ndc = glm::vec3(clipSpacePos) / clipSpacePos.w;
+
+		// Step 4: Convert NDC to screen space (window space)
+		// NDC to screen space: x and y are mapped from [-1, 1] to [0, windowWidth] and [0, windowHeight] respectively
+		float x = (ndc.x + 1.0f) * 0.5f * width;
+		float y = (1.0f - (ndc.y + 1.0f) * 0.5f) * height; // y is inverted for screen coordinates
+
+		return ImVec2(x, y);
+	}
+
+	void SimulationUI::constructImGuizmo() {
+ 		if (!m_selected_entity.lock())
+ 			return;
+		
+		glm::inverse(m_camera_component.lock()->getViewMatrix());
+		m_camera_component.lock()->getProjectionMatrix();
+		
 		// set translation/rotation/scale gizmos
 		ImGuizmo::PushID(0);
 		ImGuizmo::BeginFrame();
 		ImGuizmo::SetOrthographic(m_camera_component.lock()->m_projection_type == EProjectionType::Orthographic);
 		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 		ImGuizmo::SetDrawlist();
+		/*
+		ImGuizmo::DrawGrid(glm::value_ptr(glm::inverse(m_camera_component.lock()->getViewMatrix())), 
+			glm::value_ptr(m_camera_component.lock()->getProjectionMatrix()), 
+			glm::value_ptr(glm::mat4(1.0f)), 100.0f);
+		*/
 
 		const float* p_view = glm::value_ptr(m_camera_component.lock()->getViewMatrix());
 		const float* p_projection = glm::value_ptr(m_camera_component.lock()->getProjectionMatrixNoYInverted());
@@ -301,11 +323,10 @@ namespace Yurrgoht {
 		glm::mat4 matrix = transform_component->getGlobalMatrix();
 		if (m_operation_mode != EOperationMode::Pick) {
 			ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
-			if (m_operation_mode == EOperationMode::Rotate) {
+			if (m_operation_mode == EOperationMode::Rotate)
 				operation = ImGuizmo::ROTATE;
-			} else if (m_operation_mode == EOperationMode::Scale) {
+			else if (m_operation_mode == EOperationMode::Scale)
 				operation = ImGuizmo::SCALE;
-			}
 
 			glm::mat4 delta_matrix = glm::mat4(1.0);
 			ImGuizmo::Manipulate(p_view, p_projection, operation, (ImGuizmo::MODE)m_coordinate_mode, 
@@ -316,13 +337,12 @@ namespace Yurrgoht {
 				glm::vec3 translation, rotation, scale;
 				ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
 
-				if (m_operation_mode == EOperationMode::Translate) {
+				if (m_operation_mode == EOperationMode::Translate)
 					transform_component->m_position = translation;
-				} else if (m_operation_mode == EOperationMode::Rotate) {
+				else if (m_operation_mode == EOperationMode::Rotate)
 					transform_component->m_rotation = rotation;
-				} else if (m_operation_mode == EOperationMode::Scale) {
+				else if (m_operation_mode == EOperationMode::Scale)
 					transform_component->m_scale = scale;
-				}
 			}
 		}
 		ImGuizmo::PopID();

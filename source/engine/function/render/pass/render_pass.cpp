@@ -1,11 +1,9 @@
 #include "render_pass.h"
 #include "engine/core/vulkan/vulkan_rhi.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	void RenderPass::init()
-	{
+	void RenderPass::init() {
 		createRenderPass();
 		createDescriptorSetLayouts();
 		createPipelineLayouts();
@@ -13,37 +11,26 @@ namespace Yurrgoht
 		createPipelines();
 	}
 
-	void RenderPass::destroy()
-	{
+	void RenderPass::destroy() {
 		if (m_render_pass)
-		{
 			vkDestroyRenderPass(VulkanRHI::get().getDevice(), m_render_pass, nullptr);
-		}
 		
 		if (m_descriptor_pool)
-		{
 			vkDestroyDescriptorPool(VulkanRHI::get().getDevice(), m_descriptor_pool, nullptr);
-		}
 		
 		for (VkDescriptorSetLayout desc_set_layout : m_desc_set_layouts)
-		{
 			vkDestroyDescriptorSetLayout(VulkanRHI::get().getDevice(), desc_set_layout, nullptr);
-		}
 		for (VkPipelineLayout pipeline_layout : m_pipeline_layouts)
-		{
 			vkDestroyPipelineLayout(VulkanRHI::get().getDevice(), pipeline_layout, nullptr);
-		}
+
 		vkDestroyPipelineCache(VulkanRHI::get().getDevice(), m_pipeline_cache, nullptr);
 		for (VkPipeline pipeline : m_pipelines)
-		{
 			vkDestroyPipeline(VulkanRHI::get().getDevice(), pipeline, nullptr);
-		}
 
 		destroyResizableObjects();
 	}
 
-	void RenderPass::createPipelineCache()
-	{
+	void RenderPass::createPipelineCache() {
 		// create pipeline cache
 		VkPipelineCacheCreateInfo pipeline_cache_ci{};
 		pipeline_cache_ci.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -99,14 +86,13 @@ namespace Yurrgoht
 
 		// viewport
 		m_viewport_ci.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-		m_viewport_ci.viewportCount = 1;
+		m_viewport_ci.viewportCount = MAX_VIEWPORTS;
 		m_viewport_ci.pViewports = nullptr;
-		m_viewport_ci.scissorCount = 1;
+		m_viewport_ci.scissorCount = MAX_VIEWPORTS;
 		m_viewport_ci.pScissors = nullptr;
 
 		// Dynamic state
-		m_dynamic_states =
-		{
+		m_dynamic_states = {
 			VK_DYNAMIC_STATE_VIEWPORT,
 			VK_DYNAMIC_STATE_SCISSOR
 		};
@@ -125,24 +111,19 @@ namespace Yurrgoht
 		m_pipeline_ci.pDynamicState = &m_dynamic_state_ci;
 	}
 
-	void RenderPass::createResizableObjects(uint32_t width, uint32_t height)
-	{
+	void RenderPass::createResizableObjects(uint32_t width, uint32_t height) {
 		m_width = width;
 		m_height = height;
 
 		createFramebuffer();
 	}
 
-	void RenderPass::destroyResizableObjects()
-	{
+	void RenderPass::destroyResizableObjects() {
 		if (m_framebuffer)
-		{
 			vkDestroyFramebuffer(VulkanRHI::get().getDevice(), m_framebuffer, nullptr);
-		}
 	}
 
-	void RenderPass::onResize(uint32_t width, uint32_t height)
-	{
+	void RenderPass::onResize(uint32_t width, uint32_t height) {
 		// ensure all device operations have done
 		VulkanRHI::get().waitDeviceIdle();
 
@@ -150,8 +131,7 @@ namespace Yurrgoht
 		createResizableObjects(width, height);
 	}
 
-	bool RenderPass::isEnabled()
-	{
+	bool RenderPass::isEnabled() {
 		return m_width > 0 && m_height > 0;
 	}
 
@@ -159,8 +139,7 @@ namespace Yurrgoht
 		const std::vector<const void*>& pcos, std::vector<VkPushConstantRange> push_constant_ranges)
 	{
 		const std::vector<VkPushConstantRange>& pcrs = push_constant_ranges.empty() ? m_push_constant_ranges : push_constant_ranges;
-		for (size_t c = 0; c < pcrs.size(); ++c)
-		{
+		for (size_t c = 0; c < pcrs.size(); ++c) {
 			const VkPushConstantRange& push_constant_range = pcrs[c];
 			vkCmdPushConstants(command_buffer, pipeline_layout, push_constant_range.stageFlags, push_constant_range.offset, push_constant_range.size, pcos[c]);
 		}
@@ -205,8 +184,7 @@ namespace Yurrgoht
 	void RenderPass::addImagesDescriptorSet(std::vector<VkWriteDescriptorSet>& desc_writes, 
 		VkDescriptorImageInfo* p_desc_image_info, const std::vector<VmaImageViewSampler>& textures, uint32_t binding)
 	{
-		for (size_t i = 0; i < textures.size(); ++i)
-		{
+		for (size_t i = 0; i < textures.size(); ++i) {
 			p_desc_image_info[i].imageLayout = textures[i].image_layout;
 			p_desc_image_info[i].imageView = textures[i].view;
 			p_desc_image_info[i].sampler = textures[i].sampler;

@@ -2,10 +2,8 @@
 
 #include "render_pass.h"
 
-namespace Yurrgoht
-{
-	class DirectionalLightShadowPass : public RenderPass
-	{
+namespace Yurrgoht {
+	class DirectionalLightShadowPass : public RenderPass {
 	public:
 		DirectionalLightShadowPass();
 

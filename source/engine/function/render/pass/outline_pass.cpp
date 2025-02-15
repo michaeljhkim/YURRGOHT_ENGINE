@@ -140,12 +140,10 @@ namespace Yurrgoht
 		vkCmdEndRenderPass(command_buffer);
 	}
 
-	void OutlinePass::destroy()
-	{
+	void OutlinePass::destroy() {
 		RenderPass::destroy();
 
-		for (uint32_t i = 0; i < 2; ++i)
-		{
+		for (uint32_t i = 0; i < 2; ++i) {
 			vkDestroyRenderPass(VulkanRHI::get().getDevice(), m_render_passes[i], nullptr);
 		}
 	}

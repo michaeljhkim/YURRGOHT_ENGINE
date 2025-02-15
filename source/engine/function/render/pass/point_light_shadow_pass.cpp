@@ -4,26 +4,21 @@
 #include "engine/resource/asset/base/mesh.h"
 #include "engine/core/math/transform.h"
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	PointLightShadowPass::PointLightShadowPass()
-	{
+	PointLightShadowPass::PointLightShadowPass() {
 		m_formats = { VK_FORMAT_R32_SFLOAT, VulkanRHI::get().getDepthFormat() };
 		m_size = 1024;
 	}
 
-	void PointLightShadowPass::init()
-	{
+	void PointLightShadowPass::init() {
 		RenderPass::init();
 
 		createResizableObjects(m_size, m_size);
 	}
 
-	void PointLightShadowPass::render()
-	{
-		for (size_t p = 0; p < m_framebuffers.size(); ++p)
-		{
+	void PointLightShadowPass::render() {
+		for (size_t p = 0; p < m_framebuffers.size(); ++p) {
 			VkRenderPassBeginInfo render_pass_bi{};
 			render_pass_bi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			render_pass_bi.renderPass = m_render_pass;
@@ -55,15 +50,12 @@ namespace Yurrgoht
 			scissor.extent = { m_size, m_size };
 			vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
-			for (const auto& render_data : m_render_datas)
-			{
+			for (const auto& render_data : m_render_datas) {
 				std::shared_ptr<SkeletalMeshRenderData> skeletal_mesh_render_data = nullptr;
 				std::shared_ptr<StaticMeshRenderData> static_mesh_render_data = std::static_pointer_cast<StaticMeshRenderData>(render_data);
 				bool is_skeletal_mesh = render_data->type == ERenderDataType::SkeletalMesh;;
 				if (is_skeletal_mesh)
-				{
 					skeletal_mesh_render_data = std::static_pointer_cast<SkeletalMeshRenderData>(render_data);
-				}
 
 				uint32_t pipeline_index = (uint32_t)is_skeletal_mesh;
 				VkPipeline pipeline = m_pipelines[pipeline_index];
@@ -82,8 +74,7 @@ namespace Yurrgoht
 				std::vector<uint32_t>& index_counts = static_mesh_render_data->index_counts;
 				std::vector<uint32_t>& index_offsets = static_mesh_render_data->index_offsets;
 				size_t sub_mesh_count = index_counts.size();
-				for (size_t i = 0; i < sub_mesh_count; ++i)
-				{
+				for (size_t i = 0; i < sub_mesh_count; ++i) {
 					// push constants
 					glm::vec4 light_pos = glm::vec4(m_light_poss[p], 1.0f);
 					updatePushConstants(command_buffer, pipeline_layout, { &static_mesh_render_data->transform_pco, glm::value_ptr(light_pos) });
@@ -95,9 +86,7 @@ namespace Yurrgoht
 
 					// bone matrix ubo
 					if (is_skeletal_mesh)
-					{
 						addBufferDescriptorSet(desc_writes, desc_buffer_infos[0], skeletal_mesh_render_data->bone_ubs[flight_index], 0);
-					}
 
 					// shadow face ubo
 					addBufferDescriptorSet(desc_writes, desc_buffer_infos[1], m_shadow_cube_ubss[p][flight_index], 1);
@@ -119,22 +108,17 @@ namespace Yurrgoht
 		m_render_datas.clear();
 	}
 
-	void PointLightShadowPass::destroy()
-	{
+	void PointLightShadowPass::destroy() {
 		RenderPass::destroy();
 
 		// destroy shadow face uniform buffers
-		for (auto& shadow_cube_ubs : m_shadow_cube_ubss)
-		{
+		for (auto& shadow_cube_ubs : m_shadow_cube_ubss) {
 			for (VmaBuffer& uniform_buffer : shadow_cube_ubs)
-			{
 				uniform_buffer.destroy();
-			}
 		}
 	}
 
-	void PointLightShadowPass::createRenderPass()
-	{
+	void PointLightShadowPass::createRenderPass() {
 		// color attachment
 		std::array<VkAttachmentDescription, 2> attachments{};
 		attachments[0].format = m_formats[0];
@@ -197,8 +181,7 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create render pass");
 	}
 
-	void PointLightShadowPass::createDescriptorSetLayouts()
-	{
+	void PointLightShadowPass::createDescriptorSetLayouts() {
 		std::vector<VkDescriptorSetLayoutBinding> desc_set_layout_bindings = {
 			{1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT, nullptr},
 			{2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr}
@@ -221,10 +204,8 @@ namespace Yurrgoht
 		CHECK_VULKAN_RESULT(result, "create skeletal mesh descriptor set layout");
 	}
 
-	void PointLightShadowPass::createPipelineLayouts()
-	{
-		m_push_constant_ranges =
-		{
+	void PointLightShadowPass::createPipelineLayouts() {
+		m_push_constant_ranges = {
 			{ VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TransformPCO) },
 			{ VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(TransformPCO), sizeof(vec4) }
 		};

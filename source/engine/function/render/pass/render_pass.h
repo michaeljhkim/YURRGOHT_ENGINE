@@ -2,10 +2,10 @@
 
 #include "engine/function/render/render_data.h"
 
-namespace Yurrgoht
-{
-	class RenderPass
-	{
+#define MAX_VIEWPORTS 1
+
+namespace Yurrgoht {
+	class RenderPass {
 	public:
 		virtual void init();
 		virtual void render() = 0;

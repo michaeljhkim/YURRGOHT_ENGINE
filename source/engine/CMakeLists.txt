@@ -2,7 +2,7 @@ set(TARGET_NAME Engine)
 set(CPACK_GENERATOR "")
 
 # Search for libraries
-find_package(Vulkan REQUIRED)
+find_package(glslang REQUIRED)
 find_package(Ktx REQUIRED)
 
 
@@ -40,9 +40,10 @@ target_include_directories(${TARGET_NAME} PRIVATE
 # linking dotnet core libraries
 target_link_libraries(${TARGET_NAME} PRIVATE ${DOTNET_RUNTIME_LIBS})
 
-
 # Link statically to Vulkan and other libraries
 target_link_libraries(${TARGET_NAME} PUBLIC ${Vulkan_LIBRARY})
+target_link_libraries(${TARGET_NAME} PUBLIC glslang::glslang)
+
 target_link_libraries(${TARGET_NAME} PUBLIC SDL3)
 target_link_libraries(${TARGET_NAME} PUBLIC SDL3_image)
 target_link_libraries(${TARGET_NAME} PUBLIC imgui)
