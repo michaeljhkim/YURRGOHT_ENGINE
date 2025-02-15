@@ -52,6 +52,11 @@ namespace Yurrgoht {
 			ImGui::DockBuilderSetNodeSize(dock_node->ID, ImVec2(dock_node->Size.x, 225.0f * m_res_scale));
 			m_first_init = false;
 		}
+		// get folder window rect - must get info here since GetWindowPos() and GetWindowSize() only works on the last created window
+		m_folder_rect.x = ImGui::GetWindowPos().x;
+		m_folder_rect.y = ImGui::GetWindowPos().x + ImGui::GetWindowSize().x;
+		m_folder_rect.z = ImGui::GetWindowPos().y;
+		m_folder_rect.w = ImGui::GetWindowPos().y + ImGui::GetWindowSize().y;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(2.0f, 2.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.0f, 4.0f));
@@ -106,10 +111,12 @@ namespace Yurrgoht {
 		ImGui::EndChild();
 
 		// get folder window rect
+		/*
 		m_folder_rect.x = ImGui::GetItemRectMin().x;
 		m_folder_rect.y = ImGui::GetItemRectMax().x;
 		m_folder_rect.z = ImGui::GetItemRectMin().y;
 		m_folder_rect.w = ImGui::GetItemRectMax().y;
+		*/
 
 		ImGui::EndChild();
 
@@ -377,8 +384,7 @@ namespace Yurrgoht {
 				as->importTexture2D(import_file, import_folder);
 				LOG_INFO("import texture 2d {} to {}, elapsed time: {}ms", import_file, import_folder, stop_watch.stopMs());
 				iter = m_imported_files.erase(iter);
-			} 
-			else if (as->isTextureCubeFile(import_file)) {
+			} else if (as->isTextureCubeFile(import_file)) {
 				StopWatch stop_watch;
 				stop_watch.start();
 
@@ -526,7 +532,6 @@ namespace Yurrgoht {
 		{
 			return;
 		}
-
 		m_imported_files = drop_event->filenames;
 	}
 

@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <array>
+#include <map>
 
 namespace Yurrgoht
 {
@@ -35,6 +36,17 @@ namespace Yurrgoht
             bool isPlaying();
             bool isPausing();
             bool isSimulating() { return isPlaying() || isPausing(); }
+
+            // render settings
+            std::map<std::string, bool> m_render_settings = {
+                { "anti-aliasing", false },
+                { "bounding boxes", false }, 
+                { "collision", false }, 
+                { "grid", true }, 
+                { "static meshes", true }, 
+                { "skeletal meshes", true }, 
+                { "translucency", true }
+            };
 
         private:
             std::shared_ptr<class TimerManager> m_timer_manager;

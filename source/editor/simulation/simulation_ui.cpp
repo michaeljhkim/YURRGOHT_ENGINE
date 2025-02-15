@@ -150,11 +150,7 @@ namespace Yurrgoht {
 			ImGui::OpenPopup("show");
 		}
 
-		static std::vector<std::pair<std::string, bool>> shows = {
-			{ "anti-aliasing", false }, { "bounding boxes", false }, { "collision", false }, { "grid", false }, 
-			{ "static meshes", true }, { "skeletal meshes", true }, { "translucency", true }
-		};
-		constructCheckboxPopup("show", shows);
+		constructCheckboxPopup("show", g_engine.m_render_settings);
 		ImGui::PopStyleVar(3);
 
 		constructOperationModeButtons();
@@ -245,21 +241,23 @@ namespace Yurrgoht {
 		return is_radio_button_pressed;
 	}
 
-	void SimulationUI::constructCheckboxPopup(const std::string& popup_name, std::vector<std::pair<std::string, bool>>& values) {
+	void SimulationUI::constructCheckboxPopup(const std::string& popup_name, std::map<std::string, bool>& values) {
 		static int show_debug_option = 0;
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMax().y));
 		if (ImGui::BeginPopup(popup_name.c_str())) {
-			for (size_t i = 0; i < values.size(); ++i) {
-				if (ImGui::Checkbox(values[i].first.c_str(), &values[i].second)) {
-					if (values[i].second)
-						show_debug_option |= (1 << i);
+			size_t index = 0;
+			for (auto iter = values.begin(); iter != values.end(); ++iter) {
+				if (ImGui::Checkbox(iter->first.c_str(), &iter->second)) {
+					if (iter->second)
+						show_debug_option |= (1 << index);
 					else
-						show_debug_option &= ~(1 << i);
-
+						show_debug_option &= ~(1 << index);
 					g_engine.renderSystem()->setShowDebugOption(show_debug_option);
 				}
-				if (i != values.size() - 1)
+				if (iter != values.end())
 					ImGui::Spacing();
+
+				index++;
 			}
 			ImGui::EndPopup();
 		}
@@ -350,36 +348,31 @@ namespace Yurrgoht {
 
 	void SimulationUI::onKey(const std::shared_ptr<class Event>& event) {
 		const WindowKeyEvent* key_event = static_cast<const WindowKeyEvent*>(event.get());
-		if (key_event->action != true) {
+		if (key_event->action != true)
 			return;
-		} if (key_event->key == SDL_SCANCODE_F11) {
+		if (key_event->key == SDL_SCANCODE_F11)
 			g_editor.toggleFullscreen();
-		}
 
 		if (g_engine.isEditor()) {
 			ESceneMode current_scene_mode = g_engine.sceneManager()->getSceneMode();
 			if ((key_event->mods & SDL_KMOD_ALT) && key_event->key == SDL_SCANCODE_P) {
-				if (current_scene_mode == ESceneMode::Edit) {
+				if (current_scene_mode == ESceneMode::Edit)
 					g_engine.sceneManager()->setSceneMode(ESceneMode::Play);
-				}
 			} 
 			else if (key_event->key == SDL_SCANCODE_ESCAPE) {
-				if (current_scene_mode == ESceneMode::Play) {
+				if (current_scene_mode == ESceneMode::Play)
 					g_engine.sceneManager()->setSceneMode(ESceneMode::Edit);
-				}
 			}
 			if (m_selected_entity.lock()) {
 				uint32_t selected_entity_id = m_selected_entity.lock()->getID();
 				//if (key_event->key == SDL_SCANCODE_ESCAPE || key_event->key == SDL_SCANCODE_DELETE) {
-				if (key_event->key == SDL_SCANCODE_ESCAPE) {
+				if (key_event->key == SDL_SCANCODE_ESCAPE)
 					g_engine.eventSystem()->syncDispatch(std::make_shared<SelectEntityEvent>(UINT_MAX));
-				} if (key_event->key == SDL_SCANCODE_DELETE) {
+				if (key_event->key == SDL_SCANCODE_DELETE)
 					g_engine.sceneManager()->getCurrentScene()->removeEntity(selected_entity_id);
-				}
 			}
-			if (!isFocused()) {
+			if (!isFocused())
 				return;
-			}
 
 			if (m_selected_entity.lock() || !m_mouse_right_button_pressed) {
 				switch (key_event->key) {
@@ -427,7 +420,6 @@ namespace Yurrgoht {
 	}
 
 	void SimulationUI::handleDragDropTarget(const glm::vec2& mouse_pos, const glm::vec2& viewport_size) {
-
 		if (ImGui::BeginDragDropTarget()) {
 			const ImGuiPayload* payload = nullptr;
 			ImGuiDragDropFlags flags = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoPreviewTooltip;
@@ -489,10 +481,8 @@ namespace Yurrgoht {
 				glm::vec3 place_pos = calcPlacePos(mouse_pos, viewport_size);
 				m_created_entity->getComponent(TransformComponent)->m_position = place_pos;
 			}
-
-			if (payload && payload->IsDelivery()) {
+			if (payload && payload->IsDelivery())
 				m_created_entity = nullptr;
-			}
 
 			ImGui::EndDragDropTarget();
 		}

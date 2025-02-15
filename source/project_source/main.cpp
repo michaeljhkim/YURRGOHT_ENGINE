@@ -8,6 +8,9 @@ NOTE: Log output for terminal and file will be a little different
 - The terminal log output is synchronous, and file log output is synchronous
 - Done for efficiency reasons
 - IF NESSECARY, OPEN log_system AND CHANGE THAT SECTION
+
+
+TRY AND FIGURE OUT HOW APPLICATION ENTITY WAS SUPPOSED TO WORK
 */
 
 

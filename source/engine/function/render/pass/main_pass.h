@@ -28,7 +28,7 @@ namespace Yurrgoht {
 		}
 
 		const VmaImageViewSampler* getColorTexture() { return &m_color_texture_sampler; }
-
+		
 	private:
 		enum class ERendererType {
 			Deferred, Forward

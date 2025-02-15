@@ -162,7 +162,7 @@ namespace Yurrgoht {
 		}
 
 		// 3.5 render infinite xz grid
-		if (m_grid_render_data) {
+		if (m_grid_render_data && g_engine.m_render_settings["grid"]) {
 			// bind pipeline
 			vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelines[8]);
 

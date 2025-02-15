@@ -18,24 +18,21 @@ meta_hpp::class_<Yurrgoht::ApplicationEntity>(meta_hpp::metadata_()("name", "App
 meta_hpp::extend_scope_(global_reflection_scope)
 	.typedef_<Yurrgoht::ApplicationEntity>("ApplicationEntity");
 
-//adding as derived_classes to Entity metadata 
+// adding as derived_classes to Entity metadata 
 meta_hpp::class_<Yurrgoht::Entity>(meta_hpp::metadata_()("derived_classes", "ApplicationEntity"s));
 }
 
 CEREAL_REGISTER_TYPE(Yurrgoht::ApplicationEntity)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Entity, Yurrgoht::ApplicationEntity)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	ApplicationEntity::ApplicationEntity()
-	{
+	ApplicationEntity::ApplicationEntity() {
 		m_spawn_num = 100;
 		setTickEnabled(true);
 	}
 
-	void ApplicationEntity::beginPlay()
-	{
+	void ApplicationEntity::beginPlay() {
 		Entity::beginPlay();
 
 		// add floor rigidbody
@@ -56,8 +53,7 @@ namespace Yurrgoht
 			"cube", "sphere", "cylinder"
 		};
 
-		for (int i = 0; i < m_spawn_num; ++i)
-		{
+		for (int i = 0; i < m_spawn_num; ++i) {
 			uint32_t primitive_type_index = MathUtil::randomInteger(0, primitive_types.size() - 1);
 			const std::string& primitive_type = primitive_types[primitive_type_index];
 			std::string url = StringUtil::format("asset/engine/mesh/primitive/sm_%s.sm", primitive_type.c_str());
@@ -84,29 +80,21 @@ namespace Yurrgoht
 			// add collider component
 			std::shared_ptr<ColliderComponent> collider_component;
 			if (primitive_type_index == 0)
-			{
 				collider_component = std::make_shared<BoxColliderComponent>();
-			}
 			else if (primitive_type_index == 1)
-			{
 				collider_component = std::make_shared<SphereColliderComponent>();
-			}
 			else if (primitive_type_index == 2)
-			{
 				collider_component = std::make_shared<CylinderColliderComponent>();
-			}
 			entity->addComponent(collider_component);
 		}
 	}
 
-	void ApplicationEntity::tick(float delta_time)
-	{
+	void ApplicationEntity::tick(float delta_time) {
 		Entity::tick(delta_time);
 
 	}
 
-	void ApplicationEntity::endPlay()
-	{
+	void ApplicationEntity::endPlay() {
 		Entity::endPlay();
 
 	}

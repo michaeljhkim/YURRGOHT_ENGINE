@@ -24,7 +24,7 @@ namespace Yurrgoht {
 	private:
 		void loadAsset(const std::string& url);
 		bool constructRadioButtonPopup(const std::string& popup_name, const std::vector<std::string>& values, int& index);
-		void constructCheckboxPopup(const std::string& popup_name, std::vector<std::pair<std::string, bool>>& values);
+		void constructCheckboxPopup(const std::string& popup_name, std::map<std::string, bool>& values);
 		void constructOperationModeButtons();
 		void constructImGuizmo();
 
