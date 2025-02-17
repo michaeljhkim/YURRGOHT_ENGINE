@@ -9,6 +9,8 @@ namespace Yurrgoht {
 
 	class RigidbodyComponent : public Component {
 	public:
+		RigidbodyComponent();
+
 		EMotionType m_motion_type = EMotionType::Dynamic;
 		float m_friction = 0.2f;
 		float m_restitution = 0.0f;

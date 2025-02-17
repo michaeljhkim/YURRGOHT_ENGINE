@@ -9,7 +9,7 @@ meta_hpp::enum_<Yurrgoht::EMotionType>(meta_hpp::metadata_()("name", "EMotionTyp
         .evalue_("Dynamic", Yurrgoht::EMotionType::Dynamic);
 
 meta_hpp::class_<Yurrgoht::RigidbodyComponent>(meta_hpp::metadata_()("name", "RigidbodyComponent"s))
-	.member_("motion_type", &Yurrgoht::RigidbodyComponent::m_motion_type, meta_hpp::metadata_()("type_name", "Yurrgoht::EMotionType"s))
+	.member_("motion_type", &Yurrgoht::RigidbodyComponent::m_motion_type, meta_hpp::metadata_()("type_name", "EMotionType"s))
 	.member_("friction", &Yurrgoht::RigidbodyComponent::m_friction, meta_hpp::metadata_()("type_name", "float"s))
 	.member_("restitution", &Yurrgoht::RigidbodyComponent::m_restitution, meta_hpp::metadata_()("type_name", "float"s))
 	.member_("linear_damping", &Yurrgoht::RigidbodyComponent::m_linear_damping, meta_hpp::metadata_()("type_name", "float"s))
@@ -25,7 +25,8 @@ meta_hpp::class_<Yurrgoht::Component>(meta_hpp::metadata_()("derived_classes", "
 CEREAL_REGISTER_TYPE(Yurrgoht::RigidbodyComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::RigidbodyComponent)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 	POLYMORPHIC_DEFINITION(RigidbodyComponent)
+	
+	RigidbodyComponent::RigidbodyComponent() {}
 }

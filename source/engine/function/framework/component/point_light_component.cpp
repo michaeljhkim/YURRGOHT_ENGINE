@@ -16,12 +16,10 @@ meta_hpp::class_<Yurrgoht::LightComponent>(meta_hpp::metadata_()("derived_classe
 CEREAL_REGISTER_TYPE(Yurrgoht::PointLightComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::LightComponent, Yurrgoht::PointLightComponent)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 	POLYMORPHIC_DEFINITION(PointLightComponent)
 
-	PointLightComponent::PointLightComponent()
-	{
+	PointLightComponent::PointLightComponent() {
 		m_radius = 64.0f;
 		m_linear_attenuation = 0.14f;
 		m_quadratic_attenuation = 0.07f;

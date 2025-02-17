@@ -37,8 +37,7 @@ static void auto_register_function_();
 
 
 // register all user defined serialization
-namespace cereal
-{
+namespace cereal {
 	// glm vectors serialization
 	template<class Archive> void serialize(Archive& ar, glm::vec2& v) { ar(cereal::make_nvp("x", v.x), cereal::make_nvp("y", v.y)); }
 	template<class Archive> void serialize(Archive& ar, glm::vec3& v) { ar(cereal::make_nvp("x", v.x), cereal::make_nvp("y", v.y), cereal::make_nvp("z", v.z)); }

@@ -21,5 +21,6 @@ namespace Yurrgoht {
 		virtual void bindRefs() override;
 		
 		std::shared_ptr<StaticMesh> m_static_mesh;
+		glm::vec3 default_size;
 	};
 }

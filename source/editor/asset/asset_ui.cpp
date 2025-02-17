@@ -233,10 +233,12 @@ namespace Yurrgoht {
 					tex_id = (ImTextureID)imgui_tex->tex_id;
 				}
 			}
-		} else if (g_engine.fileSystem()->isDir(filename)) {
+		} 
+		else if (g_engine.fileSystem()->isDir(filename)) {
 			bool is_empty = g_engine.fileSystem()->isEmptyDir(filename);
 			tex_id = is_empty ? (ImTextureID)m_empty_folder_image->tex_id : (ImTextureID)m_non_empty_folder_image->tex_id;
-		} else {
+		} 
+		else {
 			return;
 		}
 		

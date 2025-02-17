@@ -335,8 +335,7 @@ namespace Yurrgoht
 			}
 		}
 
-		if (last_simulating && !g_engine.isSimulating())
-		{
+		if (last_simulating && !g_engine.isSimulating()) {
 			// remove all rigidbodies when pie stop playing
 			clearRigidbodies();
 		}
@@ -345,57 +344,42 @@ namespace Yurrgoht
 		stop_watch.start();
 
 		if (is_stepping)
-		{
 			is_stepping = false;
-		}
 	}
 
-	JPH::ObjectLayer motionTypeToObjectLayer(EMotionType motion_type)
-	{
-		if (motion_type == EMotionType::Static)
-		{
+	JPH::ObjectLayer motionTypeToObjectLayer(EMotionType motion_type) {
+		if (motion_type == EMotionType::Static) {
 			return ObjectLayers::NonMoving;
 		}
 		return ObjectLayers::Moving;
 	}
 
-	JPH::ShapeSettings* makeShapeSettingsFromCollider(const glm::vec3& scale, const std::shared_ptr<class ColliderComponent>& collider_component)
-	{
+	JPH::ShapeSettings* makeShapeSettingsFromCollider(const glm::vec3& scale, const std::shared_ptr<class ColliderComponent>& collider_component) {
 		EColliderType collider_type = collider_component->m_type;
 		JPH::ShapeSettings* shape_settings = nullptr;
 		float max_scale = std::max(std::max(scale.x, scale.y), scale.z);
 
 		switch (collider_type)
 		{
-		case EColliderType::Box:
-		{
+		case EColliderType::Box: {
 			std::shared_ptr<BoxColliderComponent> collider = std::static_pointer_cast<BoxColliderComponent>(collider_component);
 			shape_settings = new JPH::BoxShapeSettings(glmVec3ToJPHVec3(collider->m_size * scale));
-		}
-		break;
-		case EColliderType::Sphere:
-		{
+		} break;
+		case EColliderType::Sphere: {
 			std::shared_ptr<SphereColliderComponent> collider = std::static_pointer_cast<SphereColliderComponent>(collider_component);
 			shape_settings = new JPH::SphereShapeSettings(collider->m_radius * max_scale);
-		}
-		break;
-		case EColliderType::Capsule:
-		{
+		} break;
+		case EColliderType::Capsule: {
 			std::shared_ptr<CapsuleColliderComponent> collider = std::static_pointer_cast<CapsuleColliderComponent>(collider_component);
 			shape_settings = new JPH::CapsuleShapeSettings(collider->m_height * 0.5f * scale.z, collider->m_radius * std::max(scale.x, scale.y));
-		}
-		break;
-		case EColliderType::Cylinder:
-		{
+		} break;
+		case EColliderType::Cylinder: {
 			std::shared_ptr<CylinderColliderComponent> collider = std::static_pointer_cast<CylinderColliderComponent>(collider_component);
 			shape_settings = new JPH::CylinderShapeSettings(collider->m_height * 0.5f * scale.z, collider->m_radius * std::max(scale.x, scale.y));
-		}
-		break;
-		case EColliderType::Mesh:
-		{
+		} break;
+		case EColliderType::Mesh: {
 
-		}
-		break;
+		} break;
 		default:
 			break;
 		}
@@ -403,26 +387,21 @@ namespace Yurrgoht
 		return shape_settings;
 	}
 
-	void PhysicsSystem::collectRigidbodies()
-	{
+	void PhysicsSystem::collectRigidbodies() {
 		const auto& scene = g_engine.sceneManager()->getCurrentScene();
 		const auto& entities = scene->getEntities();
 		std::vector<uint32_t> current_body_ids;
-		for (const auto& iter : entities)
-		{
+		for (const auto& iter : entities) {
 			const auto& entity = iter.second;
 			auto rigidbody_component = entity->getComponent(RigidbodyComponent);
-			if (!rigidbody_component)
-			{ 
+			if (!rigidbody_component) { 
 				continue;
 			}
 
-			if (rigidbody_component->m_body_id == UINT_MAX)
-			{
+			if (rigidbody_component->m_body_id == UINT_MAX) {
 				auto transform_component = entity->getComponent(TransformComponent);
 				auto collider_components = entity->getChildComponents(ColliderComponent);
-				if (!collider_components.empty())
-				{
+				if (!collider_components.empty()) {
 					glm::quat rotation;
 					glm::vec3 scale, position, skew;
 					glm::vec4 perspective;
@@ -430,25 +409,21 @@ namespace Yurrgoht
 					glm::decompose(global_matrix, scale, rotation, position, skew, perspective);
 
 					std::vector<JPH::ShapeSettings*> shape_settings_list;
-					for (const auto& collider_component : collider_components)
-					{
+					for (const auto& collider_component : collider_components) {
 						shape_settings_list.push_back(makeShapeSettingsFromCollider(scale, collider_component));
 					}
 
 					JPH::ShapeSettings* shape_settings;
 					bool is_compound_shape = collider_components.size() > 1;
-					if (is_compound_shape)
-					{
+					if (is_compound_shape) {
 						JPH::StaticCompoundShapeSettings* compound_shape_settings = new JPH::StaticCompoundShapeSettings;
-						for (size_t i = 0; i < shape_settings_list.size(); ++i)
-						{
+						for (size_t i = 0; i < shape_settings_list.size(); ++i) {
 							compound_shape_settings->AddShape(glmVec3ToJPHVec3(collider_components[i]->m_position),
 								glmRotToJPHQuat(collider_components[i]->m_rotation), shape_settings_list[i]);
 						}
 						shape_settings = compound_shape_settings;
 					}
-					else
-					{
+					else {
 						shape_settings = new JPH::RotatedTranslatedShapeSettings(
 							glmVec3ToJPHVec3(collider_components.front()->m_position * scale),
 							glmRotToJPHQuat(collider_components.front()->m_rotation),
@@ -460,7 +435,7 @@ namespace Yurrgoht
 					JPH::BodyCreationSettings body_creation_settings(shape_settings, glmVec3ToJPHVec3(position),
 						glmQuatToJPHQuat(rotation), (JPH::EMotionType)motion_type, motionTypeToObjectLayer(motion_type));
 					JPH::BodyID body_id = m_body_interface->CreateAndAddBody(body_creation_settings,
-						motion_type == EMotionType::Static ? JPH::EActivation::DontActivate : JPH::EActivation::Activate);
+						(motion_type == EMotionType::Static) ? JPH::EActivation::DontActivate : JPH::EActivation::Activate);
 
 					ASSERT(!body_id.IsInvalid(), "jolt run out of bodies");
 					rigidbody_component->m_body_id = body_id.GetIndexAndSequenceNumber();
@@ -473,27 +448,22 @@ namespace Yurrgoht
 		}
 
 		// remove rigidbodies that owned rigidbody component have been removed
-		for (auto iter = m_body_transforms.begin(); iter != m_body_transforms.end(); )
-		{
+		for (auto iter = m_body_transforms.begin(); iter != m_body_transforms.end(); ) {
 			uint32_t body_id = iter->first;
-			if (std::find(current_body_ids.begin(), current_body_ids.end(), body_id) == current_body_ids.end())
-			{
+			if (std::find(current_body_ids.begin(), current_body_ids.end(), body_id) == current_body_ids.end()) {
 				m_body_interface->RemoveBody(JPH::BodyID(body_id));
 				m_body_interface->DestroyBody(JPH::BodyID(body_id));
 				iter = m_body_transforms.erase(iter);
 				LOG_INFO("remove body {}", body_id);
 			}
-			else
-			{
+			else {
 				++iter;
 			}
 		}
 	}
 
-	void PhysicsSystem::clearRigidbodies()
-	{
-		for (auto iter : m_body_transforms)
-		{
+	void PhysicsSystem::clearRigidbodies() {
+		for (auto iter : m_body_transforms) {
 			uint32_t body_id = iter.first;
 
 			m_body_interface->RemoveBody(JPH::BodyID(body_id));

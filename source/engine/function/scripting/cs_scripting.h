@@ -41,6 +41,7 @@ NOTES:
 #include <vector>
 
 // Manually installed in the engine cmake file
+#define NETHOST_USE_AS_STATIC
 #include <nethost.h>
 #include <coreclr_delegates.h>
 #include <hostfxr.h>

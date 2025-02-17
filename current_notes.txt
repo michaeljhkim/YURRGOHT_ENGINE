@@ -89,10 +89,6 @@ Written down thoughts to remember stuff:
 - figure out how to move child windows vertically in properties
 
 
-- now that property_ui layout has been figured out for the most part, it is time to finally work on attach/remove component
-- when attach option selected, a popup will come up with all built-in components (maybe even some hover text)
-- when remove option selected, a popup will come up asking if the user is sure (checkbox will be added somewhere to turn this off maybe)
-
 - There should be 2 more options for attaching/removing scripts
 - maybe user will also be able to attach scripts through the asset_ui
 - user will for certain be able to navigate file system and find the appropriate .cs file
@@ -127,6 +123,11 @@ Written down thoughts to remember stuff:
 - IDEA: give grid.vert a couple more outputs, the values that would makeup the y-axis
     - then modify the grid.frag to output the y-axis
 - for now work on "add script" option, more immediate
+
+- MUST modify loadAsset in simulation_ui where on createEntity, default size is based off of the size of the model
+- LOOP through the vertices of any given mesh, and find the LARGEST x,y,z values
+- pass this to transformation component for default size
+- THEN modify colliders to accept default sizes, which will be based on what the transformation component size is
 
 
 

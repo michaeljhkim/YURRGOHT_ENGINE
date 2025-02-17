@@ -44,6 +44,7 @@ namespace Yurrgoht {
 			{ EPropertyValueType::Color3, std::bind(&PropertyUI::constructPropertyColor3, this, std::placeholders::_1, std::placeholders::_2) },
 			{ EPropertyValueType::Color4, std::bind(&PropertyUI::constructPropertyColor4, this, std::placeholders::_1, std::placeholders::_2) },
 			{ EPropertyValueType::Asset, std::bind(&PropertyUI::constructPropertyAsset, this, std::placeholders::_1, std::placeholders::_2) },
+			{ EPropertyValueType::EMotion, std::bind(&PropertyUI::constructPropertyEMotion, this, std::placeholders::_1, std::placeholders::_2) },
 		};
 
 		m_property_components = {
@@ -58,8 +59,7 @@ namespace Yurrgoht {
 			//{"LightComponent"				, std::bind(&PropertyUI::CreateComponent<LightComponent>, this)				},
 			{"MeshColliderComponent"		, std::bind(&PropertyUI::CreateComponent<MeshColliderComponent>, this)		},
 			{"PointLightComponent"			, std::bind(&PropertyUI::CreateComponent<PointLightComponent>, this)		},
-			// issues with rigidbody, look into it later
-			//{"RigidbodyComponent"			, std::bind(&PropertyUI::CreateComponent<RigidbodyComponent>, this)			},
+			{"RigidbodyComponent"			, std::bind(&PropertyUI::CreateComponent<RigidbodyComponent>, this)			},
 			{"SkeletalMeshComponent"		, std::bind(&PropertyUI::CreateComponent<SkeletalMeshComponent>, this)		},
 			{"SkyLightComponent"			, std::bind(&PropertyUI::CreateComponent<SkyLightComponent>, this)			},
 			{"SphereColliderComponent"		, std::bind(&PropertyUI::CreateComponent<SphereColliderComponent>, this)	},
@@ -220,7 +220,7 @@ namespace Yurrgoht {
 		for (auto& prop : properties) {
 			std::string prop_name = prop.get_name();
 			EPropertyType property_type = getPropertyType(prop.get_metadata().find("type_name")->second);
-			ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type now");
+			ASSERT(property_type.second != EPropertyContainerType::Map, "don't support map container property type (for now)");
 			
 			meta_hpp::uvalue variant = prop.get(u_instance);	//the get value just returns a member
 			if (property_type.second == EPropertyContainerType::Mono) {
@@ -240,6 +240,7 @@ namespace Yurrgoht {
 				}
 				prop.set(u_instance, variant);
 			}
+			// PROCESS MAPS I KNOW HOW TO DO SO NOW - THATS HOW TO DO THE RIGIDBODY FLAG STUFF
 		}
 		ImGui::Spacing();
 		ImGui::Spacing();
@@ -393,7 +394,7 @@ namespace Yurrgoht {
 
 		// asset find combo box
 		const char* asset_names[] = { "asset_0", "asset_1", "asset_2", "asset_3" };
-		int selected_index = 0;
+		int selected_index = 2;
 		const char* preview_value = asset_names[selected_index];
 		ImGuiComboFlags combo_flags = 0;
 		
@@ -401,11 +402,34 @@ namespace Yurrgoht {
 		if (ImGui::BeginCombo("##select_asset", preview_value, combo_flags)) {
 			for (int i = 0; i < IM_ARRAYSIZE(asset_names); ++i) {
 				const bool is_selected = selected_index == i;
-				if (ImGui::Selectable(asset_names[i], is_selected))
-					selected_index = i;
-
 				if (is_selected)
 					ImGui::SetItemDefaultFocus();
+
+				if (ImGui::Selectable(asset_names[i], is_selected))
+					selected_index = i;
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopItemWidth();
+	}
+
+	// USE meta.hpp ENUM SYSTEM IN ORDER TO PRINT!!!
+	void PropertyUI::constructPropertyEMotion(const std::string& name, meta_hpp::uvalue& instance) {
+		addPropertyNameText(name);
+		ImGui::SameLine();
+
+		auto motion_types = meta_hpp::resolve_type<EMotionType>().get_evalues();
+		const meta_hpp::evalue selected_value = meta_hpp::resolve_type<EMotionType>().value_to_evalue(instance);
+		
+		const char* preview_value = selected_value.get_name().c_str();
+		ImGuiComboFlags combo_flags = 0;
+	
+		ImGui::PushItemWidth(std::max(ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize(preview_value).x * 1.5f));
+		if (ImGui::BeginCombo("##select_motion_type", preview_value, combo_flags)) {
+			for (const meta_hpp::evalue& motion_value : motion_types) {
+				const bool is_selected = (selected_value != motion_value); 
+				if (ImGui::Selectable(motion_value.get_name().c_str(), is_selected))
+					instance.as<EMotionType>() = motion_value.get_value().as<EMotionType>();
 			}
 			ImGui::EndCombo();
 		}
@@ -475,9 +499,9 @@ namespace Yurrgoht {
 			}
 			*/
 			if (ImGui::BeginMenuBar()) {
-				if (ImGui::Button("Close", ImVec2(120.0f*m_res_scale, 0)) ) {
+				if (ImGui::Button("Close", ImVec2(120.0f*m_res_scale, 0)) )
 					showing_component_manager = false;
-				}
+
 				ImGui::EndMenuBar();
 			}
 
@@ -489,13 +513,13 @@ namespace Yurrgoht {
 	EPropertyType PropertyUI::getPropertyType(const meta_hpp::uvalue& type) {
 		const std::string& type_name = type.as<std::string>();
 
-		EPropertyValueType value_type = EPropertyValueType::Bool;
 		EPropertyContainerType container_type = EPropertyContainerType::Mono;
 		if (type_name.find("std::vector") != std::string::npos)
 			container_type = EPropertyContainerType::Array;
 		else if (type_name.find("std::map") != std::string::npos)
 			container_type = EPropertyContainerType::Map;
 
+		EPropertyValueType value_type = EPropertyValueType::Bool;
 		if (type_name.find("glm::vec2") != std::string::npos)
 			value_type = EPropertyValueType::Vec2;
 		else if (type_name.find("glm::vec3") != std::string::npos)
@@ -516,6 +540,8 @@ namespace Yurrgoht {
 			value_type = EPropertyValueType::Float;
 		else if (type_name.find("std::string") != std::string::npos)
 			value_type = EPropertyValueType::String;
+		else if (type_name.find("EMotionType") != std::string::npos)
+			value_type = EPropertyValueType::EMotion;
 		
 		return std::make_pair(value_type, container_type);
 	}

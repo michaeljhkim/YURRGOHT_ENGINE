@@ -8,6 +8,7 @@
 
 namespace Yurrgoht {
 	
+	// unused for now - made this for something else, but keeping in case I could use this (don't want to write it all out again)
 	enum class EPropertyComponentType {
 		AnimationComponent,
 		AnimatorComponent, 
@@ -30,7 +31,7 @@ namespace Yurrgoht {
 	};
 
 	enum class EPropertyValueType {
-		Bool, Integar, Float, String, Vec2, Vec3, Vec4, Color3, Color4, Asset
+		Bool, Integar, Float, String, Vec2, Vec3, Vec4, Color3, Color4, Asset, EMotion
 	};
 	enum class EPropertyContainerType {
 		Mono, Array, Map
@@ -56,6 +57,7 @@ namespace Yurrgoht {
 		void constructPropertyColor3(const std::string& name, meta_hpp::uvalue& instance);
 		void constructPropertyColor4(const std::string& name, meta_hpp::uvalue& instance);
 		void constructPropertyAsset(const std::string& name, meta_hpp::uvalue& instance);
+		void constructPropertyEMotion(const std::string& name, meta_hpp::uvalue& instance);
 
 		void DragFloatInlineLabel(const std::string& name, float *value, float size);
 		void addPropertyNameText(const std::string& name);

@@ -17,8 +17,16 @@ CEREAL_REGISTER_TYPE(Yurrgoht::StaticMeshComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Component, Yurrgoht::StaticMeshComponent)
 
 namespace Yurrgoht {
-	
 	void StaticMeshComponent::setStaticMesh(std::shared_ptr<StaticMesh>& static_mesh) {
+		// calculates the absolute min/max vertex position for the original size of the mesh
+		glm::vec3 position_min = {std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max()};
+		glm::vec3 position_max = {std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
+		for (auto mesh: static_mesh->m_vertices) {
+			position_min = glm::min(mesh.m_position, position_min);
+			position_max = glm::max(mesh.m_position, position_max);
+		}
+		default_size = position_max - position_min;
+
 		REF_ASSET(m_static_mesh, static_mesh)
 	}
 
