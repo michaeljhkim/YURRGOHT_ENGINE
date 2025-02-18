@@ -8,3 +8,6 @@
 	path = external/imgui
 	url = https://github.com/michaeljhkim/imgui.git
 	branch = docking
+[submodule "build/source"]
+	path = build/source
+	url = git@github.com:michaeljhkim/YURRGOHT_ENGINE_ASSETS.git
