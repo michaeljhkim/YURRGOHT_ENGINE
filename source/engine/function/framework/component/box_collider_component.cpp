@@ -3,6 +3,7 @@
 REGISTER_AT_RUNTIME {
 meta_hpp::class_<Yurrgoht::BoxColliderComponent>(meta_hpp::metadata_()("name", "BoxColliderComponent"s))
 	.member_("size", &Yurrgoht::BoxColliderComponent::m_size, meta_hpp::metadata_()("type_name", "glm::vec3"s));
+	//.method_("setNewSize", &Yurrgoht::BoxColliderComponent::setNewSize, meta_hpp::metadata_()("modifier_type", "bool"s));
 meta_hpp::extend_scope_(global_reflection_scope)
 	.typedef_<Yurrgoht::BoxColliderComponent>("BoxColliderComponent");
 

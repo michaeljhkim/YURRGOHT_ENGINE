@@ -1,8 +1,14 @@
 # custom
+!build/source/asset
+!build/source/config
+!build/source/.gitignore
+!build/source/README.md
 build/*
+
 install/*
 log/*
 asset/*
+source/engine/function/scripting/scripting_interface/obj
 
 # mac
 cpm_modules/

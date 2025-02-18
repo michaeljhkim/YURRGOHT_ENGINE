@@ -240,7 +240,6 @@ namespace Yurrgoht {
 				}
 				prop.set(u_instance, variant);
 			}
-			// PROCESS MAPS I KNOW HOW TO DO SO NOW - THATS HOW TO DO THE RIGIDBODY FLAG STUFF
 		}
 		ImGui::Spacing();
 		ImGui::Spacing();

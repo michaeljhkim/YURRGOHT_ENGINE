@@ -6,11 +6,8 @@ Written down thoughts to remember stuff:
 
 - must figure out how to create editor executable seperate from user developer code
 - must figure out how to update models in editor, through another program 
-- must figure out how to contain an ENTIRE scene inside of a container of some kind (like zip or something)
 - For example, show what the model looks like in-game with the editor, but then change it with blender, and once the file changes, the editor updates the model
-- use blender to create very simple test assets
 - samples from here as well: https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/Models/Models.md
-
 
 - editor/simulation/simulation_ui is where we call the sky texture
 - asset_manager.h also is where DEFAULT_TEXTURE_CUBE_URL which has the tex and texc file calls
@@ -18,14 +15,7 @@ Written down thoughts to remember stuff:
 - filter_cube_pass.cpp calls for default cube static mesh
 
 - consider adding https://github.com/KhronosGroup/glTF-IBL-Sampler later
-- engine was supposed to generate bdrf, but never got the chance due to bdrf not existing (I believe that was a bug)
-
 - VALVE'S FOSSILIZE IS GOOD: https://github.com/ValveSoftware/Fossilize
-
-- Create hash when serializing model or textures, then compare that hash with a new hash when you make edits to the model file
-- Wait a minute, the current serialization system is amazing, the only problem being that it is inflexible
-- The only changes needing to be made is to just save the name path of the original model/texture 
-- Then combine together for exporting
 
 - Entity
     - Component 1
@@ -59,8 +49,6 @@ Written down thoughts to remember stuff:
 - PRIORITY IS EXPORT OPTIONS
 - After that, ADD C#
 
-- NOTE: property_ui should be providing an option to attach a component, the problem being that one of the main reasons to do so would be to attach scripts, which I do not have rn
-- It might finally be time to do so tomorrow
 - Remember to create template C# code so that they can start with something
 
 - Must create hash for each model or texture. That way, I can make edits to each thing in something like gimp or blender, and then the program will auto update the model in the editor. 
@@ -129,12 +117,39 @@ Written down thoughts to remember stuff:
 - pass this to transformation component for default size
 - THEN modify colliders to accept default sizes, which will be based on what the transformation component size is
 
+- make it so that the base collider has a function/method that accepts a size and applies it
+- this function property will be seperate from the mono SYSTEMS
+- it will accept entity values, specifically the entity that owns the component that method belongs to
+
+
+- MUST MODIFY SERIALIZATION SYSTEM TO HAVE SEPERATE JSON FILES FOR EACH ENTITY
+- consider making a scripting component for properties
+
+- regardless of what the c# code is, each script should have a "run" or "input"/"output" function where it would alert C++ to run the code given there
+- the entire C# code should be based on giving and taking the code from there
+- must have a "main" C# function that jumpstarts everything, would be difficult to do in C++
+- must think further on how exactly C# would interact with C++
+- how far should things go? 
+
+- C# HAS BUILT IN SERIALIZATION WOOHOOOOOO
+- supports json, bin and more!
+- other than asset data like models or textures, I could probably stick with mostly C# serialization for engine state data
+
+- implement openal soft because it is open source: https://github.com/kcat/openal-soft
+- might have to curb valve audio for future engine iterations
+
+- MAYBE make a scripting component, not sure how though
+- started the conversion of the scripting manager to a proper class
+- MUST remember to create an init function and destroy function
+
+
 
 
 # cs-script - release install
 RUN dotnet add package CS-Script --version 4.8.27
 
-dotnet build -o ../../../../../build/source/scripting/cs_interface
+dotnet new console -n MyNewProject
+dotnet build -o ../../../../../build/source/asset/engine/scripts/script_interface
     
     
 

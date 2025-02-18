@@ -1,21 +1,13 @@
-#include "cs_scripting.h"
+#include "script_manager.h"
 #include <filesystem>
 
 
-
-namespace Yurrgoht
-{
-    // Globals to hold hostfxr exports
-    hostfxr_initialize_for_dotnet_command_line_fn init_for_cmd_line_fptr;
-    hostfxr_initialize_for_runtime_config_fn init_for_config_fptr;
-    hostfxr_get_runtime_delegate_fn get_delegate_fptr;
-    hostfxr_run_app_fn run_app_fptr;
-    hostfxr_close_fn close_fptr;
-
+namespace Yurrgoht {
     // called in engine_context init - not sure if I should move this whole thing, but I am considering it.
-    int run_app_example() {
-        const string_t app_path = "scripting/cs_interface/cs_interface.dll";
-        const char* script_path = "scripting/test_script.cs";
+    int ScriptManager::run_app_example() {
+        const string_t app_path = "asset/engine/scripts/script_interface/script_interface.dll";
+        //const char* script_path = "asset/engine/scripts/init_script.cs";
+        const char* script_path = "asset/engine/scripts/test_script.cs";
 
         if ( !load_hostfxr(app_path.c_str()) ) {
             assert(false && "Failure: load_hostfxr()");
@@ -45,7 +37,7 @@ namespace Yurrgoht
         typedef unsigned char (CORECLR_DELEGATE_CALLTYPE* is_waiting_fn)();
         is_waiting_fn is_waiting;
         rc = get_function_pointer(
-            STR("Program, cs_interface"),
+            STR("Program, script_interface"),
             STR("IsWaiting"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&is_waiting);
@@ -55,7 +47,7 @@ namespace Yurrgoht
         typedef void (CORECLR_DELEGATE_CALLTYPE* hello_fn)(const char*);
         hello_fn hello;
         rc = get_function_pointer(
-            STR("Program, cs_interface"),
+            STR("Program, script_interface"),
             STR("Hello"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&hello);
@@ -66,7 +58,7 @@ namespace Yurrgoht
         typedef void (CORECLR_DELEGATE_CALLTYPE* load_file_fn)(const char*);
         load_file_fn load_file;
         rc = get_function_pointer(
-            STR("Program, cs_interface"),
+            STR("Program, script_interface"),
             STR("LoadFile"),
             UNMANAGEDCALLERSONLY_METHOD,
             nullptr, nullptr, (void**)&load_file);
@@ -96,12 +88,12 @@ namespace Yurrgoht
 
 
 
-    void *load_library(const char_t *path) {
+    void *ScriptManager::load_library(const char_t *path) {
         void *h = dlopen(path, RTLD_LAZY | RTLD_LOCAL);
         assert(h != nullptr);
         return h;
     }
-    void *get_export(void *h, const char *name) {
+    void *ScriptManager::get_export(void *h, const char *name) {
         void *f = dlsym(h, name);
         assert(f != nullptr);
         return f;
@@ -109,7 +101,7 @@ namespace Yurrgoht
 
     // <SnippetLoadHostFxr>
     // Using the nethost library, discover the location of hostfxr and get exports
-    bool load_hostfxr(const char_t *assembly_path) {
+    bool ScriptManager::load_hostfxr(const char_t *assembly_path) {
         get_hostfxr_parameters params { sizeof(get_hostfxr_parameters), assembly_path, nullptr };
         // Pre-allocate a large buffer for the path to hostfxr
         char_t buffer[MAX_PATH];
@@ -134,7 +126,7 @@ namespace Yurrgoht
 
     // <SnippetInitialize>
     // Load and initialize .NET Core and get desired function pointer for scenario
-    load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t *config_path) {
+    load_assembly_and_get_function_pointer_fn ScriptManager::get_dotnet_load_assembly(const char_t *config_path) {
         // Load .NET Core
         void *load_assembly_and_get_function_pointer = nullptr;
         hostfxr_handle cxt = nullptr;
