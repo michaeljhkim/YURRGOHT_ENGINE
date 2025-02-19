@@ -11,3 +11,6 @@
 [submodule "build/source"]
 	path = build/source
 	url = git@github.com:michaeljhkim/YURRGOHT_ENGINE_ASSETS.git
+[submodule "external/angelscript"]
+	path = external/angelscript
+	url = https://github.com/codecat/angelscript-mirror
