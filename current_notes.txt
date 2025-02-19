@@ -47,9 +47,6 @@ Written down thoughts to remember stuff:
 - also considering changing imguizmo to show the axis stuff all the time? I mean, current system is still theoretically better since less clutter
 
 - PRIORITY IS EXPORT OPTIONS
-- After that, ADD C#
-
-- Remember to create template C# code so that they can start with something
 
 - Must create hash for each model or texture. That way, I can make edits to each thing in something like gimp or blender, and then the program will auto update the model in the editor. 
 - Editor will check if the hash for an asset is different, and if so, it will import and update
@@ -121,20 +118,6 @@ Written down thoughts to remember stuff:
 - this function property will be seperate from the mono SYSTEMS
 - it will accept entity values, specifically the entity that owns the component that method belongs to
 
-
-- MUST MODIFY SERIALIZATION SYSTEM TO HAVE SEPERATE JSON FILES FOR EACH ENTITY
-- consider making a scripting component for properties
-
-- regardless of what the c# code is, each script should have a "run" or "input"/"output" function where it would alert C++ to run the code given there
-- the entire C# code should be based on giving and taking the code from there
-- must have a "main" C# function that jumpstarts everything, would be difficult to do in C++
-- must think further on how exactly C# would interact with C++
-- how far should things go? 
-
-- C# HAS BUILT IN SERIALIZATION WOOHOOOOOO
-- supports json, bin and more!
-- other than asset data like models or textures, I could probably stick with mostly C# serialization for engine state data
-
 - implement openal soft because it is open source: https://github.com/kcat/openal-soft
 - might have to curb valve audio for future engine iterations
 
@@ -142,6 +125,16 @@ Written down thoughts to remember stuff:
 - started the conversion of the scripting manager to a proper class
 - MUST remember to create an init function and destroy function
 
+- create a BASE entity where most regular use cases are handled
+- flags will be ints or uints and will determine what happen
+
+
+- I AM USING angelscript NOW!
+- it also has reflection and serialization
+- it is WAY easier to embed and share data
+
+- MUST MODIFY SERIALIZATION SYSTEM TO HAVE SEPERATE JSON FILES FOR EACH ENTITY
+- consider making a scripting component for properties
 
 
 
@@ -149,7 +142,7 @@ Written down thoughts to remember stuff:
 RUN dotnet add package CS-Script --version 4.8.27
 
 dotnet new console -n MyNewProject
-dotnet build -o ../../../../../build/source/asset/engine/scripts/script_interface
+dotnet build -o ../../../../../../build/source/asset/engine/scripts/script_interface
     
     
 

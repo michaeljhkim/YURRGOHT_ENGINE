@@ -11,7 +11,8 @@
 #include "engine/function/framework/component/sphere_collider_component.h"
 #include "engine/function/framework/component/cylinder_collider_component.h"
 
-REGISTER_AT_RUNTIME {
+REGISTER_AT_RUNTIME 
+{
 meta_hpp::class_<Yurrgoht::ApplicationEntity>(meta_hpp::metadata_()("name", "ApplicationEntity"s)) 
 	.constructor_<>()
 	.member_("spawn_num", &Yurrgoht::ApplicationEntity::m_spawn_num);

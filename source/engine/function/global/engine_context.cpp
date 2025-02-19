@@ -62,8 +62,7 @@ namespace Yurrgoht {
 
         //JUST A TEST
 		m_script_system = std::make_shared<ScriptManager>();
-        //m_script_system->init();
-        m_script_system->run_app_example();
+        m_script_system->init();
 
 		//LOG_INFO("EngineContext::init {}", "TimerManager | FileSystem | LogSystem - INITIALIZED");
         // NOTE: Logging cannot start before this point as LogSystem is not initialized

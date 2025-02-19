@@ -70,32 +70,15 @@ ENV PATH="${VULKAN_SDK}/bin:$PATH"
 ENV LD_LIBRARY_PATH="${VULKAN_SDK}/lib:$LD_LIBRARY_PATH"
 ENV VK_LAYER_PATH="${VULKAN_SDK}/share/vulkan/explicit_layer.d"
 ENV GFXRECON_LOG_LEVEL=WARN
-
-
-# dotnet installation - for consistent filepath with arch package
-ENV DOTNET_INSTALL_DIR=/usr/share/dotnet/
-RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && \
-    chmod +x ./dotnet-install.sh && \
-    ./dotnet-install.sh  --install-dir ${DOTNET_INSTALL_DIR} --version latest && \
-    echo "export DOTNET_ROOT=${DOTNET_INSTALL_DIR}" >> /etc/bash.bashrc && \
-    echo "export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools" >> /etc/bash.bashrc && \
-    source /etc/bash.bashrc
-ENV DOTNET_ROOT=${DOTNET_INSTALL_DIR}
-ENV PATH="${DOTNET_ROOT}:${DOTNET_ROOT}/tools:${PATH}"
     
-# cs-script - tools install
-RUN dotnet tool install --global cs-script.cli && \
-    dotnet tool install --global cs-syntaxer
-#RUN dotnet add package CS-Script --version 4.8.27
-
-# cs-script - release install
-RUN mkdir cs-script && cd cs-script && \
-    wget https://github.com/oleg-shilo/cs-script/releases/download/v4.8.26.0/cs-script.linux.v4.8.26.0.7z && \
-    7z x cs-script.linux.v4.8.26.0.7z && \
-    ln -s /usr/local/bin/cs-script/cscs /usr/bin/css && \
-    echo 'export CSSCRIPT_DIR='"$(current_dir)" >> /etc/bash.bashrc && \
-    echo 'export PATH=$PATH:'"$(current_dir)" >> /etc/bash.bashrc && \
-    source /etc/bash.bashrc
+# angelscript dependency - experimental NOT latest stable release
+#RUN wget https://www.angelcode.com/angelscript/sdk/files/angelscript_2.37.0.zip && \
+RUN wget https://github.com/codecat/angelscript-mirror/archive/refs/heads/master.zip && \
+    unzip master.zip && \
+    cd angelscript-mirror-master/sdk/angelscript/projects/cmake && mkdir build && \
+    cmake -S . -B build -DBUILD_SHARED_LIBS=OFF && \
+    cmake --build build && \
+    cmake --install build --prefix /usr/local
     
 # imgui dependency - I think I need to do this inside the project, cannot setup beforehand I thinkg
 #RUN wget https://github.com/ocornut/imgui/archive/refs/tags/v1.91.6.tar.gz

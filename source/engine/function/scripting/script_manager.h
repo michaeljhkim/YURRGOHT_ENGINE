@@ -1,88 +1,106 @@
 #pragma once
 /*
-For loading C# code into C++ for modification:
-https://learn.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting
+For learning more about angelscript:
+https://www.angelcode.com/
 
-For loading C# as a scripting language:
-https://github.com/oleg-shilo/cs-script
+Download:
+https://www.angelcode.com/angelscript/downloads.html
 
 
-WHY CHOOSE C#:
+WHY CHOOSE ANGELSCRIPT:
 - Familiar language in the unlikely scenario that someone decides to use this engine
-- Easier language to learn and manage for my friends
+- Easy to allow interaction with compiled C++ code
 - It is fast (relative for garbage collecting)
 - Uses C-based syntax
 - Portable
 - implemented for fun and as a personal challenge
 
-WHY C# AS A SCRIPTING LANGUAGE:
+WHY ANGELSCRIPT AS A SCRIPTING LANGUAGE:
 - I was a big doom modder around 2020-2021, and I wanted to give a similar experience to people
-- It should theoretically be most of the benefits of C#, with no auxillary compile tool required for users
-- Trade off is longer startup time, but I think that's worthwhile, especially heavy computation SHOULD be done in C++
-
-NOTES:
-- Hopefully auxilliary C++ code will be available for use as well, perhaps interchangeably?
-- For now, must focus on just doing C#
+- It should theoretically be most of the benefits of C++, with no auxillary compile tool required for users
+- Trade off is longer startup time, but I think that's worthwhile, especially heavy computation SHOULD be done in compiled C++
 */
 
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+#ifdef _MSC_VER
+#pragma warning(disable:4786) // disable warnings about truncated symbol names
+#endif
 
-// Standard headers
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <chrono>
-#include <iostream>
-#include <thread>
-#include <vector>
+#include <iostream>  // cout
+#include <assert.h>  // assert()
+#include <string.h>  // strstr()
+#ifdef __linux__
+	#include <sys/time.h>
+	#include <stdio.h>
+	#include <termios.h>
+	#include <unistd.h>
+#else
+	#include <conio.h>   // kbhit(), getch()
+	#include <windows.h> // timeGetTime()
+#endif
+#include <set>
 
-// Manually installed in the engine cmake file
-#define NETHOST_USE_AS_STATIC
-#include <nethost.h>
-#include <coreclr_delegates.h>
-#include <hostfxr.h>
+#include <angelscript.h>
+#include "angelscript/sdk/add_on/scriptstdstring/scriptstdstring.h"
+#include "angelscript/sdk/add_on/scriptbuilder/scriptbuilder.h"
 
-#include <dlfcn.h>
-#include <limits.h>
 
-#define STR(s) s
-#define CH(c) c
-#define DIR_SEPARATOR '/'
-#define MAX_PATH PATH_MAX
-
-#define string_compare strcmp
-
-using string_t = std::basic_string<char_t>;
 
 
 namespace Yurrgoht {
+
 	class ScriptManager {
 	public:
+		#ifdef __linux__
+		#define UINT unsigned int 
+		typedef unsigned int DWORD;
+		
+		/*
+		- Linux doesn't have timeGetTime(), this essentially does the same thing 
+		- Except this is milliseconds since Epoch (Jan 1st 1970) instead of system start
+		- It will work the same though...
+		*/
+		static DWORD timeGetTime() {
+			timeval time;
+			gettimeofday(&time, NULL);
+			return time.tv_sec*1000 + time.tv_usec/1000;
+		}
+		
+		/*
+		- Linux does have a getch() function in the curses library, but it doesn't work like it does on DOS
+		- This does the same thing, without the need of the curses library.
+		*/
+		int getch() {
+			struct termios oldt, newt;
+			int ch;
+		
+			tcgetattr(STDIN_FILENO, &oldt);
+			newt = oldt;
+			newt.c_lflag &= ~( ICANON | ECHO );
+			tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+		
+			ch = getchar();
+		
+			tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
+			return ch;
+		}
+		#endif
+
+
         void init();
-        void clear();
         void destroy();
 
-        // Forward declarations
-        bool load_hostfxr(const char_t *app);
-        load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t *assembly);
-        int run_app_example();
+        // Function prototypes
+        static void MessageCallback(const asSMessageInfo *msg, void *param);
+        static void PrintString(std::string &str);
+        static void PrintString_Generic(asIScriptGeneric *gen);
 
-    /********************************************************************************************
-     * Function used to load and activate .NET Core
-     ********************************************************************************************/
-        void *load_library(const char_t *);
-        void *get_export(void *, const char *);
+        int  RunApplication();
+        void ConfigureEngine(asIScriptEngine *engine);
+        int  CompileScript(asIScriptEngine *engine);
+        void timeGetTime_Generic(asIScriptGeneric *gen);
+
+        static void LineCallback(asIScriptContext *ctx, DWORD *timeOut);
 
     private:    
-        // Globals to hold hostfxr exports
-        hostfxr_initialize_for_dotnet_command_line_fn init_for_cmd_line_fptr;
-        hostfxr_initialize_for_runtime_config_fn init_for_config_fptr;
-        hostfxr_get_runtime_delegate_fn get_delegate_fptr;
-        hostfxr_run_app_fn run_app_fptr;
-        hostfxr_close_fn close_fptr;
     };
 }

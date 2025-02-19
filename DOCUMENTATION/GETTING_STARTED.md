@@ -18,7 +18,7 @@ With that being said, this engine developed solely with the intention of being a
 - Switched from glfw to sdl3
 - Switched from rttr to meta.hpp (the .hpp is apart of the full name, it's not just a header file)
 - Switched from C++17 to C++20
-- Added C# support for game scripting
+- Added angelscript support for game scripting
 - Created docker image and dev container in order for consistent development
 - Packages are now either a submodule, cmake fetch module, or installed via docker
 - Implementing unfinished editor gui features 
@@ -28,6 +28,7 @@ All external libraries' source codes have been included in the dockerfile, or fe
 <br>imgui    - submodule
 <br>ImGuizmo - submodule
 <br>meta.hpp - submodule
+<br>angelscript - submodule
 <br>jolt     - cmake fetch module
 <br>yaml-cpp - cmake fetch module
 <br>spdlog   - cmake fetch module
@@ -49,10 +50,12 @@ everything else is installed through docker
 - [cereal](https://uscilab.github.io/cereal/)(serialization)
 - [json](https://www.json.org/json-en.html)(required by cereal)
 - [eventpp](https://github.com/wqking/eventpp)(event system)
-- [dotnet](https://dotnet.microsoft.com/en-us/)(C#)
-- [cs-script](https://github.com/oleg-shilo/cs-script)(C# scripting)
+- [angelscript](https://www.angelcode.com/)(scripting)
 
-NOTE: imgui shader code has been modified to accomodate sRGB and not linear coloring, so you will have to modify that in imgui/backends/imgui_impl_vulkan.cpp . Shader code is provided in the "external" folder. 
+NOTES: 
+- imgui shader code has been modified to accomodate sRGB and not linear coloring, so you will have to modify that in imgui/backends/imgui_impl_vulkan.cpp. Shader code is provided in the "external" folder.
+- angelscript is also a submodule on top of being installed on docker for the sole reason that it was the only way to get the add-ons working (direct project compilation)
+    - none of the actual library is installed
 <br/><br/>
 
 

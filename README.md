@@ -91,7 +91,7 @@ cmake --build build --config Release
 ```shell
 apt-get install -y vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools libassimp-dev libglm-dev libcereal-dev libsdl2-dev libglfw3-dev git wget clang cmake ninja-build doxygen zlib1g-dev graphviz mesa-utils libgl1-mesa-dev mesa-vulkan-drivers
 
-docker build -t yurrgoht/testapp:1.0 .
+docker build -t yurrgoht/linux:1.0 .
 cmake -G Ninja -S . -B build
 cmake --build build --config Release
 
@@ -118,5 +118,4 @@ All external libraries' source codes have been included in the dockerfile, so no
 - [cereal](https://uscilab.github.io/cereal/)(serialization)
 - [json](https://www.json.org/json-en.html)(required by cereal)
 - [eventpp](https://github.com/wqking/eventpp)(event system)
-- [dotnet](https://dotnet.microsoft.com/en-us/)(C#)
-- [cs-script](https://github.com/oleg-shilo/cs-script)(C# scripting)
+- [angelscript](https://www.angelcode.com/)(scripting)
