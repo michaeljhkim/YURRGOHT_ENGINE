@@ -13,11 +13,9 @@ meta_hpp::class_<Yurrgoht::Material>(meta_hpp::metadata_()("name", "Material"s))
 CEREAL_REGISTER_TYPE(Yurrgoht::Material)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Material)
 
-namespace Yurrgoht
-{
+namespace Yurrgoht {
 
-	void Material::bindRefs()
-	{
+	void Material::bindRefs() {
 		BIND_ASSET(m_base_color_texure, Texture2D)
 		BIND_ASSET(m_metallic_roughness_occlusion_texure, Texture2D)
 		BIND_ASSET(m_normal_texure, Texture2D)

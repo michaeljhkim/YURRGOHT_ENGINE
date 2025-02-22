@@ -61,8 +61,8 @@ namespace Yurrgoht {
         m_debug_draw_system->init();
 
         //JUST A TEST
-		m_script_system = std::make_shared<ScriptManager>();
-        m_script_system->init();
+		m_script_manager = std::make_shared<ScriptManager>();
+        m_script_manager->init();
 
 		//LOG_INFO("EngineContext::init {}", "TimerManager | FileSystem | LogSystem - INITIALIZED");
         // NOTE: Logging cannot start before this point as LogSystem is not initialized
@@ -74,7 +74,7 @@ namespace Yurrgoht {
         VulkanRHI::get().waitDeviceIdle();
 
         // destroy with reverse initialize order
-        //m_script_system->destroy();
+        m_script_manager->destroy();
         m_debug_draw_system->destroy();
         m_render_system->destroy();
         m_physics_system->destroy();

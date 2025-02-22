@@ -37,7 +37,7 @@
 namespace Yurrgoht {
 
 	enum class EAssetType {
-		Invalid, Texture2D, TextureCube, Material, Skeleton, StaticMesh, SkeletalMesh, Animation, Scene
+		Invalid, Texture2D, TextureCube, Material, Skeleton, StaticMesh, SkeletalMesh, Animation, Scene, Script
 	};
 
 	class IAssetRef {

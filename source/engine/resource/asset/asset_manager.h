@@ -24,10 +24,12 @@ namespace Yurrgoht {
 		bool importTexture2D(const std::string& filename, const URL& folder);
 		bool importTexture2D_KTX(const std::string& filename, const URL& folder);
 		bool importTextureCube(const std::string& filename, const URL& folder);
+		bool importScript(const std::string& filename, const URL& folder, const std::string& module_name);
 
 		bool isGltfFile(const std::string& filename);
 		bool isTexture2DFile(const std::string& filename);
 		bool isTextureCubeFile(const std::string& filename);
+		bool isScriptFile(const std::string& filename);
 
 		EAssetType getAssetType(const URL& url);
 

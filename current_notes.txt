@@ -133,8 +133,26 @@ Written down thoughts to remember stuff:
 - it also has reflection and serialization
 - it is WAY easier to embed and share data
 
-- MUST MODIFY SERIALIZATION SYSTEM TO HAVE SEPERATE JSON FILES FOR EACH ENTITY
 - consider making a scripting component for properties
+- there should be some sort of script manager when updating a script_interface
+- this is where all game init stuff HAPPENS when it is called
+
+
+
+- for now, we are in just the testing phase of angelscript
+- so no angelscript class needs to inherit anything from the C++ code yet, it just needs to instantiate
+- once we are done testing with it, there should be multiple angelscript classes that inherit from entity
+    - https://www.angelcode.com/angelscript/sdk/docs/manual/doc_adv_inheritappclass.html
+
+- serialization after we figure that stuff out as well: 
+    - https://www.angelcode.com/angelscript/sdk/docs/manual/doc_serialization.html
+
+- the test I want to do is just instantiate a few c++ entity objects in angelscript, add components, and then test the physics
+
+- scripts for entities will be handled by one script context, and will also allow for entity reuse
+- entities should allow for multiple script handling JUST in case. Can disable if needed.
+- MUST create a new asset for script handling and such, like for static meshes
+
 
 
 

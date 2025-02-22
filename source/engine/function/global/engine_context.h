@@ -24,7 +24,7 @@ namespace Yurrgoht
 			const auto& physicsSystem() { return m_physics_system; }
 			const auto& renderSystem() { return m_render_system; }
             const auto& debugDrawSystem() { return m_debug_draw_system; }
-            const auto& scriptSystem() { return m_script_system; }
+            const auto& scriptManager() { return m_script_manager; }
 
             void setDeltaTime(float delta_time) { m_delta_time = delta_time; }
             float getDeltaTime() { return m_delta_time; }
@@ -62,7 +62,7 @@ namespace Yurrgoht
 			std::shared_ptr<class PhysicsSystem> m_physics_system;
 			std::shared_ptr<class RenderSystem> m_render_system;
 			std::shared_ptr<class DebugDrawManager> m_debug_draw_system;
-			std::shared_ptr<class ScriptManager> m_script_system;
+			std::shared_ptr<class ScriptManager> m_script_manager;
 
             float m_delta_time = 0.0f;
     };

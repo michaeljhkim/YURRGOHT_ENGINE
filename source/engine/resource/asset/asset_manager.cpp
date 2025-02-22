@@ -11,6 +11,7 @@
 #include "asset_manager.h"
 #include "engine/resource/asset/texture_2d.h"
 #include "engine/resource/asset/texture_cube.h"
+#include "engine/resource/asset/base/script.h"
 #include "engine/function/framework/scene/scene.h"
 #include "engine/function/framework/component/sky_light_component.h"
 
@@ -47,7 +48,8 @@ namespace Yurrgoht {
 			{ EAssetType::StaticMesh, "stm" },
 			{ EAssetType::SkeletalMesh, "skm" },
 			{ EAssetType::Animation, "anim" },
-			{ EAssetType::Scene, "scene" }
+			{ EAssetType::Scene, "scene" },
+			{ EAssetType::Script, "sc" }
 		};
 
 		m_asset_archive_types = {
@@ -58,7 +60,8 @@ namespace Yurrgoht {
 			{ EAssetType::StaticMesh, EArchiveType::Binary },
 			{ EAssetType::SkeletalMesh, EArchiveType::Binary },
 			{ EAssetType::Animation, EArchiveType::Binary },
-			{ EAssetType::Scene, EArchiveType::Json }
+			{ EAssetType::Scene, EArchiveType::Json },
+			{ EAssetType::Script, EArchiveType::Json }
 		};
 
 		for (const auto& iter : m_asset_type_exts) {
@@ -172,6 +175,21 @@ namespace Yurrgoht {
 		return true;
 	}
 
+	bool AssetManager::importScript(const std::string& filename, const URL& folder, const std::string& module_name) {
+		std::shared_ptr<Script> script_import = std::make_shared<Script>();
+		std::string asset_name = getAssetName(filename, EAssetType::Script);
+		URL url = URL::combine(folder.str(), asset_name);
+		script_import->setURL(url);
+		script_import->setScriptPath(filename);
+		script_import->setModuleName(module_name);
+
+		script_import->inflate();
+		serializeAsset(script_import);
+
+		LOG_INFO("Imported - {}", filename);
+		return true;
+	}
+
 	bool AssetManager::isGltfFile(const std::string& filename) {
 		std::string extension = g_engine.fileSystem()->extension(filename);
 		return extension == "glb" || extension == "gltf";
@@ -185,6 +203,11 @@ namespace Yurrgoht {
 	bool AssetManager::isTextureCubeFile(const std::string& filename) {
 		std::string extension = g_engine.fileSystem()->extension(filename);
 		return extension == "ktx";
+	}
+
+	bool AssetManager::isScriptFile(const std::string& filename) {
+		std::string extension = g_engine.fileSystem()->extension(filename);
+		return extension == "as";
 	}
 
 	EAssetType AssetManager::getAssetType(const URL& url) {

@@ -6,6 +6,8 @@ https://www.angelcode.com/
 Download:
 https://www.angelcode.com/angelscript/downloads.html
 
+https://github.com/codecat/angelscript-mirror
+
 
 WHY CHOOSE ANGELSCRIPT:
 - Familiar language in the unlikely scenario that someone decides to use this engine
@@ -38,12 +40,13 @@ WHY ANGELSCRIPT AS A SCRIPTING LANGUAGE:
 	#include <windows.h> // timeGetTime()
 #endif
 #include <set>
+#include <map>
 
 #include <angelscript.h>
 #include "angelscript/sdk/add_on/scriptstdstring/scriptstdstring.h"
 #include "angelscript/sdk/add_on/scriptbuilder/scriptbuilder.h"
 
-
+#include "engine/core/base/macro.h"
 
 
 namespace Yurrgoht {
@@ -85,22 +88,52 @@ namespace Yurrgoht {
 		}
 		#endif
 
-
         void init();
         void destroy();
+        int assert_destroy();
 
         // Function prototypes
         static void MessageCallback(const asSMessageInfo *msg, void *param);
-        static void PrintString(std::string &str);
-        static void PrintString_Generic(asIScriptGeneric *gen);
 
-        int  RunApplication();
-        void ConfigureEngine(asIScriptEngine *engine);
-        int  CompileScript(asIScriptEngine *engine);
-        void timeGetTime_Generic(asIScriptGeneric *gen);
+		// Function implementation with native calling convention
+		static void PrintString(std::string &str) { std::cout << str; }
 
-        static void LineCallback(asIScriptContext *ctx, DWORD *timeOut);
+    	// Function implementation with generic script interface
+		static void PrintString_Generic(asIScriptGeneric *gen) { std::cout << (std::string*)gen->GetArgAddress(0); }
+		
+		asIScriptEngine* getScriptEngine() { return m_script_engine; };
+		asIScriptContext* getScriptContext() { return m_script_context; };
 
-    private:    
+        void ConfigureEngine();
+		int StartModuleIfAbsent(const std::string& module_name);
+        int AddScriptToModule(const std::string& module_name, const std::string& script_path);
+        int BuildScriptModule(const std::string& module_name);
+
+        //void timeGetTime_Generic(asIScriptGeneric *gen);
+		int AddFunction(const std::string& module, const std::string& function_name);
+		int PrepareFunction(const std::string& module, const std::string& function_name);
+		void ExecuteFunction();
+
+		/*
+		- Instead of aborting, the script can be suspended and later resumed by calling Execute() again.
+		- If the time out is reached we abort the script
+		*/
+		static void LineCallback(asIScriptContext* script_context, DWORD* timeOut) {
+			if(*timeOut < timeGetTime())
+				script_context->Abort();
+		}
+
+    private:
+		asIScriptEngine* m_script_engine;
+        asIScriptContext* m_script_context;
+		asITypeInfo* m_script_type;
+		asIScriptObject* m_script_object;
+
+		std::map<std::string, asIScriptFunction*> m_script_functions;
+
+        // The builder loads the script file and any included files specified by #include directives
+		// the key is the module that the builder is defined by
+		std::map<std::string, CScriptBuilder> m_script_builders;
     };
+
 }

@@ -26,8 +26,7 @@
     #define LOG_FATAL(...) LOG_HELPER(ELogLevel::Fatal, __VA_ARGS__)
     
     #define ASSERT(val, ...) \
-        if (!(val)) \
-        { \
+        if (!(val)) { \
             LOG_FATAL(__VA_ARGS__); \
         }
 

@@ -1,224 +1,237 @@
 #include "script_manager.h"
 //#include <filesystem>
 
+
+/*
+- EVERY {angelscript} CLASS NEEDS TO HAVE AN {_init} AND {_process} FUNCTION!!!
+- MAYBE {_destroy} as well
+- this will create a standardized system where the engine ONLY needs to look at these functions for value maniplulation
+- probably should make default angelscript classes where all minimum default functions/values are defined
+- then user inherits from these default classes
+
+- lower priority, so work on it later, but perhaps I should make a game manager that controls events and such
+- for like actually creating a story driven game with stuff happening
+
+ANGELSCRIPT TEST PLANS:
+- 1. create a simple class in angelscript, move the main and test function into it, and try calling it (maybe instantiating)
+- 2. modify class from step 1 to inherit from another simple angelscript class
+- 3. try calling types from the C++ code
+- 4. try instantiating an entity type
+
+
+NOTE: 
+- using ASSERT() means that the ENTIRE engine will stop if there is an error with the scripting
+- we use ASSERT() in the init() function because we want to make sure we can at least intialize the scripting system, otherwise there is a sever problem
+- we use SCRIPT_ASSERT() for non-critical sections because that is a script based error, easy to fix without anything else breaking too hard
+*/
+
+
 namespace Yurrgoht {
     
+    /*
+    - Create the script engine
+    - Configure the script engine with all the functions/variables that the script should use
+    - Compile script
+    - Create a context that will execute the script
+
+    - Execute the function
+    */
     void ScriptManager::init() {
-        RunApplication();
+        m_script_engine = asCreateScriptEngine();
+        ASSERT( m_script_engine != 0, 
+            "Failed to create script engine.");
 
-        // Hello World
-        std::cout << std::endl << "Hello World" << std::endl;
+        // Script compiler will write compiler messages to callback
+        m_script_engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, asCALL_CDECL);
+        ConfigureEngine();
 
-        return;
+        m_script_context = m_script_engine->CreateContext();
+        ASSERT( m_script_context != 0, 
+            "Failed to create the context.", m_script_engine->Release());
+
+        // LineCallback function sets the timeOut value (prevents scripts from hanging)
+        DWORD timeOut;
+        ASSERT( m_script_context->SetLineCallback(asFUNCTION(LineCallback), &timeOut, asCALL_CDECL) >= 0, 
+            "Failed to set the line callback function.", assert_destroy());
+
+        // Set the timeout before executing the function. Give the function 1000ms (1 second) to return before we'll abort it
+        timeOut = timeGetTime() + 1000;
+
+        ASSERT( StartModuleIfAbsent("test_module") >= 0, 
+            "Failed to start new module.");
+
+        ASSERT( AddScriptToModule("test_module", "asset/engine/scripts/script.as") >= 0, 
+            "Failed to add script.", m_script_engine->Release());
+
+        ASSERT( BuildScriptModule("test_module") >= 0,
+            "Failed to add script.", m_script_engine->Release());
+
+
+        // Get the object type
+        asIScriptModule *module = m_script_engine->GetModule("test_module");
+        m_script_type = module->GetTypeInfoByDecl("TEST");
+        
+        // Get the factory function from the object type
+        asIScriptFunction *factory = m_script_type->GetFactoryByDecl("TEST @TEST()");
+        
+        // Prepare the context to call the factory function
+        // Execute the call
+        m_script_context->Prepare(factory);
+        m_script_context->Execute();
+        
+        // Get the object that was created
+        // If you're going to store the object you must increase the reference, otherwise it will be destroyed when the context is reused or destroyed.
+        m_script_object = *(asIScriptObject**)m_script_context->GetAddressOfReturnValue();
+        m_script_object->AddRef();
+
+
+
+        
+
+        AddFunction("test_module", "void _init()");
+        AddFunction("test_module", "void _process()");
+
+        PrepareFunction("test_module", "void _init()");
+        ExecuteFunction();
+        PrepareFunction("test_module", "void _process()");
+        ExecuteFunction();
+
+        destroy();
+    }
+
+    void ScriptManager::destroy() {
+        m_script_context->Release();
+        m_script_engine->ShutDownAndRelease();
+    }
+
+    int ScriptManager::assert_destroy() {
+        destroy();
+        return 0;
     }
 
     void ScriptManager::MessageCallback(const asSMessageInfo *msg, void *param) {
-        const char *type = "ERR ";
+        std::string type = "ERR ";
         if( msg->type == asMSGTYPE_WARNING ) 
             type = "WARN";
         else if( msg->type == asMSGTYPE_INFORMATION ) 
             type = "INFO";
 
-        printf("%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type, msg->message);
+        printf("%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
     }
 
-    int ScriptManager::RunApplication() {
+    
+    /*  
+    - Functions, properties, and types can be registered in configuration groups, which define available groups for scripts during compilation.
+    - Groups can also be removed to change the engine configuration without recompiling scripts.
+    - assert() validates return codes to catch errors during script building without extra checks in release mode.
+    */
+    void ScriptManager::ConfigureEngine() {
+        // Register the script string type
+        RegisterStdString(m_script_engine);
+
+        // Register script functions
         int r;
+        !strstr(asGetLibraryOptions(), "AS_MAX_PORTABILITY") ?
+            r = m_script_engine->RegisterGlobalFunction("void print(string &in)", asFUNCTION(PrintString), asCALL_CDECL) :
+            r = m_script_engine->RegisterGlobalFunction("void print(string &in)", asFUNCTION(PrintString_Generic), asCALL_GENERIC);
 
-        // Create the script engine
-        asIScriptEngine *engine = asCreateScriptEngine();
-        if( engine == 0 ) {
-            std::cout << "Failed to create script engine." << std::endl;
+        assert(r >= 0);
+    }
+
+	int ScriptManager::StartModuleIfAbsent(const std::string& module_name) {
+        // we make sure that the module is not already built
+        if( !m_script_builders.contains(module_name) ) {
+
+            m_script_builders[module_name] = CScriptBuilder();
+            int r = m_script_builders[module_name].StartNewModule(m_script_engine, module_name.c_str()); 
+            
+            if (r < 0) {
+                LOG_ERROR("Failed to start new module");
+                m_script_engine->Release();
+                return r;
+            }
+        }
+        return 0;
+    }
+
+    /*  
+    - The engine discards script sections after Build(), so they must be re-added for recompilation.
+    - For unrelated scripts, compile them into separate modules with their own namespaces and scopes to avoid conflicts.
+    */
+    int ScriptManager::AddScriptToModule(const std::string& module_name, const std::string& script_path) {
+        int r = m_script_builders[module_name].AddSectionFromFile(script_path.c_str());
+
+        // Build the script; compiler messages are written to the message stream if there are errors or warnings.
+        if (r < 0) {
+            LOG_ERROR("Failed to add script file");
+            return r;
+        }
+        return 0;
+    }
+
+    int ScriptManager::BuildScriptModule(const std::string& module_name) {
+        int r = m_script_builders[module_name].BuildModule();
+        if (r < 0) {
+            LOG_ERROR("Failed to build the module");
+            return r;
+        }
+        return 0;
+    }
+
+
+
+    /*
+    - Find the function for the function we want to execute.
+    - Always call Prepare() before executing a script function
+    - Store the returned value from GetFunctionByDecl() somewhere to avoid repeating this slow call
+    - IDEA: store that value inside a map where the key is a string of the function name
+    */
+    int ScriptManager::AddFunction(const std::string& module, const std::string& function_name) {
+        asIScriptFunction* function = m_script_type->GetMethodByDecl(function_name.c_str());
+        if (function == 0) {
+            LOG_ERROR("The function '{}' was not found.", function_name);
+            destroy();
             return -1;
         }
+        m_script_functions[function_name] = function;
+        return 0;
+    }
 
-        // The script compiler will write any compiler messages to the callback.
-        engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, asCALL_CDECL);
-
-        // Configure the script engine with all the functions, 
-        // and variables that the script should be able to use.
-        ConfigureEngine(engine);
-        
-        // Compile the script code
-        r = CompileScript(engine);
-        if( r < 0 ) {
-            engine->Release();
+    int ScriptManager::PrepareFunction(const std::string& module, const std::string& function_name) {
+        if (m_script_context->Prepare(m_script_functions[function_name]) < 0) {
+            LOG_ERROR("Failed to prepare the context.");
+            destroy();
             return -1;
         }
+        m_script_context->SetObject(m_script_object);
+        return 0;
+    }
 
-        // Create a context that will execute the script.
-        asIScriptContext *ctx = engine->CreateContext();
-        if( ctx == 0 ) {
-            std::cout << "Failed to create the context." << std::endl;
-            engine->Release();
-            return -1;
-        }
 
-        // We don't want to allow the script to hang the application, e.g. with an
-        // infinite loop, so we'll use the line callback function to set a timeout
-        // that will abort the script after a certain time. Before executing the 
-        // script the timeOut variable will be set to the time when the script must 
-        // stop executing. 
-        DWORD timeOut;
-        r = ctx->SetLineCallback(asFUNCTION(LineCallback), &timeOut, asCALL_CDECL);
-        if( r < 0 ) {
-            std::cout << "Failed to set the line callback function." << std::endl;
-            ctx->Release();
-            engine->Release();
-            return -1;
-        }
+    void ScriptManager::ExecuteFunction() {
+        std::cout << "---- Executing The Function ----\n" << std::endl;
+        int r = m_script_context->Execute();
 
-        // Find the function for the function we want to execute.
-        asIScriptFunction *func = engine->GetModule(0)->GetFunctionByDecl("void main()");
-        if( func == 0 ) {
-            std::cout << "The function 'void main()' was not found." << std::endl;
-            ctx->Release();
-            engine->Release();
-            return -1;
-        }
+        // The execution didn't finish as we had planned. Determine why
+        std::string exec_message = "\n---- The Function Finished Successfully ----";
+        if (r != asEXECUTION_FINISHED) {
+            if (r == asEXECUTION_ABORTED)
+                exec_message = "\n---- The Function was aborted before it could finish. Probably it timed out ----";
+            else if (r == asEXECUTION_EXCEPTION) {
+                exec_message = "\n---- The Function ended with an exception ----";
 
-        /*
-        - Prepare the script context with the function we wish to execute. 
-        - Prepare() must be called on the context before each new script function that will be executed. 
-        - Note, that if you intend to execute the same function several times, it might be a good idea to store the function returned by GetFunctionByDecl().
-        - This will allow the relatively slow call to be skipped.
-        */
-        r = ctx->Prepare(func);
-        if( r < 0 ) {
-            std::cout << "Failed to prepare the context." << std::endl;
-            ctx->Release();
-            engine->Release();
-            return -1;
-        }
-
-        // Set the timeout before executing the function. Give the function 1 sec to return before we'll abort it.
-        timeOut = timeGetTime() + 1000;
-
-        // Execute the function
-        std::cout << "Executing the script." << std::endl;
-        std::cout << "---" << std::endl;
-        r = ctx->Execute();
-        std::cout << "---" << std::endl;
-        if( r != asEXECUTION_FINISHED ) {
-            // The execution didn't finish as we had planned. Determine why.
-            if( r == asEXECUTION_ABORTED )
-                std::cout << "The script was aborted before it could finish. Probably it timed out." << std::endl;
-            else if( r == asEXECUTION_EXCEPTION ) {
-                std::cout << "The script ended with an exception." << std::endl;
-
-                // Write some information about the script exception
-                asIScriptFunction *func = ctx->GetExceptionFunction();
-                std::cout << "func: " << func->GetDeclaration() << std::endl;
-                std::cout << "modl: " << func->GetModuleName() << std::endl;
-                std::cout << "sect: " << func->GetScriptSectionName() << std::endl;
-                std::cout << "line: " << ctx->GetExceptionLineNumber() << std::endl;
-                std::cout << "desc: " << ctx->GetExceptionString() << std::endl;
+                // Write some information about the function exception
+                asIScriptFunction* func = m_script_context->GetExceptionFunction();
+                std::cout << "function:  " << func->GetDeclaration()                     << std::endl;
+                std::cout << "module:    " << func->GetModuleName()                      << std::endl;
+                std::cout << "section:   " << func->GetScriptSectionName()               << std::endl;
+                std::cout << "line:      " << m_script_context->GetExceptionLineNumber() << std::endl;
+                std::cout << "exception: " << m_script_context->GetExceptionString()     << std::endl;
             }
             else
-            std::cout << "The script ended for some unforeseen reason (" << r << ")." << std::endl;
+                exec_message = "\n---- The Function ended for some unforeseen reason (" + std::to_string(r) + "). ----";
         }
-        else {
-            std::cout << "The script finished successfully." << std::endl;
-        }
-
-        // We must release the contexts when no longer using them
-        ctx->Release();
-
-        // Shut down the engine
-        engine->ShutDownAndRelease();
-
-        return 0;
+        std::cout << exec_message << std::endl;
     }
 
-    void ScriptManager::ConfigureEngine(asIScriptEngine *engine) {
-        int r;
-
-        /*
-        - Register the script string type
-        - Look at the implementation for this function for more information on how to register a custom string type, and other object types.
-        */
-        RegisterStdString(engine);
-
-        if (!strstr(asGetLibraryOptions(), "AS_MAX_PORTABILITY")) {
-            /*
-            - Register the functions that the scripts will be allowed to use.
-            - Note how the return code is validated with an assert().
-            - This helps us discover where a problem occurs, and doesn't pollute the code with a lot of if's. 
-            - If an error occurs in release mode it will be caught when a script is being built.
-            - So it is not necessary to do the verification here as well.
-            */
-            r = engine->RegisterGlobalFunction("void print(string &in)", asFUNCTION(PrintString), asCALL_CDECL); assert( r >= 0 );
-        }
-        else {
-            // Notice how the registration is almost identical to the above. 
-            r = engine->RegisterGlobalFunction("void print(string &in)", asFUNCTION(PrintString_Generic), asCALL_GENERIC); assert( r >= 0 );
-        }
-        
-        /*
-        - It is possible to register the functions, properties, and types in configuration groups as well
-        - When compiling the scripts it then be defined which configuration groups should be available for that script. 
-        - If necessary a configuration group can also be removed from the engine, so that the engine configuration could be changed without having to recompile all the scripts.
-        */
-    }
-
-    int ScriptManager::CompileScript(asIScriptEngine *engine) {
-        int r;
-
-        // The builder is a helper class that will load the script file, search for #include directives, and load any included files as well.
-        CScriptBuilder builder;
-
-        /*
-        - Build the script. 
-        - If there are any compiler messages they will be written to the message stream that we set right after creating the script engine. 
-        - If there are no errors, and no warnings, nothing will be written to the stream.
-        */
-        r = builder.StartNewModule(engine, 0);
-        if( r < 0 ) {
-            std::cout << "Failed to start new module" << std::endl;
-            return r;
-        }
-
-        // MODIFY THIS LINE TO FIND THE LOCATION OF THE SCRIPT
-        r = builder.AddSectionFromFile("asset/engine/scripts/script.as");
-        if( r < 0 ) {
-            std::cout << "Failed to add script file" << std::endl;
-            return r;
-        }
-        r = builder.BuildModule();
-        if( r < 0 ) {
-            std::cout << "Failed to build the module" << std::endl;
-            return r;
-        }
-        
-        /*
-        - The engine doesn't keep a copy of the script sections after Build() has returned. 
-        - So if the script needs to be recompiled, then all the script sections must be added again.
-        - If we want to have several scripts executing at different times but that have no direct relation with each other, then we can compile them into separate script modules. 
-        - Each module use their own namespace and scope, so function names, and global variables will not conflict with each other.
-        */
-
-        return 0;
-    }
-
-    void ScriptManager::LineCallback(asIScriptContext *ctx, DWORD *timeOut) {
-        // If the time out is reached we abort the script
-        if( *timeOut < timeGetTime() )
-            ctx->Abort();
-
-        /*
-        - It would also be possible to only suspend the script, instead of aborting it. 
-        - That would allow the application to resume the execution where it left of at a later time, by simply calling Execute() again.
-        */
-    }
-
-    // Function implementation with native calling convention
-    void ScriptManager::PrintString(std::string &str) {
-        std::cout << str;
-    }
-
-    // Function implementation with generic script interface
-    void ScriptManager::PrintString_Generic(asIScriptGeneric *gen) {
-        std::string *str = (std::string*)gen->GetArgAddress(0);
-        std::cout << *str;
-    }
 }
