@@ -182,6 +182,7 @@ namespace Yurrgoht {
 		script_import->setURL(url);
 		script_import->setScriptPath(filename);
 		script_import->setModuleName(module_name);
+		//script_import->setScriptTypename();
 
 		script_import->inflate();
 		serializeAsset(script_import);

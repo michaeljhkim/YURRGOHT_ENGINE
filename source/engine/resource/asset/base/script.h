@@ -11,7 +11,12 @@ namespace Yurrgoht {
 		
 		void setScriptPath(const std::string& script_path) 	 { m_script_path = script_path; }
 		void setModuleName(const std::string& module_name) 	 { m_module_name = module_name; }
-		void setScriptTypename(const std::string& type_name) { m_typename = type_name; 		}
+
+		// for now, when setting typename, factory function will also be defined
+		void setScriptTypename(const std::string& type_name) { 
+			m_typename = type_name;
+			m_factory_name = m_typename + " @" + m_typename + "()";
+		}
 
 	protected:
 		// to serialize values

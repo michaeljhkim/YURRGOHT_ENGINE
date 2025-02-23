@@ -7,6 +7,7 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Yurrgoht::Asset, Yurrgoht::Script)
 
 namespace Yurrgoht {
 
+	// NOTE: I DO NOT KNOW WHERE TO SET typename AT THE MOMENT
 	void Script::inflate() {
 		// setup script module
 		g_engine.scriptManager()->StartModuleIfAbsent(m_module_name);
